@@ -14,7 +14,7 @@ Antes que nada os recomiendo visitar otros repositorios, ya cuanto más material
 
 ### 1. Introdución
 
-Bienvenidos al repositorio de GitHubdel Doble Grado de Informática y Matemáticas (DGIIM) de la Universidad de Granada (UGR).
+Bienvenidos al repositorio de GitHub del Doble Grado de Informática y Matemáticas (DGIIM) de la Universidad de Granada (UGR).
 
 Todos los contenidos son públicos y descargables.
 
