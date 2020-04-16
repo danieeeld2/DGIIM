@@ -1,0 +1,137 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Relación 3}
+\author{Daniel Alconchel Vázquez }
+\date{8 de Abril de 2020}
+
+\begin{document}
+
+\maketitle
+\newpage
+\begin{raggedright}
+\begin{bf}
+1. Durante un año, las personas de una ciudad utilizan 3 tipos de transporte: metro(M), autobús(A), y coche particulas(C). Las probabilidades de que durante el año hayan usado uno u otros transportes son:
+
+\smallskip
+M: 0.3; A: 0.2; C: 0.15; M y A: 0.1; M y C:0.05; A y C: 0.06; M,A y C: 0.01
+
+\smallskip
+Calcular las siguientes probabilidades:
+
+\smallskip
+a) que una persona viaje en metro y no en autobús;
+
+\smallskip
+b) que una persona tome al menos dos medios de transporte;
+
+\smallskip
+c) que una persona viaje en metro o en coche, pero no en autobús;
+
+\smallskip
+d) que viaje en metro, o bien en autobús y en coche;
+
+\smallskip
+e) que una persona vaya a pie
+\end{bf}
+
+\begin{rm}
+\bigskip
+a) \begin{equation}
+    P(M\cap \overline{A}) = P(M-A) = P(M) - P(M\cap A) = 0.2 
+\end{equation}
+
+\smallskip
+b) \begin{equation}
+    P(M\cap A) + P(M\cap C) - P(A\cap M\cap C) + P(A\cap C) - P(A\cap M\cap C) = 0.19 
+\end{equation}
+
+\smallskip
+Hay que restarle $P(A\cap M\cap C)$ porque dicha probabilidad esta contenida en la suma de las anteriores.
+
+\bigskip
+c)
+
+\smallskip
+\begin{equation}
+     P(M\cap C)\cap \overline{A}) = P((M\cap \overline{A}) \cap P(C\cap \overline{A})) = \\
+    = P(M\cap \overline{A}) + P(C\cap \overline{A}) - P(\overline{A}\cap M\cap C) = \\
+    = P(M-A) + P(C-A) - P((M\cap C)-A) = \\
+    = P(M) - P(M\cap A) + P(C) - P(C\cap A) - P(M\cap C) + P(M\cap C\cap A) = 0.25
+\end{equation}
+
+\smallskip
+d) \begin{equation}
+    P(M\cap(A\cap C)) = P(M) + P(A\cap C) - P(M\cap A\cap C) = 0.35
+\end{equation}
+
+\smallskip
+e) No se puede calcular, ya que dicho suceso no pertenece al espacio muestral.
+\end{rm}
+\end{raggedright}
+
+\begin{bf}
+\newpage
+Sean A,B,C tres sucesos de un espacio probabilístico (\Omega, $\textit{A}$, P). \\
+$P(A) = 0,4, P(B) = 0,2, P(C) = 0,3, P(A\cap B) = 0,1, P(A\cup B)\cap C = \emptyset$. Calcular las probabilidades de los siguientes sucesos:
+
+\smallskip
+a) sólo ocurre A.
+
+\smallskip
+b) ocurren los tres sucesos.
+
+\smallskip
+c) ocurren A y B pero no C.
+
+\smallskip
+d) por los menos dos ocurren.
+
+\smallskip
+e) ocurren dos y no más.
+
+\smallskip
+f) no ocurren dos y no más.
+
+\smallskip
+g) ocurre por lo menos uno.
+
+\smallskip
+h) ocurre sólo uno.
+
+\smallskip
+i) no ocurre ninguno.
+\end{bf}
+
+\begin{rm}
+\bigskip
+a)\begin{equation}
+    P(A\cap \overline{B}) = P(A) - P(A\cap B) = 0,4 - 0,1 = 0,3
+\end{equation}
+
+\smallskip
+b)\begin{equation}
+    P((A\cup B)\cap C) = \emptyset \implie P(A\cap C \cup B\cap C) = \emptyset \implies P(A\cap C) \emptyset, y,P(B\cap C)\emptyset \implies P(A\cap B\cap C) = \emptyset
+\end{equation}
+
+\smallskip
+c)\begin{equation}
+    P((A\cap B)\cup \overline{C}) = P(A\cap B) - P(A\cap B\cap C) = 0,1 - \emptyset = 0,1
+\end{equation}
+
+\smallskip
+d)
+\smallskip
+
+\begin{multline*}
+     P((A\cap B)\cup (A\cap C)\cup (B\cap C) = \\
+     P((A\cap B)\cup (A\cap C)) + \cancel{P(B\cap C)} - P(\cancel{(A\cap B)}\cup (A\cap C)\cup (B\cap C)) = \\
+     p(A\cap B) + \cancel{P(A\cap C)} - \cancel{P((A\cap B\cap C)} = 0,1
+\end{multiline*}
+
+\smallskip
+e) Como la intersección de C con el resto de sucesos es vacío, la única opción es: $P(A\cap B) = 0,1$
+
+\end{rm}
+
+\end{document}
