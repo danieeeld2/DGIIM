@@ -1,0 +1,11 @@
+"make" -f nbproject/Makefile-Debug.mk QMAKE= SUBPROJECTS= .build-conf
+make[1]: se entra en el directorio '/home/daniel/Escritorio/DGIIM/Primero/2Cuatrimestre/MP/Movelist'
+"make"  -f nbproject/Makefile-Debug.mk dist/Debug/GNU-Linux/movelist
+make[2]: se entra en el directorio '/home/daniel/Escritorio/DGIIM/Primero/2Cuatrimestre/MP/Movelist'
+mkdir -p build/Debug/GNU-Linux/src
+rm -f "build/Debug/GNU-Linux/src/main.o.d"
+g++    -c -g -Iinclude -I../local/include -std=c++14 -MMD -MP -MF "build/Debug/GNU-Linux/src/main.o.d" -o build/Debug/GNU-Linux/src/main.o src/main.cpp
+mkdir -p dist/Debug/GNU-Linux
+g++     -o dist/Debug/GNU-Linux/movelist build/Debug/GNU-Linux/src/bag.o build/Debug/GNU-Linux/src/main.o build/Debug/GNU-Linux/src/move.o build/Debug/GNU-Linux/src/movelist.o build/Debug/GNU-Linux/src/player.o ../local/lib/libansiterminal.a ../local/lib/liblanguage.a ../local/lib/libwordlist.a
+make[2]: se sale del directorio '/home/daniel/Escritorio/DGIIM/Primero/2Cuatrimestre/MP/Movelist'
+make[1]: se sale del directorio '/home/daniel/Escritorio/DGIIM/Primero/2Cuatrimestre/MP/Movelist'

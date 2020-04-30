@@ -1,0 +1,13 @@
+
+%%%CALL 
+%%%OUTPUT
+VALIDATING clear(): 0 
+METHOD add() (fair): 7 1234567
+METHOD add() (short): 0 
+METHOD isValid(): 11  0
+METHOD  isValid(): 123456789  0
+METHOD  isValid(): 12345  1
+METHOD  extract(long): 123456789 7 1234567
+METHOD  extract(fair): 12345 2 67
+METHOD  extract(full): 1234567 0 
+METHOD  extract(short):  7 1234567

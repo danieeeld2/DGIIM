@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="100">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>src/bag.cpp</itemPath>
+      <itemPath>src/main.cpp</itemPath>
+      <itemPath>src/move.cpp</itemPath>
+      <itemPath>src/movelist.cpp</itemPath>
+      <itemPath>src/player.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>include/bag.h</itemPath>
+      <itemPath>include/move.h</itemPath>
+      <itemPath>include/movelist.h</itemPath>
+      <itemPath>include/player.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <standard>11</standard>
+          <incDir>
+            <pElem>include</pElem>
+            <pElem>../local/include</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibFileItem>../local/lib/libansiterminal.a</linkerLibFileItem>
+            <linkerLibFileItem>../local/lib/liblanguage.a</linkerLibFileItem>
+            <linkerLibFileItem>../local/lib/libwordlist.a</linkerLibFileItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="include/bag.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/move.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/movelist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/player.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/bag.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/move.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/movelist.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/player.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="include/bag.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/move.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/movelist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/player.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/bag.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/move.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/movelist.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/player.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

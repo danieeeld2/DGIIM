@@ -1,0 +1,12 @@
+
+%%%CALL 
+%%%OUTPUT
+Method set()/size() empty 0
+Method set()/size() 1234567 7
+Method to_string() empty 
+Method to_string() 1234567 1234567
+Method extract(0) 1234567
+Method extract(3) 4567
+Method extract(13) 
+Method extract(3+3) 7
+Method extract(3+3+3) 

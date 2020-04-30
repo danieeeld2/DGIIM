@@ -1,0 +1,15 @@
+
+%%%CALL
+%%%OUTPUT
+Opening tree file ./languages/ES.tree
+Trying to read 48428 words
+OK 48428 words read
+Opening ./languages/ES.scrabble
+OK 25 Scrabble's letter read 
+CONSTRUCTOR: 
+METHOD set(,,,): HOLA
+METHOD setLetters(): ADIOS
+METHOD read(): UNO
+METHOD read(): DOS
+METHOD findScore(MESAS): 7
+METHOD findScore(ADIEU): -1

@@ -1,0 +1,5 @@
+%%%CALL -r 100 -p data/ES_100_ERROR.data
+%%%VALGRIND
+%%%OUTPUT
+Error in call. Please use:
+ -l <language> -p <playfile> [-r <randomnumber>]
