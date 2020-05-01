@@ -407,3 +407,92 @@ $ ls -la | head -7	Muestra los 7 primeros archivos del directorio
 - La orden sleep n, siendo n un natural, permite hacer que el sistema tarde un tiempo antes de pasar a la siguiente iteración.
 
   
+  
+- Una de las características de bash es la posibilidad de crear funciones. Las cuales se pueden invocar más rápido que los guiones. Su estructura es la siguiente:
+
+  ```bash
+  fuction nombre_fn {
+  	declaraciones
+  }
+  #También podemos:
+  
+  nombre_fn{
+  	declaraciones
+  }
+  ```
+  
+- El comando fuction establece la función y con el comando unset -f *nombre* la borramos. También podemos ver qué funciones tenemos definidas junto con su declaración con el comando declare -f.
+
+- Para invocar la función dentro de un guión solamente debemos escribir el nombre seguido de los argumentos correspondientes (en caso de que los hubiese).
+
+
+
+- Es muy importante adaptar los guiones al sistema operativo en el que se usan. Una opción en usar el comando uname, el cual nos devuelve el nombre del sistema en uso. Por ejemplo:
+
+  ```bash
+  #!bin/bash
+  SO = `uname`
+  case $SO in
+  	Linux) echo "Estamos en Linux";;
+  	SunOS) echo "Estamos en SunOS";;
+  esac
+  ```
+
+  
+
+- Para realizar actividades en background usamos el metacarácter & :
+
+  ```bash
+  orden &
+  ```
+
+
+
+Hablemos ahora de la depuración y control de trabajos en bash:
+
+La shell bash no contiene ninguna orden específica para la depuración de guiones, pero contamos con diferentes herramientas que nos pueden ayudar a suplir esta función:
+
+- Usar la orden echo en puntos críticos del guión para seguir el rastro de las variables más importantes.
+- Usar las opciones -n, -v y -x de bash
+
+| Opción | Efecto                                            | Órdenes equivalentes                   |
+| ------ | ------------------------------------------------- | -------------------------------------- |
+| -n     | Chequea errores sintácticos sin ejecutar el guión | set -n                  set -o noexec  |
+| -v     | Visualiza cada orden antes de ejecutarla          | set -v                  set -o verbose |
+| -x     | Actúa igual que -v pero de forma más abreviada    | set - x                 set -o xtrace  |
+
+- Se pueden invocar pasándola como opciones o bien declarándolas dentro del guión. Se activa poniendo en una línea set -n y se desactica al encontrar en una línea set +n.
+
+
+
+- También podemos usar la orden trap, que sirve para especificar una acción a realizar cuando se recibe una señal (Mecanimos de comunicación entre procesos que permite la notificación de que ha ocurrido un determinado suceso a los procesos):
+
+  ```bash
+  trap 'echo TRAZA --- contador= $contador lineaLectura= $lineaLectura' DEBUG
+  contador=1
+  while read lineaLectura;
+  do
+  	echo "Linea $contador: $lineaLectura"
+  	contador=$[$contador+1]
+  done < archivotest
+  echo "Finalizado el procesamiento del archivo"
+  ```
+
+- Al invocar el guión anterior con xtrace se obtiene: 
+
+  ```
+  + trap 'echo TRAZA ---contador= $contador lineaLectura= $lineaLectura' DEBUG
+  ++ echo TRAZA ---contador= lineaLectura=
+  TRAZA ---contador= lineaLectura=
+  + contador=1
+  ++ echo TRAZA ---contador= 1 lineaLectura=
+  TRAZA ---contador= 1 lineaLectura=
+  + read lineaLectura
+  ++ echo TRAZA ---contador= 1 lineaLectura= Esta es la linea 1 de archivotest
+  TRAZA ---contador= 1 lineaLectura= Esta es la linea 1 de archivotest
+  
+  #etc
+  ```
+
+  
+
