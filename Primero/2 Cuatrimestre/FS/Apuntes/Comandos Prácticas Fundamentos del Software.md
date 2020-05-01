@@ -494,5 +494,92 @@ La shell bash no contiene ninguna orden específica para la depuración de guion
   #etc
   ```
 
+- Generalmente se utiliza también la señarl ERR para atrapar un error (Que se activa cuando una orden devuelve un código distinto de 0). Podemos contruir funciones para imprimir ese error.  Por ejemplo: 
+
+  ```bash
+  function _atrapaerror{
+  	codigo_error=$?	#Salvamos el código de error de la última orden
+  	echo "ERROR linea $1: la orden finalizó con estado $codigo_error"
+  }
+  ```
+
   
 
+- Por último, también podemos usar aserciones. Una función de aserción comprueba una variable o condición en un punto crítico del guión. Por ejemplo:
+
+  ```bash
+  #!/bin/bash
+  #asercion.sh
+  #
+  _asercion()			# Si la condición es falsa, finaliza el guión
+  {					# con un mensaje de error
+  	E_PARAMETRO_ERROR=98
+  	E_PATAMETRO_FALLIDA=99
+  	if [ -z "$2" ]; then		# Parámetros insuficientes pasados a_asercion
+  		return $E_PARAMETRO_ERROR
+  	fi
+      lineno=$2
+      if [ ! $1 ]; then
+      	echo "Falla la aserción: \"$1\""
+      	echo “Archivo \”$0\”, línea$lineno” # da el nombre del guion y núm. de línea 
+      	exit$E_ASERCION_FALLIDA
+      	# else retorna y continúa con el guion
+      fi
+  }
+  a=5
+  b=4
+  condicion=”$a -lt $b”		# Mensaje de error y salida del guion
+  							# Ajustarla variable condicion a otra cosa y ver qué pasa
+  
+  _asercion “$condicion” $FILENO
+  
+  # El resto del guion se ejecuta únicamente si la aserción no falla
+  
+  echo “Si llega aquí es porque la aserción es correcta”
+  ```
+
+  
+
+Por último hablaremos del control de trabajos en bash:
+
+Las órdenes que se mandan a ejecutar en shell reciben el nombre de trabajos. Estas pueden estar en primer plano (foreground), en segundo plano (background) o suspendido (detenido).
+
+- Para  ejecutar una orden en segundo plano usamos &.
+
+  ```bash
+  $ (sleep 5; echo "Fin de la siesta de 5 segs.")  &
+  [1] 10217
+  $ Fin de la siesta
+  
+  [1]+  Hecho                   ( sleep 5; echo "Fin de la siesta" ) 
+  ```
+
+- El número entre corchetes indica el número de trabajo que acaba de ser lanzado en segundo plano y el número de al lado representa el identificador asociado al proceso.
+
+- Los trabajos se pueden manipular usando órdenes de la shell. Estas órdenes permiten hacer referencia a un trabajo de varias formas. Una forma de hacerlo es mediante el carácter %:
+
+  | Especificador | Trabajo que es denotado con dicho especificador              |
+  | ------------- | ------------------------------------------------------------ |
+  | %             | Trabajo actual (%+ y %% son sinónimos de este especificador) |
+  | %-            | Trabajo previo al actual                                     |
+  | %n            | Trabajo número n                                             |
+  | %<cadena>     | Trabajo cuya línea de órdenes comienza por <cadena>          |
+  | %?<cadena>    | Trabajo cuya línea de órdenes contiene <cadena>              |
+
+
+
+- La tabla siguiente recoge las órdenes más frecuentes de control de trabajos:
+
+  | Órdenes | Descripción                                                  |
+  | ------- | ------------------------------------------------------------ |
+  | jobs    | Lista de trabajos activos bajo control del usuario<br />Si se usa con -l permite visualizar la identificación del proceso |
+  | fg      | Trae a primer plano un trabajo que se encuentra suspendido o en segundo plano<br />Si se usa sin argumentos lleva el trabajo actual a primer plano |
+  | bg      | Envía a segundo plano un trabajo<br />Orden opuesta a fg y se usa exactamente igual |
+  | %       | Permite cambiar el estado del trabajo                        |
+  | wait    | Espera a la finalización de procesos en segundo plano        |
+  | dosown  | Suprime un trabajo de la lista de trabajos activos           |
+  | kill    | Envía una señal a un/os proceso/s. Por defecto, finaliza la ejecución del proceso<br />A veces, la orden kill no puede finalizar un proceso debido a que este la ignore o realice una acción distinta a la especificada por defecto.  Para ese caso se puede forzar la terminación de un procesoen estas circunstancias usando kill -9 |
+  | ps      | Muestra el estado de los procesos actuales del sistema. Puede usarse con:<br />-e para mostrar la información de todos los procesos<br />-l para mostrarlo en formato largo<br />-u <nombre> para mostrar el estado de los procesos del usuario<nombre><br />-o<formato> para usar el formato definido por el usuario |
+  | top     | Muestra los procesos en ejecución con actualización de su informa en tiempo real |
+
+  Para pasar argumetnos usar orden %numero detrabajo.
