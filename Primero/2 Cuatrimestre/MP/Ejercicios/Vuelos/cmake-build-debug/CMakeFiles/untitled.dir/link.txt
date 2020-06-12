@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/untitled.dir/main.cpp.o CMakeFiles/untitled.dir/Punto3D.cpp.o CMakeFiles/untitled.dir/Trayectoria.cpp.o CMakeFiles/untitled.dir/Vuelo.cpp.o  -o untitled 
