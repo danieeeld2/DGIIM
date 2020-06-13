@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/untitled.dir/main.cpp.o CMakeFiles/untitled.dir/RedMetro.cpp.o CMakeFiles/untitled.dir/Linea.cpp.o CMakeFiles/untitled.dir/InfoParada.cpp.o  -o untitled 

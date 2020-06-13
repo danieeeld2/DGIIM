@@ -48,10 +48,10 @@ RM = /home/daniel/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/201.7846.88/bin
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos"
+CMAKE_SOURCE_DIR = "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug"
+CMAKE_BINARY_DIR = "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled/cmake-build-debug"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles/progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled/cmake-build-debug/CMakeFiles" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled/cmake-build-debug/CMakeFiles/progress.marks"
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled/cmake-build-debug/CMakeFiles" 0
 .PHONY : all
 
 # The main clean target
@@ -123,86 +123,86 @@ untitled/fast:
 	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/build
 .PHONY : untitled/fast
 
-Punto3D.o: Punto3D.cpp.o
+InfoParada.o: InfoParada.cpp.o
 
-.PHONY : Punto3D.o
-
-# target to build an object file
-Punto3D.cpp.o:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/Punto3D.cpp.o
-.PHONY : Punto3D.cpp.o
-
-Punto3D.i: Punto3D.cpp.i
-
-.PHONY : Punto3D.i
-
-# target to preprocess a source file
-Punto3D.cpp.i:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/Punto3D.cpp.i
-.PHONY : Punto3D.cpp.i
-
-Punto3D.s: Punto3D.cpp.s
-
-.PHONY : Punto3D.s
-
-# target to generate assembly for a file
-Punto3D.cpp.s:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/Punto3D.cpp.s
-.PHONY : Punto3D.cpp.s
-
-Trayectoria.o: Trayectoria.cpp.o
-
-.PHONY : Trayectoria.o
+.PHONY : InfoParada.o
 
 # target to build an object file
-Trayectoria.cpp.o:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/Trayectoria.cpp.o
-.PHONY : Trayectoria.cpp.o
+InfoParada.cpp.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/InfoParada.cpp.o
+.PHONY : InfoParada.cpp.o
 
-Trayectoria.i: Trayectoria.cpp.i
+InfoParada.i: InfoParada.cpp.i
 
-.PHONY : Trayectoria.i
+.PHONY : InfoParada.i
 
 # target to preprocess a source file
-Trayectoria.cpp.i:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/Trayectoria.cpp.i
-.PHONY : Trayectoria.cpp.i
+InfoParada.cpp.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/InfoParada.cpp.i
+.PHONY : InfoParada.cpp.i
 
-Trayectoria.s: Trayectoria.cpp.s
+InfoParada.s: InfoParada.cpp.s
 
-.PHONY : Trayectoria.s
+.PHONY : InfoParada.s
 
 # target to generate assembly for a file
-Trayectoria.cpp.s:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/Trayectoria.cpp.s
-.PHONY : Trayectoria.cpp.s
+InfoParada.cpp.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/InfoParada.cpp.s
+.PHONY : InfoParada.cpp.s
 
-Vuelo.o: Vuelo.cpp.o
+Linea.o: Linea.cpp.o
 
-.PHONY : Vuelo.o
+.PHONY : Linea.o
 
 # target to build an object file
-Vuelo.cpp.o:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/Vuelo.cpp.o
-.PHONY : Vuelo.cpp.o
+Linea.cpp.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/Linea.cpp.o
+.PHONY : Linea.cpp.o
 
-Vuelo.i: Vuelo.cpp.i
+Linea.i: Linea.cpp.i
 
-.PHONY : Vuelo.i
+.PHONY : Linea.i
 
 # target to preprocess a source file
-Vuelo.cpp.i:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/Vuelo.cpp.i
-.PHONY : Vuelo.cpp.i
+Linea.cpp.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/Linea.cpp.i
+.PHONY : Linea.cpp.i
 
-Vuelo.s: Vuelo.cpp.s
+Linea.s: Linea.cpp.s
 
-.PHONY : Vuelo.s
+.PHONY : Linea.s
 
 # target to generate assembly for a file
-Vuelo.cpp.s:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/Vuelo.cpp.s
-.PHONY : Vuelo.cpp.s
+Linea.cpp.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/Linea.cpp.s
+.PHONY : Linea.cpp.s
+
+RedMetro.o: RedMetro.cpp.o
+
+.PHONY : RedMetro.o
+
+# target to build an object file
+RedMetro.cpp.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/RedMetro.cpp.o
+.PHONY : RedMetro.cpp.o
+
+RedMetro.i: RedMetro.cpp.i
+
+.PHONY : RedMetro.i
+
+# target to preprocess a source file
+RedMetro.cpp.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/RedMetro.cpp.i
+.PHONY : RedMetro.cpp.i
+
+RedMetro.s: RedMetro.cpp.s
+
+.PHONY : RedMetro.s
+
+# target to generate assembly for a file
+RedMetro.cpp.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/RedMetro.cpp.s
+.PHONY : RedMetro.cpp.s
 
 main.o: main.cpp.o
 
@@ -240,15 +240,15 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... untitled"
-	@echo "... Punto3D.o"
-	@echo "... Punto3D.i"
-	@echo "... Punto3D.s"
-	@echo "... Trayectoria.o"
-	@echo "... Trayectoria.i"
-	@echo "... Trayectoria.s"
-	@echo "... Vuelo.o"
-	@echo "... Vuelo.i"
-	@echo "... Vuelo.s"
+	@echo "... InfoParada.o"
+	@echo "... InfoParada.i"
+	@echo "... InfoParada.s"
+	@echo "... Linea.o"
+	@echo "... Linea.i"
+	@echo "... Linea.s"
+	@echo "... RedMetro.o"
+	@echo "... RedMetro.i"
+	@echo "... RedMetro.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

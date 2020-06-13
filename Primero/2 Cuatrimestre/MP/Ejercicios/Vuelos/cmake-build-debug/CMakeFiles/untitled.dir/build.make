@@ -43,10 +43,10 @@ RM = /home/daniel/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/201.7846.88/bin
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/daniel/CLionProjects/untitled
+CMAKE_SOURCE_DIR = "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/daniel/CLionProjects/untitled/cmake-build-debug
+CMAKE_BINARY_DIR = "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug"
 
 # Include any dependencies generated for this target.
 include CMakeFiles/untitled.dir/depend.make
@@ -59,55 +59,55 @@ include CMakeFiles/untitled.dir/flags.make
 
 CMakeFiles/untitled.dir/main.cpp.o: CMakeFiles/untitled.dir/flags.make
 CMakeFiles/untitled.dir/main.cpp.o: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/CLionProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/untitled.dir/main.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/main.cpp.o -c /home/daniel/CLionProjects/untitled/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/untitled.dir/main.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/main.cpp.o -c "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/main.cpp"
 
 CMakeFiles/untitled.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/untitled.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/daniel/CLionProjects/untitled/main.cpp > CMakeFiles/untitled.dir/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/main.cpp" > CMakeFiles/untitled.dir/main.cpp.i
 
 CMakeFiles/untitled.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/daniel/CLionProjects/untitled/main.cpp -o CMakeFiles/untitled.dir/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/main.cpp" -o CMakeFiles/untitled.dir/main.cpp.s
 
 CMakeFiles/untitled.dir/Punto3D.cpp.o: CMakeFiles/untitled.dir/flags.make
 CMakeFiles/untitled.dir/Punto3D.cpp.o: ../Punto3D.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/CLionProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/untitled.dir/Punto3D.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/Punto3D.cpp.o -c /home/daniel/CLionProjects/untitled/Punto3D.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/untitled.dir/Punto3D.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/Punto3D.cpp.o -c "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/Punto3D.cpp"
 
 CMakeFiles/untitled.dir/Punto3D.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/untitled.dir/Punto3D.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/daniel/CLionProjects/untitled/Punto3D.cpp > CMakeFiles/untitled.dir/Punto3D.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/Punto3D.cpp" > CMakeFiles/untitled.dir/Punto3D.cpp.i
 
 CMakeFiles/untitled.dir/Punto3D.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/Punto3D.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/daniel/CLionProjects/untitled/Punto3D.cpp -o CMakeFiles/untitled.dir/Punto3D.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/Punto3D.cpp" -o CMakeFiles/untitled.dir/Punto3D.cpp.s
 
 CMakeFiles/untitled.dir/Trayectoria.cpp.o: CMakeFiles/untitled.dir/flags.make
 CMakeFiles/untitled.dir/Trayectoria.cpp.o: ../Trayectoria.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/CLionProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/untitled.dir/Trayectoria.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/Trayectoria.cpp.o -c /home/daniel/CLionProjects/untitled/Trayectoria.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/untitled.dir/Trayectoria.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/Trayectoria.cpp.o -c "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/Trayectoria.cpp"
 
 CMakeFiles/untitled.dir/Trayectoria.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/untitled.dir/Trayectoria.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/daniel/CLionProjects/untitled/Trayectoria.cpp > CMakeFiles/untitled.dir/Trayectoria.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/Trayectoria.cpp" > CMakeFiles/untitled.dir/Trayectoria.cpp.i
 
 CMakeFiles/untitled.dir/Trayectoria.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/Trayectoria.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/daniel/CLionProjects/untitled/Trayectoria.cpp -o CMakeFiles/untitled.dir/Trayectoria.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/Trayectoria.cpp" -o CMakeFiles/untitled.dir/Trayectoria.cpp.s
 
 CMakeFiles/untitled.dir/Vuelo.cpp.o: CMakeFiles/untitled.dir/flags.make
 CMakeFiles/untitled.dir/Vuelo.cpp.o: ../Vuelo.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/CLionProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/untitled.dir/Vuelo.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/Vuelo.cpp.o -c /home/daniel/CLionProjects/untitled/Vuelo.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/untitled.dir/Vuelo.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/Vuelo.cpp.o -c "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/Vuelo.cpp"
 
 CMakeFiles/untitled.dir/Vuelo.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/untitled.dir/Vuelo.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/daniel/CLionProjects/untitled/Vuelo.cpp > CMakeFiles/untitled.dir/Vuelo.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/Vuelo.cpp" > CMakeFiles/untitled.dir/Vuelo.cpp.i
 
 CMakeFiles/untitled.dir/Vuelo.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/Vuelo.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/daniel/CLionProjects/untitled/Vuelo.cpp -o CMakeFiles/untitled.dir/Vuelo.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/Vuelo.cpp" -o CMakeFiles/untitled.dir/Vuelo.cpp.s
 
 # Object files for target untitled
 untitled_OBJECTS = \
@@ -125,7 +125,7 @@ untitled: CMakeFiles/untitled.dir/Trayectoria.cpp.o
 untitled: CMakeFiles/untitled.dir/Vuelo.cpp.o
 untitled: CMakeFiles/untitled.dir/build.make
 untitled: CMakeFiles/untitled.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/daniel/CLionProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable untitled"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable untitled"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/untitled.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -138,6 +138,6 @@ CMakeFiles/untitled.dir/clean:
 .PHONY : CMakeFiles/untitled.dir/clean
 
 CMakeFiles/untitled.dir/depend:
-	cd /home/daniel/CLionProjects/untitled/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/daniel/CLionProjects/untitled /home/daniel/CLionProjects/untitled /home/daniel/CLionProjects/untitled/cmake-build-debug /home/daniel/CLionProjects/untitled/cmake-build-debug /home/daniel/CLionProjects/untitled/cmake-build-debug/CMakeFiles/untitled.dir/DependInfo.cmake --color=$(COLOR)
+	cd "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug" && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles/untitled.dir/DependInfo.cmake" --color=$(COLOR)
 .PHONY : CMakeFiles/untitled.dir/depend
 

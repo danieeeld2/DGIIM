@@ -4,10 +4,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/daniel/CLionProjects/untitled/Punto3D.cpp" "/home/daniel/CLionProjects/untitled/cmake-build-debug/CMakeFiles/untitled.dir/Punto3D.cpp.o"
-  "/home/daniel/CLionProjects/untitled/Trayectoria.cpp" "/home/daniel/CLionProjects/untitled/cmake-build-debug/CMakeFiles/untitled.dir/Trayectoria.cpp.o"
-  "/home/daniel/CLionProjects/untitled/Vuelo.cpp" "/home/daniel/CLionProjects/untitled/cmake-build-debug/CMakeFiles/untitled.dir/Vuelo.cpp.o"
-  "/home/daniel/CLionProjects/untitled/main.cpp" "/home/daniel/CLionProjects/untitled/cmake-build-debug/CMakeFiles/untitled.dir/main.cpp.o"
+  "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/Punto3D.cpp" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles/untitled.dir/Punto3D.cpp.o"
+  "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/Trayectoria.cpp" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles/untitled.dir/Trayectoria.cpp.o"
+  "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/Vuelo.cpp" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles/untitled.dir/Vuelo.cpp.o"
+  "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/main.cpp" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/Vuelos/cmake-build-debug/CMakeFiles/untitled.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
