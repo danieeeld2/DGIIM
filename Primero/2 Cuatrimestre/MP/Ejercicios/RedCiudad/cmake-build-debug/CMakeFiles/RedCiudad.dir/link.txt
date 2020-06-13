@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/RedCiudad.dir/main.cpp.o CMakeFiles/RedCiudad.dir/RedCiudades.cpp.o  -o RedCiudad 

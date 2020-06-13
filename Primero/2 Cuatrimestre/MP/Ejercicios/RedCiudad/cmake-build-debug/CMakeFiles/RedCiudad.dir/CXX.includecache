@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedCiudad/RedCiudades.cpp
+iostream
+-
+RedCiudades.h
+/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedCiudad/RedCiudades.h
+
+/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedCiudad/RedCiudades.h
+istream
+-
+fstream
+-
+string
+-
+cstring
+-
+
+/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedCiudad/main.cpp
+iostream
+-
+fstream
+-
+RedCiudades.h
+/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedCiudad/RedCiudades.h
+string
+-
+
