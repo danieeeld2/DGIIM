@@ -216,8 +216,10 @@ Imagen::Imagen(string ifilename){
     string cadena;
     Imagen();   //Por si falla
     ifile.open(ifilename);
-    if(!file)
+    if(!file){
         cerr << "Error de apertura del fichero";
+        exit(1);
+    }
     else{
         getline(ifile, cadena);
         if(cadena == "P2")

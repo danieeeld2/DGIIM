@@ -1,4 +1,18 @@
-/home/daniel/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/201.7846.88/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled"
+/home/daniel/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/201.7846.88/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro"
+-- The C compiler identification is GNU 10.1.1
+-- The CXX compiler identification is GNU 10.1.1
+-- Check for working C compiler: /usr/bin/cc
+-- Check for working C compiler: /usr/bin/cc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled/cmake-build-debug
+-- Build files have been written to: /home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro/cmake-build-debug

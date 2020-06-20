@@ -1,4 +1,4 @@
-# Install script for directory: /home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled
+# Install script for directory: /home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

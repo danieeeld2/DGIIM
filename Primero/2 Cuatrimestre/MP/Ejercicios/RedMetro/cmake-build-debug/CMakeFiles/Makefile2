@@ -44,10 +44,10 @@ RM = /home/daniel/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/201.7846.88/bin
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled"
+CMAKE_SOURCE_DIR = "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled/cmake-build-debug"
+CMAKE_BINARY_DIR = "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro/cmake-build-debug"
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -74,14 +74,14 @@ clean: CMakeFiles/untitled.dir/clean
 CMakeFiles/untitled.dir/all:
 	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/depend
 	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled/cmake-build-debug/CMakeFiles" --progress-num=1,2,3,4,5 "Built target untitled"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro/cmake-build-debug/CMakeFiles" --progress-num=1,2,3,4,5 "Built target untitled"
 .PHONY : CMakeFiles/untitled.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/untitled.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled/cmake-build-debug/CMakeFiles" 5
+	$(CMAKE_COMMAND) -E cmake_progress_start "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro/cmake-build-debug/CMakeFiles" 5
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/untitled.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/untitled/cmake-build-debug/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro/cmake-build-debug/CMakeFiles" 0
 .PHONY : CMakeFiles/untitled.dir/rule
 
 # Convenience name for target.
