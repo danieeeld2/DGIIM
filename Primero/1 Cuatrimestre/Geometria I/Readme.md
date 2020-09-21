@@ -1,0 +1,1 @@
+Apenas tengo apuntes de esta asignatura debido a que se encuentra todo en el libro indicado porel grupo y, además, incluyo la teoría dentro de los ejercicios
