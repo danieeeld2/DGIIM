@@ -8,9 +8,21 @@ Antes que nada os recomiendo visitar otros repositorios, ya cuanto más material
 
 ### Otros repositorios de interés
 
-- https://gitlab.com/danielperezruiz.10/dgiim-ugr/-/tree/master/
+- kutt.it/xagNGB
 
+- http://github.com/DGIIMUnderground
 
+- https://libreim.github.io/blog/2015/09/10/primero/
+
+- https://www.dropbox.com/sh/d0hvppw58b9897i/AABHzOOEZAeo5_xsWXJc2Jfya?dl=0
+
+- https://drive.google.com/drive/folders/19eo0Xe8WY6ErtinBWGlWf6XoGucps_qB
+
+- http://deiit.ugr.es/BDExamenes/search.html
+
+- Prácticas FS: https://github.com/pwaqo/practicas-fs
+
+  
 
 ### 1. Introdución
 
@@ -28,12 +40,7 @@ En el git encontrareis tanto material creado por mi mismo, como por otros compa�
 
 ### 3. Distribución
 
-En cada asignatura encontrareis lo siguiente:
-
-- README: Documento con consejos y advertencias de la asignatura **basado en mi propia experiencia**
-- Material proporcionado por el profesor
-- Contenido propio 
-- Contenidos de otros compañeros
+En principio todo el material distribuido es propio. En caso de utilizar material de algún compañero se indicará al principio de la publicación y será siempre bajo su consentimiento.
 
 
 
