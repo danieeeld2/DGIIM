@@ -1,0 +1,4 @@
+Introduzca la secuencia de número: (Finaliza al introducir -1) Presione una tecla para continuar . . . 
+
+Empate
+
