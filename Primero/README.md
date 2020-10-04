@@ -8,6 +8,8 @@ Antes que nada os recomiendo visitar otros repositorios, ya cuanto más material
 
 ### Otros repositorios de interés
 
+- https://gitlab.com/dgiim-ugr-collaborators/dgiim-ugr
+
 - kutt.it/xagNGB
 
 - http://github.com/DGIIMUnderground
