@@ -4,6 +4,8 @@
 
 ------
 
+## <u>Sesión 1</u>
+
 Convertirse en administrador del sistema implica entrar al mismo como usuario **root**.
 
 ```bash
@@ -231,4 +233,326 @@ Otro directorio muy útil para obtener información es el **/proc**, el cual sop
 - **/proc/mounts**: Muestra los sistemas de archivos mostrados actualmente
 
 
+
+## <u>Sesión 2</u>
+
+Comencemos recordando algunos de los tipos  de archivos que encontramos en el SO:
+
+- **Archivos regulares**: Archivos de programas y datos.
+- **Directorios**: Archivos diseñados para soportar la estructura jerárquica.
+- **Enlances simbólicos**: Permite referenciar a otros archivos desde distintas ubicaciones.
+- **Archivos especiales de dispositivos**: Estos archivos representan dispositivos y permitenal usuario del lenguaje de órdenes del shell y a los programadores de aplicacionestrabajar sobre los dispositivos como si se tratase de un archivo normal. 
+- Archivos para comunicaciones **FIFO **.
+- Archivos para comunicaciones **Socket**.
+
+### 
+
+### 3. Partición de dispositivos de almacenamiento secundario
+
+Para poder utilizar un dispositivo de almacenamiento secundario (drive), como puede ser un disco duro o una memoria flash, en un SO es necesario, en primer lugar, establecer secciones (**particiones**) dentro del dispositivo físico, que sean identificables, y que permitan alojar un SA concreto. Al proceso de establecer e identificar estas particiones en el dispositivo se le denomina comúnmente  **partición de disco**.
+
+Una partición está constituida por un conjunto de sectores que van a formar lo que podemos denominar un *disco lógico*. Es necesario asociarle una etiqueta que indica el tipo de SA que va a alojar cuando posteriormente se formatee.
+
+El número de particiones que podemos establecer en un dispositivo bajo una arquitectura Intel está limitado debido a la *“compatibilidad hacia atrás”*. La primera ***tabla de particiones*** se almacenaba como parte del ***sector de arranque maestro (master boot record, MBR)*** y solamente tenía espacio para almacenar cuatro entradas, conocidas como **particiones primarias**.
+
+#### 3.1 ¿Cuántas particiones hago en mi dispositivo?
+
+Dependiendo si el dispositivo actua como ***dispositivo de arranque (Boot drive)*** o no, será necesario establecer una distribución de particiones u otra. Un dispositivo de arraque va a ser el dispositivo que utilice en primer lugar la BIOS de nuestra arquitectura para cargar en memoria el programa SO.
+
+Si queremos que nuestro SO arranque desde el dispositivo donde vamos a realizar las particiones necesitamos establecer la siguiente configuración:
+
+- Partición primaria
+- Una o más particiones **swap**
+- Tantas particiones primarias o lógicas como uno desee
+
+En caso de que no actue como dispositivo de arranque, se usará la siguiente configuración:
+
+- Una o más particiones primarias o lógicas
+- Ninguna o las que quieras particiones swap.
+
+#### 3.2 ¿Qué directorios de primer nivel del estándar FHS deberían estar soportados por una partición independiente?
+
+Toda la estructura del FHS puede estar soportada por una única partición, pero es conveniente establecer particiones independientes, que soporten la información que se almacena en determinados directorios de la estructura.
+
+| Directorio | Descripción                                                  |
+| ---------- | ------------------------------------------------------------ |
+| **/home**  | Almacena los directorios de inicio de los usuarios. Podemos establecer una partición independiente y, de esta forma, limitar de esta forma el espacio de almacenamiento permitido para los mismos. Además, de cara a instalar nuevas versiones, si el **/home** está soportado en una partición independiente no tendremos probleas con nuestra partición raiz y podremos formatearla y en ella instalar la nueva versión del SO |
+| **/usr**   | Almmacena la mayoría de los ejecutables binarios del sistema |
+| **/var**   | Contiene los directorios de SPOOL                            |
+
+
+
+#### Actividad: Partición de un dispositivo
+
+Para esta actividad vamos a usar un dispositivo simulado mediante un archivo **/dev/loop?**, que permite crear un dispositivo de almacenamiento virtual, cuyo espacio de almacenamiento viene soportado por un archivo asociado. Para crearlos:
+
+```bash
+#Creamos dos /dev/loop
+
+$ mknod /dev/loop0 b 7 0
+$ mknod /dev/loop1 b 7 1
+
+#Creamos un archivo de 20 MB y otro de 30 MB:
+
+$ dd if=/dev/zero of=/root/archivo_SA20 bs=2k count=10000
+$ dd if=/dev/zero of=/root/archivo_SA30 bs=3k count=10000
+
+# Asociamos los archivos de dispositivo loop a los archivos que acabamos de crear
+
+$ losetup /dev/loop0 /root/archivo_SA20
+$ losetup /dev/loop1 /root/archivo_SA30
+
+# Comprobamos la configuración 
+
+$ fdisk -l /dev/loop0 /dev/loop1
+
+Disk /dev/loop0: 20 MB, 20480000 bytes
+255 heads, 63 sectors/track, 2 cylinders, total 40000 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x00000000
+
+Disk /dev/loop0 doesn't contain a valid partition table
+
+Disk /dev/loop1: 30 MB, 30720000 bytes
+255 heads, 63 sectors/track, 3 cylinders, total 60000 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x00000000
+
+Disk /dev/loop1 doesn't contain a valid partition table
+
+```
+
+Si vas a usar un dispositivo físico, como un pen drive, conectalo al puerto correspondiente y desmonta el dispositivo.
+
+A continuación, procedemos a crear la tabla de particiones mediante **fdisk**. Una vez acabado, vemos si las particiones son correctas:
+
+```bash
+$ fdisk /dev/loop0
+Command (m for help): m
+	a   toggle a bootable flag
+   	b   edit bsd disklabel
+    c   toggle the dos compatibility flag
+    d   delete a partition
+    l   list known partition types
+    m   print this menu
+    n   add a new partition
+    o   create a new empty DOS partition table
+    p   print the partition table
+    q   quit without saving changes
+    s   create a new empty Sun disklabel
+    t   change a partition's system id
+    u   change display/entry units
+    v   verify the partition table
+    w   write table to disk and exit
+    x   extra functionality (experts only)
+
+Command: n
+Command action
+   e   extended
+   p   primary partition (1-4)
+p
+# Le damos a Enter para que se haga automático
+Partition number (1-4, default 1): 
+Using default value 1
+First sector (2048-39999, default 2048): 
+Using default value 2048
+Last sector, +sectors or +size{K,M,G} (2048-39999, default 39999): 
+Using default value 39999
+Command: w
+
+$ fdisk -l /dev/loop0
+Disk /dev/loop0: 20 MB, 20480000 bytes
+125 heads, 58 sectors/track, 5 cylinders, total 40000 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0xd5a06c53
+
+      Device Boot      Start         End      Blocks   Id  System
+/dev/loop0p1            2048       39999       18976   83  Linux
+
+# Análogo para el segundo
+```
+
+
+
+### 4. Asignación de un Sistema de Archivos a una partición (formateo lógico)
+
+Una vez que disponemos de las particiones en nuestro dispositivo de almacenamiento secundario, debemos proceder a asignar el sistema de archivos adecuado a cada una de las particiones. En Linux, a parte del SA específico para las particiones especialmente dedicadas a intercambio (**swap**), se utilizan, normalmente, tres sistemas de archivos: **ext2, ext3 y ext4**.
+
+- **ext2**: Sistema de archivos de disco de alto rendimiento usado para discos duros, memorias flash y medios extraibles, ofreciendo el mejor rendimiento en velocidad de transferencia de E/S y uso de CPU.
+- **ext3**: Versión del *ext2* que incluye ***journaling***, mecanismo por el cual un sistema informático puede implementar *transacciones*. Se basa en llevar un regisro diario en el que se almacena la información necesaria para restablecer datos afectados por la transacción, en caso de que esta falle.
+- **ext4**: El estándar actual. Es similar al *ext3*, pero presenta las siguientes mejoras:
+  - **Extensiones**: Permiten describir un conjunto de bloques de disco contiguos, mejorando de esta forma el rendimieno E/S al trabajar con archivos de gran tamaño y reduciendo la fragmentación de disco.
+  - **Asignación retardada de espacio en disco**: Permite postergar en el tiempo la asignación de bloques de disco hasta el momento real en el que va a realizar la escritura.
+
+
+
+#### Actividad: Creación de sistemas de archivos
+
+Volviendo a la actividad anterior, el objetivo de esta actividad es formatear las particiones creadas con anterioridad de forma consistente con el tipo SA que vayamos a alojar.
+
+La orden que nos permite hacer dicha acción es **mke2fs**.
+
+```bash
+$ mke2fs -t ext? /dev/loop? #Build a fylesystem on a specific device
+$ mke2fs -L LABEL_ext? /dev/loop? # Set a Volume Label for Partition
+```
+
+
+
+```bash
+$ mke2fs -t ext3 /dev/loop0
+mke2fs 1.41.12 (17-May-2010)
+Filesystem label=
+OS type: Linux
+Block size=1024 (log=0)
+Fragment size=1024 (log=0)
+Stride=0 blocks, Stripe width=0 blocks
+5016 inodes, 20000 blocks
+1000 blocks (5.00%) reserved for the super user
+First data block=1
+Maximum filesystem blocks=20709376
+3 block groups
+8192 blocks per group, 8192 fragments per group
+1672 inodes per group
+Superblock backups stored on blocks: 
+	8193
+
+Writing inode tables: done                            
+Creating journal (1024 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+$ mke2fs -L LABEL_ext3 /dev/loop0
+mke2fs 1.41.12 (17-May-2010)
+Filesystem label=LABEL_ext3
+OS type: Linux
+Block size=1024 (log=0)
+Fragment size=1024 (log=0)
+Stride=0 blocks, Stripe width=0 blocks
+5016 inodes, 20000 blocks
+1000 blocks (5.00%) reserved for the super user
+First data block=1
+Maximum filesystem blocks=20709376
+3 block groups
+8192 blocks per group, 8192 fragments per group
+1672 inodes per group
+Superblock backups stored on blocks: 
+	8193
+
+Writing inode tables: done                            
+Writing superblocks and filesystem accounting information: done
+
+This filesystem will be automatically checked every 23 mounts or
+180 days, whichever comes first.  Use tune2fs -c or -i to override.
+
+$ fdisk -l /dev/loop0
+Disk /dev/loop0: 20 MB, 20480000 bytes
+255 heads, 63 sectors/track, 2 cylinders, total 40000 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x00000000
+```
+
+
+
+### 5. Ajustes de parámetros configurables de un SA y comprobación de errores
+
+Una vez listo los sistemas de archivos, podemos usar la orden **tune2fs**, que nos permite ajustar determinados parámetros de los mismos. Algunas funciones son:
+
+| Etiqueta                          | Descripción                                                  |
+| --------------------------------- | ------------------------------------------------------------ |
+| -l  *dispositivo*                 | Muestra por pantalla el contenido del superbloque del SA     |
+| -c max-mount-counts *dispositivo* | Establece el número máximo de montajes que se puede llegar a realizar sin que se realice una comprobación de la consistencia del SA |
+| -L label *dispositivo*            | Poner una etiqueta al SA                                     |
+
+
+
+Con el tiempo, las estructuras del SA pueden llegar a corromperse. Esta situación podría provocar la  degradación en el rendimiento del sistema e incluso situaciones de pérdida de información. Para solucionarlo, Linux automatiza el proceso de comprobación, pero pueden ocurrir situaciones en las que sea necesario que el administrador ejecute manualmente las comprobaciones. Para ello se usa la herramienta **fsck**.
+
+
+
+#### Actividad: Personalización de los metadatos del SA
+
+Consultando el manual en línea para la orden **tune2fs** responde a las siguientes preguntas:
+
+a) ¿Cómo podrías conseguir que en el siguiente arranque del sistema se ejecutara automáticamente **e2fsck** sin que se haya alcanzado el máximo número de montajes?
+
+```bash
+#Pendiente
+```
+
+b) ¿Cómo podrías conseguir reservar para uso exclusivo de un usuario username un número de bloques del sistema de archivos?
+
+```bash
+#Pendiente
+```
+
+
+
+### 6. Montaje y desmontaje del Sistema de Archivos
+
+Una vez que disponemos de nuestros sistemas de archivos, ya solo queda ponerlos a disposición del usuario, haciendo que puedan ser accesibles dentro de la jerarquía de directorios. Para ello utilizaremos la orden **mount** (Para desmontarlo se utiliza **umount**).
+
+Hablamos *de montaje de un sistema de archivos*, en el sentido de añadir una nueva rama al espacio de nombres. Para montar un sistea de archivos es necesario solamente indicar en qué directorio se montará.
+
+
+
+Como vimos anteriormente, el archivo **/etc/fstab** es el archivo de configuración que contiene la información sobre todos los sistemas de archivos que se pueden montar y de las zonas de intercambio a activar. Utiliza el siguiente formato:
+
+​					**< file system > < mount point > < type > < options > < dump > < pass >**
+
+- **< file system > **, es el número que identifica el archivo especial de lo bloques
+- **< mount point >** , esel directorio que actua como punto de montaje.
+- **< type >**, tipo de sistema de archivos.
+- **< options >**, son las opciones que se utilizarán en el proceso de ensamblado.
+  - **rw**: Lectura y escritura.
+  - **ro**: Sólo lectura.
+  - **suid/nosuid**: Permitido el acceso en modo SUID o no permitido.
+  - **auto/noauto**: Montar automáticamente o no montar automáticamente.
+  - **exec/noexec**: Permitir la ejecución de ficheros o no.
+  - **usrquota, grpquota**: Cuotas de usuario y de grupo.
+  - **defaults = rw, suid, dev, exec, auto, nouser, async**
+  - **user, users, owner**. Permitir a los usuarios montar un sistema de archivos.
+  - **uid=500, gid=100**: Propietario y grupo propietario de los archivos del SA.
+  - **umask**: Máscara para aplicar los permisos a los archivos.
+- **< dump >**, frecuencia con la que se realiza una copia de seguridad.
+- **< pass >**, durante el arranque del sistema, especifica el orden en el que fsck realizará las comprobaciones sobre los SAs.
+
+
+
+#### Actividad: Montaje de sistemas  de archivos
+
+Utiliza el manual para descubrir la forma de montar nuestros SAs de manera que cumpla:
+
+1) El SA etiquetado como LABEL_ext3 debe estar montado en el directorio /mnt/SA_ext3 y en modo de solo lectura.
+
+```bash
+$ vi /etc/fstab
+
+#Añadimos la siguiente línea
+LABEL=LABEL_ext3        /mnt    ext3    ro      0       0
+
+$ mount -L LABEL_ext3
+/dev/loop0             19M  170K   18M   1% /mnt
+```
+
+2)  El SA etiquetado como LABEL_ext4 debe estar montado en el directorio /mnt/LABEL_ext4 y debe tener sincronizadas sus operaciones de E/S de modificación de directorios.
+
+```bash
+$ vi /etc/fstab
+
+#Añadimos la siguiente línea
+LABEL=LABEL_ext4        /mnt    ext4    defaults      0       0
+
+$ mount -L LABEL_ext4
+
+$ df -h | grep /dev/loop1
+/dev/loop1             29M  365K   27M   2% /mnt
+```
 
