@@ -556,3 +556,45 @@ $ df -h | grep /dev/loop1
 /dev/loop1             29M  365K   27M   2% /mnt
 ```
 
+
+
+### 7. Administración de software
+
+El software a instalar en sistemas Linux se estructura en paquetes. Un **paquete de software** es un archivo que contiene un conjunto de programas complementarios, y, en la mayoría de los casos, tienen dependencia con otros paquetes. Los paquetes pueden incluir archivos con programas en código binario, o bien en formato de código fuente junto con las instrucciones para generar el código binario,
+
+Las herrmientas para la gestión de estos paquetes se conocen como **gestores de paquetes**. 
+
+La forma más simplede instalar y actualizar software en un sistema es mediante el uso de los gestores que proporciona el propio SO. Por ejemplo, los Linux basados en Debian se identifican por tener la extensión **".deb"** en el nombre del archivo del paquete. Otros, como los basados en Red Hat, usan **".rpm"**. Estos son los dos con los que trabajaremos en esta asignatura, ya que el primero corresponde al que usamos en Ubuntu y el segundo a Fedora.
+
+
+
+|                   | Formato .deb            | Formato .rpm                 |
+| ----------------- | ----------------------- | ---------------------------- |
+| **Modo Terminal** | dpkg, apt-get, aptitude | rpm, YUM, apt-get            |
+| **Modo Gráfico**  | Synaptic, Adept...      | Synaptic, yumex, Kpackage... |
+
+
+
+Dentro de los gestores de paquetes de línea están:
+
+- Los de alto nivel, como apt-get o YUM.  Permiten realizar atualizaciones automáticas, incluyen análisis de dependencias, procesamiento de paquetes obsoletos...
+- Los de bajo nivel como dpkg y rpm. Suelen ser más precisos y potentes
+
+
+
+Algunas órdenes útiles de YUM son:
+
+| Órdenes de YUM      | Descripción                                                  |
+| ------------------- | ------------------------------------------------------------ |
+| yum list            | Lista de paquetes disponibles en los repositorios para instalar |
+| yum list installed  | Lista de paquetes instalados                                 |
+| yum list updates    | Lista de paquetes con actualizaciones disponibles en los repositorios |
+| yum install paquete | Instala el paquete especificado                              |
+| yum update          | Actualiza los paquetes instalados                            |
+| yum remove paquete  | Elimina el paquete especificado                              |
+
+
+
+#### Actividad: Trabajo con el gestor de paquetes YUM
+
+Encuentra los archivos de configuración de YUM y explora las distintas órdenes disponibles en YUM ejecutándose. En concreto, lista todos los paquetes instalados y disponibles, elimina alguno de los paquetes instalado haciendo uso de los paquetes que se encuentran disponibles en **/fenix/depar/lsi/so/paquetes**. 
