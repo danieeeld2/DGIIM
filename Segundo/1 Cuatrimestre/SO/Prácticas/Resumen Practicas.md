@@ -582,6 +582,8 @@ Dentro de los gestores de paquetes de línea están:
 
 
 
+#### 7.2.1 APT y YUM
+
 Algunas órdenes útiles de YUM son:
 
 | Órdenes de YUM      | Descripción                                                  |
@@ -598,3 +600,120 @@ Algunas órdenes útiles de YUM son:
 #### Actividad: Trabajo con el gestor de paquetes YUM
 
 Encuentra los archivos de configuración de YUM y explora las distintas órdenes disponibles en YUM ejecutándose. En concreto, lista todos los paquetes instalados y disponibles, elimina alguno de los paquetes instalado haciendo uso de los paquetes que se encuentran disponibles en **/fenix/depar/lsi/so/paquetes**. 
+
+```bash
+$ mount none /mnt/ -t hostfs -o /tmp/paquetes #Para montar los paquetes
+#rpm -i para ir instalando los paquetes
+
+$ yum list installed
+python-iniparse.noarch      0.4-2.fc14                  @febootstrap/$releasever
+$yum remove yum.noarch
+$yum install yum.noarch
+```
+
+
+
+#### 7.2.2 RPM
+
+RPM comprueba dependencias eincluye opciones como la verificación de la revisión y las firmas de seguridad de privacidad de GNU que permite que los paquetes se distribuyan con seguridad.
+
+La bases de datos en nuestra computadora registran las versiones de los paquetes Linux, véase directorio /var/lib/rpm que es el que utiliza RPM.
+
+```bash
+$ rpm <opciones><nombres-paquetes>
+```
+
+- **rpm -i < nombre-archivo-paquete >**: Instala paquetes. Si la operación tiene éxito no se mostrará ningún mensaje
+- **rpm -e < nombre-paquete >**: Elimina paquetes. Si la operación tiene éxito no se mostrará ningún mensaje
+- **rmp -U < nombre-archivo-paquete >**: Actualización de descargas de paquetes. Con la opción -U incluye la eliminación automática de la versión de paquete previamente instalada
+- **rpm -F < nombre-servidor-HTTP/FTP >**: Se busca el paquete en el servidor designado en Internet y se preparará la correspondiente actualización
+- **rpm -qa | grep < parte-nombre-paquete-buscado > | sort**: Esta línea de órdenes puede utilizarse para buscar paquetes instalados por su nombre
+- **rpm -qi < nombre-paquete >**: Muestra información precisa del paquete instalado
+- **rpm -V < nombre-paquete >**: Consulta en la base de datos paraverificar la instalación de unpaquete recientemente instalado.
+
+
+
+#### Actividad: Trabajo con el gestor de paquetes rpm
+
+```bash
+#Mostrar información general de un paquete ya instalado
+$ rpm -qi libselinux-utils-2.0.96-6.fc14.1.i686 
+
+#Mostrar solo los archivos de configuración
+$rpm -qc libselinux-utils-2.0.96-6.fc14.1.i686 
+/etc/ssh/moduli
+
+#Mostrar paquetes requeridos por un paquete determinado del sistema
+$rpm -q libselinux-utils-2.0.96-6.fc14.1.i686 --whatrequires
+no package requires libselinux-utils-2.0.96-6.fc14.1.i686
+
+#Instalar paquete quota
+$rpm -q quota-3.17-13.fc14.i686.rpm --whatrequires
+no package requires quota-3.17-13.fc14.i686.rpm
+$rpm -i quota-3.17-13.fc14.i686.rpm
+
+#Instalar y desinstalar el paquete sysstat
+$rpm -q sysstat-9.0.6-3.fc13.i686.rpm  --whatrequires
+no package requires sysstat-9.0.6-3.fc13.i686.rpm
+$rpm -i sysstat-9.0.6-3.fc13.i686.rpm 
+warning: sysstat-9.0.6-3.fc13.i686.rpm: Header V3 RSA/SHA256 Signature, key ID e8e40fde: NOKEY
+	package sysstat-9.0.6-3.fc13.i686 is already installed
+$ rpm -e sysstat-9.0.6-3.fc13.i686.rpm
+
+
+```
+
+
+
+### 8. Administración de quotas
+
+Existe una forma flexible de limitar el uso de disco por parte de los usuarios del sistema. Este control se lleva a cabo mediante un sistema de **cuotas**. Las cuotas de disco permien limitar el número de recursos de un SA que va a poder utilizar el usuario. Estos recursos son los bloques de disco y los i-nodos.
+
+Para poder trabajar con el sistema de cuotas en Linux es necesario tener instalado el paquete **quota**.
+
+El sistema de cuotas permite establecer límites para usuarios y/o grupos o para bloques y/o i-nodos:
+
+- **Límite hard**: El usuario no puede sobrepasarlo. Si llegara a sobrepasarlo, el sistema no le permitirá usar más bloques, por lo que no pordrá ampliar el tamaño de sus archivos ya creados, ni tampoco i-nodos, por lo que no podrá crear nuevos archivos.
+- **Límite soft**: Debe configurarse como un número de recursos inferior al límite hard y se puede sobrepasar durante cierto tiempo, pero sin llegar a superar el límite hard. Una vez pasado el tiempo se comporta como si hubiera superado el límite hard.
+
+
+
+#### Actividad: Sistema de cuotas para el sistema de archivos tipo ext4
+
+```bash
+# Editar /etc/fstab y activarel sistema de cuotas para el usuario ext4 (usrquota)
+
+# Volver a montar el dispositivo
+$ mount -o remount /mnt/
+
+# Crear el archivo que permite llevar el control de cuotas de usuario para el SA. El nombre de este archivo es aquota.user
+$ quotacheck -nm /mnt/
+$ ls /mnt/
+aquota.user    
+
+# Procedemos a activar el sistema de control de cuotas de usuario
+$ quotaon -a
+
+# Ahora solo falta editar la cuota para cada usuario del sistema mediante la siguiente orden. Puede ser buena idea inspeccionar /etc/passwd para localizar los nombres:
+$ edquota username # Por ejemplo smmsp
+$ edquota smmsp
+Disk quotas for user smmsp (uid 51):
+  Filesystem                   blocks       soft       hard     inodes     soft
+   hard
+  /dev/loop1                       56          0          0         14        0 
+      0
+
+
+# Para finalizar el periodo de gracia para el límite soft
+$ edquota -t
+  Filesystem             Block grace period     Inode grace period
+  /dev/loop1                    7days                  7days
+
+```
+
+
+
+Algunas órdenes útiles para trabajar con cuotas son:
+
+- **quota username**: Asigna las cuotas para un usuario
+- **repquota < SA >**: Estadística de las cuotas para todos los usuarios.
