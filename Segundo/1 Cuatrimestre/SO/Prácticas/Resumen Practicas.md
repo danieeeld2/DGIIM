@@ -717,3 +717,659 @@ Algunas órdenes útiles para trabajar con cuotas son:
 
 - **quota username**: Asigna las cuotas para un usuario
 - **repquota < SA >**: Estadística de las cuotas para todos los usuarios.
+
+
+
+## <u>Sesión 3</u>
+
+### 3. Control y gestión de CPU
+
+En este punto veremos algunas órdenes para comprobar el estado del siste,a y su rendimiento
+
+
+
+#### 3.1. Orden *uptime*
+
+Muestra en una línea la siguiente información:
+
+**< hora actual >< tiempo que lleva el sistema en marcha >< nº usuarios conectados >< carga media del sistema en los últimos 1, 5, 15 minutos >**
+
+La órden **w** muestra la misma información y, además, lo que está haciendo cada usuario conectado.
+
+```bash
+$ uptime
+ 14:10:13 up 8 min,  1 user,  load average: 0.00, 0.00, 0.00
+$ w
+ 14:10:27 up 8 min,  1 user,  load average: 0.00, 0.00, 0.00
+USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU WHAT
+root     tty0     -                14:01    0.00s  0.00s  0.00s w
+```
+
+
+
+#### Actividad: Consulta de estadísticas del sistema
+
+Responde a las siguientes cuestiones y especifica, para cada una, la opción que has utilizado:
+
+a) ¿Cuánto tiempo lleva en marcha el sistema?
+
+```bash
+# Usamos uptime y nos fijamos en la información de después del up
+$ uptime
+ 14:10:13 up 8 min,  1 user,  load average: 0.00, 0.00, 0.00 # up 8 min
+```
+
+b) ¿Cuántos usuarios hay trabajando?
+
+```bash
+# Usamos uptime y nos fijamos en el número que acompaña a la palabra user
+$ uptime
+ 14:10:13 up 8 min,  1 user,  load average: 0.00, 0.00, 0.00 # 1 user
+```
+
+c) ¿Cuál es la carga media del sistema en los últimos 15 minutos?
+
+```bash
+# Usamos uptime y nos fijamos en el último número
+$ uptime
+ 14:10:13 up 8 min,  1 user,  load average: 0.00, 0.00, 0.00 # 0.00
+```
+
+
+
+#### 3.2. Orden *time*
+
+Mide el tiempo de ejecución de un programa y muestra un resumen del uso de los recursos del sistema. Muestra el tiempo en el siguiente formato:
+
+​		**< tiempo real > < tiempo en modo usuario > < tiempo en modo supervisor (sys) >**
+
+Para calcular el tiempo de espera de un proceso: **T.espera = real - user - sys**
+
+```bash
+$ time ps
+  PID TTY          TIME CMD
+ 1180 tty0     00:00:00 bash
+ 1210 tty0     00:00:00 ps
+
+real	0m0.058s
+user	0m0.000s
+sys	0m0.000s
+```
+
+
+
+#### 3.3. Órdenes *nice* y  *renice*
+
+Linux realiza una planificación por prioridades. Por defecto, un proceso hereda la prioridad de un proceso padre.
+
+- **nice**: Permite establecer un valor de prioridad a un proceso, distinto del que traía por defecto. El rango de valores que permite establecer es [-20,19].
+
+  Asignar un valor negativo aumenta la posibilidad de ejecución de un proceso y solo lo puede hacer **root**. Los usuarios sin privilegios de administración solo pueden usar valores positivos.
+
+  ```bash
+  $ nice -5 konqueror # Aumenta en 5 el valor de prioridad de la ejecución dekonqueror
+  $nice −−10 konqueror # Decrementa en 10 el valor de prioridad (sólo usuario root)
+  ```
+
+- **renice**: Permite alterar la prioridad de uno o más procesos de ejecución
+
+  ```bash
+  $ renice 14 890 # Aumenta en 14 la prioridad del proceso 890
+  ```
+
+
+
+#### Actividad: Prioridad de los procesos
+
+a) Crear una script que realice un ciclo de un número variable de iteraciones en el que se hagan dos cosas: una operación aritmética y el incremento de una variable. Cuando terminen las iteraciones escribirá un mensaje en pantalla  indicando el valor actual de la variable.
+
+```bash
+$ touch prueba_procesos
+$ vi prueba_procesos
+
+#!/bin/bash
+
+i=0;
+for (( ; i < $1 ; i++ )); do
+        i=$(( $i + 1 ));
+        x=$(( $i + 10 ));
+done;
+
+echo $i;
+
+$ chmod +x prueba_procesos
+$ ./prueba procesos 10
+10
+```
+
+b) Ejecuta el guión anterior varias veces en background y comprueba su prioridad inicial. Cambia la prioridad de dos de ellos, a uno lo aumentas y a otro se la disminuyes, ¿cómo se comporta el sistema para estos procesos?
+
+```bash
+$ nice --adjustment=3 ./prueba_procesos 100001 &
+$ nice --adjustment=-3 ./prueba_procesos 100002 &
+100002
+100001
+
+# Ejecuta antes el de prioridad negativa (probabilidad más favorable de que se ejecute)
+```
+
+c) Obtén los tiempos de finalización de cada uno de los guiones del apartado anterior
+
+```bash
+$ time nice --adjustment=3 ./prueba_procesos 100001
+$ time nice --adjustment=-3 ./prueba_procesos 100002
+10001
+real	0m0.214s
+user	0m0.200s
+sys	0m0.050s
+
+10002
+real	0m0.187s
+user	0m0.180s
+sys	0m0.000s
+
+```
+
+
+
+#### 3.4. Orden *pstree*
+
+Permite visualizar un árbol de procesos de ejecución. Algunas opciones que trae son:
+
+| Opciones | Descripción                                                  |
+| -------- | ------------------------------------------------------------ |
+| **-a**   | Muestra argumentos de la línea de ódenes                     |
+| **-A**   | Usa caracteres ASCII para dibujar el árbol                   |
+| **-G**   | Uso de caracteres de VT100                                   |
+| **-h**   | Resalta el proceso actual y sus antepasados                  |
+| **-H**   | Igual que el anterior, pero para el proceso que se especifique |
+| **-l**   | Usa formato largo                                            |
+| **-n**   | Ordena los procesos por el PID  de su antecesor              |
+| **-p**   | Desactiva el mostrar los PID entre paréntesis después del nombre de cada proceso |
+| **-u**   | Si el uid de un proceso es diferente del de su padre, el nuevo uid se pone entre paréntesis |
+| **-V**   | Información sobre la versión                                 |
+| **-Z**   | Muestra el contexto de seguridad de cada proceso             |
+
+```bash
+$ pstree
+init-+-auditd---{auditd}
+     |-crond
+     |-login---bash---pstree
+     |-rsyslogd---2*[{rsyslogd}]
+     |-sendmail
+     `-sshd
+```
+
+#### 
+
+#### 3.5. Orden *ps*
+
+Esta orden se implementa usando el psudo-sistema de archivos **/proc**. Muestra la siguiente información de los procesos en ejecución:
+
+- **USER**: Usuario que lanzó el programa
+- **PID**: Identificador de un proceso
+- **PPID**: Identificador del proceso padre
+- **%CPU**: Porcentaje entre el tiempo usado realmente y el que lleva en ejecución
+- **%MEM**: Fraxción de memoria consumida
+- **VSZ**: Tamaño virtual del proceso en KB
+- **RSS**: Memoria real usado en KB
+- **TTY**: Terminal asociada al proceso
+- **STAT**: Estado del proceso, que puede ser:
+  - **R**: En ejecución o listo
+  - **S**: Durmiendo
+  - **T**: Parado
+  - **Z**: Proceso Zombie
+  - **D**: Durmiendo ininterrumplibemente
+  - **N**: Prioridad baja (>0)
+  - **<**: Prioridad alta (<0)
+  - **s**: Lider de sesión
+  - **l**: Tiene multi-thread
+  - **+**: Proceso foreground
+  - **L**: Páginas bloqueadas en memoria
+
+Esta órden se suele ejecutar con la opción **-ef**, donde la *e* significa procesos que están en el sistema y *f* para que muestre la información completa. Sin argumentos muestra los procesos lanzados por el usuario que ejecuta esta orden.
+
+
+
+#### Actividad: Jerarquía e información de procesos
+
+a) La orden **pstree** muestra el árbol de procesos que hay en ejecución. Comprueba que la jerarquía mostrada es correcta mediante la orden **ps**.
+
+```bash
+$ pstree
+init-+-auditd---{auditd}
+     |-crond
+     |-login---bash---pstree
+     |-rsyslogd---2*[{rsyslogd}]
+     |-sendmail
+     `-sshd
+$ ps
+  PID TTY          TIME CMD
+ 1180 tty0     00:00:00 bash
+ 1201 tty0     00:00:00 ps
+ 
+ # Es correcta
+```
+
+b) Ejecuta la orden **ps** con la opción **-A**, ¿ qué significa que un proceso tenga un carácter **"?"** en la comuna etiquetada como **TTY**?
+
+```bash
+$ ps -A
+  PID TTY          TIME CMD
+    1 ?        00:00:00 init
+    2 ?        00:00:00 kthreadd
+    3 ?        00:00:00 ksoftirqd/0
+    4 ?        00:00:00 kworker/0:0
+    5 ?        00:00:00 kworker/u:0
+    6 ?        00:00:00 rcu_kthread
+    7 ?        00:00:00 watchdog/0
+    8 ?        00:00:00 cpuset
+    9 ?        00:00:00 khelper
+   10 ?        00:00:00 kworker/u:1
+  115 ?        00:00:00 sync_supers
+  117 ?        00:00:00 bdi-default
+  118 ?        00:00:00 kblockd
+  134 ?        00:00:00 rpciod
+
+# Significa unkonw value, es decir, no hay una terminal asociada al proceso
+```
+
+
+
+#### 3.6. Orden *top*
+
+Esta orden proporciona una visión continuada de la actividad de un rpoceso en tiempo real, muestra lastareas que más uso hacen de la CPU. Las 5 primeras líneas muestran información general del sistema:
+
+- Estadística de la orden **uptime** 
+- Estadísticas sobre los procesos del sistema (número de procesos, procesos enejecución, durmiendo, parados o zombies)
+- Estado actual de la CPU  (porcentaje en uso por usuarios, por el sistema, porprocesos con valor nice positivo, por procesos esperando E/S, CPU desocupada,tratando interrupciones hardware o software, en espera involuntaria porvirtualización)
+- Memoria (memoria total disponible, usada, libre, cantidad usada en buffers y enmemoria caché de página)
+- Espacio del swap (swap total disponible, usada y libre)
+
+Los datos de la parte de abajo son parecidos a **ps**, excepto SHR, que muestra la cantidad de memoria compartida.
+
+Esta orden permite, también, realizar una serie de acciones sobre los rpocesos de forma interactiva:
+
+- **r**: Cambiar prioridad de un proceso
+- **k**: Matar o enviar una señal
+- **N**: Ordenarlos por PID
+- **P**: Ordenarlos por CPU
+- **n**: Cambiar el número de procesos que se muestran
+- **q**: Para salir
+
+```bash
+$ top
+11:49:35 up 37 min,  1 user,  load average: 0.00, 0.00, 0.00
+Tasks:  36 total,   1 running,  35 sleeping,   0 stopped,   0 zombie
+Cpu(s):  0.0%us,  0.0%sy,  0.0%ni,100.0%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Mem:   1019252k total,    38416k used,   980836k free,     3468k buffers
+Swap:        0k total,        0k used,        0k free,    17516k cached
+
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND            
+    1 root      20   0  2884 1316 1152 S  0.0  0.1   0:00.02 init               
+    2 root      20   0     0    0    0 S  0.0  0.0   0:00.00 kthreadd           
+    3 root      20   0     0    0    0 S  0.0  0.0   0:00.63 ksoftirqd/0        
+    4 root      20   0     0    0    0 S  0.0  0.0   0:00.00 kworker/0:0        
+    5 root      20   0     0    0    0 S  0.0  0.0   0:00.00 kworker
+```
+
+
+
+#### 3.7. Orden *mpstat*
+
+Muestra estadísticas del procesador del sistema junto con la media gloal de todos los datos mostrados. La información de lacabezera hace referencia a:
+
+- **CPU**: Número del procesador
+- **%user**: Porcentaje de uso de la CPU con tareas a nivel de usuario
+- **%nice:** Porcentaje de uso de la CPU con tareas a nivel de usuario con prioridad “nice” (>0)
+- **%sys:** Porcentaje de uso de la CPU para tareas del sistema (no incluye el tratamiento de interrupciones) 
+- **%iowait:** Porcentaje de tiempo que la CPU estaba “desocupada” mientras que el sistematenía pendientes peticiones de E/S
+- **%irq:** Porcentaje de tiempo que la CPU gasta con interrupciones hardware
+- **%soft:** Porcentaje de tiempo que la CPU gasta con interrupciones software (la mayoríason llamadas al sistema)
+- **%idle:** Porcentaje de tiempo que la CPU estaba “desocupada” y el sistema no tienepeticiones de disco pendientes
+- **intr/s:** Número de interrupciones por segundo recibidas por el procesador
+
+La sistaxis de la orden es **mpstat [intervalo] [número] **, donde el intervalo es cada cuántos segundos debe mostrar datos y cuántos muestra
+
+```bash
+$ mpstat 
+Linux 3.0.4 (localhost) 	10/10/20 	_i686_	(1 CPU)
+
+12:00:19     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest   %idle
+12:00:19     all    0.02    0.00    0.00    0.10    0.00    0.00    0.00    0.00   99.88
+
+```
+
+
+
+#### Actividad: Estadística de recursos del sistema
+
+Responde a las siguientes cuestiones y especifíca,para cada una, la orden que has utilizado:
+
+a) ¿Qué porcentaje de tiempo de CPU se ha usado para atender a las interrupciones de hardware?
+
+b) ¿Y en iterrupciones de software?
+
+c) ¿Cuánto espacio de swap está libre y cuánto está ocupado?
+
+```bash
+# Para las tres usamos la orden top y nos fijamos en la línea correspondiente
+$ top
+Tasks:  38 total,   1 running,  37 sleeping,   0 stopped,   0 zombie
+Cpu(s):  0.0%us,  0.0%sy,  0.0%ni,100.0%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Mem:   1019252k total,    74592k used,   944660k free,     4904k buffers
+Swap:        0k total,        0k used,        0k free,    50692k cached
+```
+
+
+
+### 4. Control y gestión de memoria
+
+#### 4.1. Orden *free*
+
+Si queremos centrar la monitorización únicamente en el uso de memoria podemos usar esta orden, la cual, consume menos recursos que **top**.
+
+```bash
+$ free
+ total       used       free     shared    buffers     cached
+Mem:       1019252      74600     944652          0       4952      50708
+-/+ buffers/cache:      18940    1000312
+Swap:            0          0          0
+```
+
+La línea **-/+** refleja el total de memoria principal dividido en base a la memoriausada por la cada una de estas dos últimas cantidades
+
+
+
+#### 4.2. Orden *vmstat*
+
+Sirve para supervisar el sistema mostrando información de memoria pero también acerca de procesos, E/S y CPU.
+
+```bash
+vmstat 2 20
+procs -----------memory---------- ---swap-- -----io---- --system-- -----cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 0  0      0 944404   5000  50844    0    0     8     3  100    4  0  0 100  0  0	
+ 0  0      0 944404   5000  50844    0    0     0     0   99    4  0  0 100  0  0	
+ 0  0      0 944404   5000  50844    0    0     0     0   99    2  0  0 100  0  0	
+ 0  0      0 944404   5000  50844    0    0     0     0   99    2  0  0 100  0  0	
+ 0  0      0 944404   5000  50844    0    0     0     0   99    1  0  0 100  0  0	
+ 0  0      0 944404   5000  50844    0    0     0     0   99    5  0  0 100  0  0	
+```
+
+Las columnas muestran:
+
+- **us:** Programas o peticiones del usuario
+- **sy**: Tareas del sistema
+- **id**: No haciendo nada en absoluto
+- **r**: Cuántos procesos están en cola de ejecución
+- **wa**: Indica que no hay procesos en espacio de intercambio
+- **so**: Indicaría que se está incrementando el espacio de intercambio
+- **free**: Indica que la memoria principal libre se está agotando
+
+
+
+### 5. Control y gestión de dispositivos E/S
+
+El SO necesita mantener una estructura de datos por cada archivo que contenga la información que le es necesario para poder trabajar con él. A esta información se le conoce comunmente como **metadatos de archivo**.
+
+#### 5.1. Consulta de información de archivos
+
+Vamos a profundizar sobre las opciones de la orden **ls**:
+
+| Opciones   | Descripción                                                  |
+| ---------- | ------------------------------------------------------------ |
+| **ls -l**  | Imprime en fomato largo los metadatos de cada archivo        |
+| **ls -n**  | Imprime lista numérica de ID de usuarios y grupos            |
+| **ls -la** | Como ls -l, pero muestra también los archivos ocultos        |
+| **ls -li** | Incluye el número del campo del inodo                        |
+| **ls -lh** | Igual que -s -l, pero el tamaño de los archivos se imprimen en Kbytes, Mbytes o Gbytes |
+| **ls -X**  | Ordena  alfabéticamente                                      |
+| **ls -t**  | Ordena por tiempo de modificación                            |
+| **ls -u**  | Ordena por tiempo de acceso                                  |
+| **ls -c**  | Ordena por ctime                                             |
+
+Los carácteres asociados a los tipos de archivos son:
+
+- **-** : Archivo regular
+- **d** : Directorio
+- **l** : Enlace simbólico
+- **b** : Archivo especial de dispositivo de bloques
+- **c** : Archivo especial de dispositivo de caracteres
+- **p** : Archivo FIFO para comunicaciones entre procesos
+
+```bash
+$ ls -lu
+total 2280
+-rw-r--r-- 1 1000 1000 359699 Oct 10 12:00 ORBit-0.5.17-25.fc11.i586.rpm
+-rw-r--r-- 1 1000 1000 302712 Oct 10 12:00 ORBit-0.5.17-30.fc14.i686.rpm
+-rw-r--r-- 1 1000 1000 126716 Oct 10 11:59 device-mapper-1.02.54-3.fc14.i686.rpm
+-rw-r--r-- 1 1000 1000 134536 Oct 10 11:59 device-mapper-libs-1.02.54-3.fc14.i686.rpm
+
+$ ls -lc
+total 2280
+-rw-r--r-- 1 1000 1000 359699 Oct 10 11:12 ORBit-0.5.17-25.fc11.i586.rpm
+-rw-r--r-- 1 1000 1000 302712 Oct 10 11:12 ORBit-0.5.17-30.fc14.i686.rpm
+-rw-r--r-- 1 1000 1000 126716 Oct 10 11:12 device-mapper-1.02.54-3.fc14.i686.rpm
+-rw-r--r-- 1 1000 1000 134536 Oct 10 11:12 device-mapper-libs-1.02.54-3.fc14.i686.rpm
+```
+
+
+
+#### Actividad: Consulta de metadatos de archivo
+
+Anota al menos dos nombres de archivo de dispositivo de bloques y dos nombres de dispositivo de caracteres de tu sistema UML. Anota los nombres de los archivos ocultos de tu directorio de inicio como usuario root que tienen relación con el intérprete de órdenes que tienes asignado por defecto. Ahora efectúa la misma tarea pero en una consola de terminal del sistema Ubuntu que arrancas inicialmente en el laboratorio de prácticas. ¿Qué diferencias encuentras entre los nombres de los archivos?
+
+**PENDIENTEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE**
+
+
+
+#### 5.2. Consulta de metadatos del SA
+
+Para poder asignar espacio en un disco, tanto para datos de archivo como para metadatos de archivo, los sistemas de archivo tipo UNIX/Linux mantienen información relativa a bloques de disco libres/ocupados e inodos libres/asignados.
+
+La orden **df** permite visualizar información sobre su capacidad de almacenamiento total, el espacio usado en almacenamiento total, el espacio usado, el espacio libre y el punto de montaje en la jerarquía de directorios.
+
+```bash
+$ df
+Filesystem           1K-blocks      Used Available Use% Mounted on
+LABEL=ROOT             1032088    411180    568480  42% /
+tmpfs                  1032088    411180    568480  42% /dev/shm
+/tmp                    510244         0    510244   0% /tmp
+
+# Usando la opción -i podemos visualizar la información sobre los inodos
+$ df -i
+Filesystem            Inodes   IUsed   IFree IUse% Mounted on
+LABEL=ROOT             65536   14665   50871   23% /
+tmpfs                  65536   14665   50871   23% /dev/shm
+/tmp                  127561       2  127559    1% /tmp
+```
+
+Para porder ver el espacio en el disco que gasta un directorio de la jerarquía de directorios y todo sus subárboles, se usa la orden **du**. Hay que tener en cuenta:
+
+- La última línea muestra por pantalla la cantidad total de bloques utilizadas por el subárbol
+- Contabiliza los bloques asignados, estén o no ocupados
+
+```bash
+$ du home/
+4	home/
+```
+
+
+
+#### Actividad: Metadaos del sistema 
+
+Resuelve las siguientes cuestiones:
+
+1. Comprueba cuántos bloques de datos está utilizando la partición raíz del sistema UML. Ahora obtén la misma información, pero en Megabytes o Gigabytes.
+
+   ```bash
+   $ du /
+   377132	/	# Nos fijamos en la última línea
+   
+   # Para mostrar la salida en Gb o Mb
+   $ du --block-size=1M #1G	# También puedes usar --human-readable o -h
+   369	/
+   ```
+
+2. ¿Cuántos inodos se están utilizando en la partición raíz? ¿Cuántos nuevos archivos se podrían crear en esta partición?
+
+   ```bash
+   $ df -i /
+   Filesystem            Inodes   IUsed   IFree IUse% Mounted on
+   LABEL=ROOT             65536   14665   50871   23% /
+   
+   # Se podrían crear tantos como IFree hubiera
+   ```
+
+3. ¿Cuál es el tamañp del directorio /etc? ¿ Y el del directorio /var? Compara estos tamaños con los de los directorios /bin, /usr y /lib.
+
+   ```bash
+   $ du -h /etc/
+   21M	/etc/	# Nos fijamos en la última línea
+   
+   $ du -h /bin/
+   5.3M	/bin/
+   
+   $ du -h /usr/
+   297M	/usr/
+   
+   $ du -h /lib/
+   24M	/lib/
+   ```
+
+4. Obtén el número de bloques de tamaño 4KB que utiliza la rama de la estructura jerárquica de directorios que comienza en el directorio /etc.
+
+   ```bash
+   $ du -h /etc/ | grep 4.0K
+    du -h /etc/ | grep 4.0K
+   4.0K	/etc/rwtab.d
+   4.0K	/etc/chkconfig.d
+   4.0K	/etc/rc.d/rc5.d
+   4.0K	/etc/rc.d/rc1.d
+   4.0K	/etc/rc.d/rc0.d
+   4.0K	/etc/rc.d/rc6.d
+   4.0K	/etc/rc.d/rc2.d
+   4.0K	/etc/rc.d/rc4.d
+   4.0K	/etc/rc.d/rc3.d
+   ...
+   ```
+
+
+
+#### 5.3. Creación de enlaces a archivos
+
+El objetivo de los enlaces de archivos es disponer de más de un nombre para los archivos en nuestro espacio de nombres de archivo soportado por la estructura jerárquica de directorios. 
+
+Bajo esta óptica, los enlaces a  archivos pueden considerarse como referencia a otros archivos, bien a su nombre, **enlaces simbólicos**, bien a sus metadatos, **enlaces duros** (Se establece sobre el inodo asociado al archivo en su creación) .
+
+Podemos usar la orden **ls -la** para comprobar que todos los directorios tienen dos enlaces duros:
+
+```bash
+$ cd mnt/
+$ ls -la 
+ls -la
+total 8
+drwxr-xr-x  2 root root 4096 Apr 19  2010 .
+dr-xr-xr-x 22 root root 4096 Oct 11 06:08 ..
+```
+
+Para crear enlaces duros o enlaces simbólicos sobre un archivo creado previamente se utiliza las orden **ln**. Como argumento básico debemos pasar el nombre del archivo a enlazar y el nuevo nombre.
+
+```bash
+$ touch archivo.txt
+$ ln archivo.txt hardLink	
+$ ln archivo.txt softLink # -s para softLink
+$ ls -lai
+total 8
+  309 drwxr-xr-x  2 root root 4096 Oct 11 06:49 .
+    2 dr-xr-xr-x 22 root root 4096 Oct 11 06:08 ..
+14175 -rw-r--r--  2 root root    0 Oct 11 06:49 archivo.txt
+14175 -rw-r--r--  2 root root    0 Oct 11 06:49 hardLink
+14239 lrwxrwxrwx  1 root root   11 Oct 12 04:51 softLink -> archivo.txt
+```
+
+Los números que aparecen en la columna inmediatamente anterior al **username** son los valores del campo **contador de enlaces**, que antiene el número de enlaces duros a archivo con el objetivo de liberar el inodo cuando todos los nombres de archivo que utilizan dicho inodo hayan sido eliminados de la estructura de directorios.
+
+
+
+#### Actividad: Trabajo con enlaces
+
+Proporciona las opciones necesarias de la orden **ls** para obtener la información de metadatos de los archivos de un directorio concreto en los dos casos siguientes:
+
+- En el caso de  que haya archivos de tipo enlace simbólico, la orden debe mostrar la información del archivo al que enlaza cada enlace simbólico y no la del propio archivo de tipo enlace simbólico
+
+  ```bash
+  $ ls -laiL
+  total 32
+    311 dr-xr-x---  2 root root 4096 Oct 12 04:51 .
+      2 dr-xr-xr-x 22 root root 4096 Oct 12 04:47 ..
+     58 -rw-------  1 root root   53 Sep 13  2011 .bash_history
+   3958 -rw-r--r--  1 root root   18 Mar 30  2009 .bash_logout
+   3959 -rw-r--r--  1 root root  176 Mar 30  2009 .bash_profile
+   3960 -rw-r--r--  1 root root  176 Sep 22  2004 .bashrc
+   3961 -rw-r--r--  1 root root  100 Sep 22  2004 .cshrc
+   3962 -rw-r--r--  1 root root  129 Dec  3  2004 .tcshrc
+  14175 -rw-r--r--  2 root root    0 Oct 12 04:49 archivo.txt #######
+  14175 -rw-r--r--  2 root root    0 Oct 12 04:49 hardLink
+  14238 -rw-r--r--  2 root root    0 Oct 12 04:49 hardLink2
+  14175 -rw-r--r--  2 root root    0 Oct 12 04:49 softLink #######
+  14238 -rw-r--r--  2 root root    0 Oct 12 04:49 target_hardLinj.txt
+  ```
+
+- En el caso de enlaces simbólicos debe mostrar la información del enlace en sí, no del archivo al cual enlaza. En el caso de directorios no debe mostrar su contenido sino los metadatos del directorio.
+
+  ```bash
+  # Para la primera parte se usa como siempre ls -lai. Para la segunda:
+  $ ls -laid
+  311 dr-xr-x--- 2 root root 4096 Oct 12 04:51 .
+  ```
+
+
+
+#### 5.4. Archivos especiales de dispositivo
+
+Los dispositivos de nuestro sistema se representan mediante archivos especiales de dispositivo, que pueden ser de bloques o de caracteres.
+
+```bash
+$ ls -l /dev
+total 12
+crw------- 1 root root 5, 1 Oct 12 04:47 console
+crw-rw-rw- 1 root root 1, 7 Nov  3  2010 full
+-rw-r--r-- 1 root root   54 Sep 13  2011 kmsg
+srw-rw-rw- 1 root root    0 Oct 12 04:47 log
+drwxr-xr-x 2 root root 4096 Nov  3  2010 mapper
+crw-rw-rw- 1 root root 1, 3 Nov  3  2010 null
+crw-rw-rw- 1 root root 5, 2 Nov  3  2010 ptmx
+drwxr-xr-x 2 root root    0 Oct 12 04:47 pts
+crw-rw-rw- 1 root root 1, 8 Nov  3  2010 random
+drwxr-xr-x 2 root root 4096 Nov  3  2010 shm
+lrwxrwxrwx 1 root root   15 Nov  3  2010 stderr -> /proc/self/fd/2
+lrwxrwxrwx 1 root root   15 Nov  3  2010 stdin -> /proc/self/fd/0
+lrwxrwxrwx 1 root root   15 Nov  3  2010 stdout -> /proc/self/fd/1
+crw-rw-rw- 1 root root 5, 0 Nov  3  2010 tty
+crw--w---- 1 root tty  4, 0 Oct 12 05:07 tty0
+cr--r--r-- 1 root root 1, 9 Nov  3  2010 urandom
+crw-rw-rw- 1 root root 1, 5 Nov  3  2010 zero
+```
+
+Podemos crear archivos especiales usando la orden **mknod**. Permite especificar el nombre del archivo y los números principales (**major**) y secundario (**minor**), lo cual  permite identificar a los dispositivos en el kernel. El número principal determina el controlador al que está conectado el dispositivo y el número secundario al dispositivo en sí.
+
+
+
+#### Actividad: Creación de archivos especiales
+
+Crear un dispositivo de bloques y otro de caracteres y proporciona una salida ls -li de los dos archivos de dispositivo recién creados.
+
+```bash
+# Para un dispositivo de bloques
+$ mknod dispbloques b 10 5
+
+# Para crear un dispositivo de caracteres
+$ mknod dispcaracteres c 10 5
+
+$ ls -li
+14241 brw-r--r-- 1 root root 10, 5 Oct 12 05:17 dispbloques
+14248 crw-r--r-- 1 root root 10, 5 Oct 12 05:18 dispcaracteres
+```
+
