@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.11">
+  <compound refid="classRacional" kind="class"><name>Racional</name>
+    <member refid="classRacional_1a1a053a6a9d6adee4cfc73b1cb8e3305c" kind="variable"><name>num</name></member>
+    <member refid="classRacional_1aee8b1719744e807c0498b89b9ff90276" kind="variable"><name>den</name></member>
+    <member refid="classRacional_1a05130ab34147ac85a4e340a33c82deb2" kind="function"><name>Racional</name></member>
+    <member refid="classRacional_1a5b8490366043f82fcc83cb827197fc05" kind="function"><name>Racional</name></member>
+    <member refid="classRacional_1a6c5adcd48e75a23200f2db70bd13101b" kind="function"><name>Racional</name></member>
+    <member refid="classRacional_1a7457006396e7609e8a03af043a86afbb" kind="function"><name>numerador</name></member>
+    <member refid="classRacional_1a222dded5259ed20fc4c40ffbe9d6b9a7" kind="function"><name>denominador</name></member>
+    <member refid="classRacional_1ad5a5b3220853ced644fef769e122cf52" kind="function"><name>asignar</name></member>
+    <member refid="classRacional_1a585a90e00a35d0d00576af756ab301f0" kind="function"><name>comparar</name></member>
+    <member refid="classRacional_1ab30e69922f714ac6c79ec2628b301274" kind="function"><name>print</name></member>
+    <member refid="classRacional_1aa4539b99ed60caa9a107a1c0b4f28aa2" kind="function"><name>operator+</name></member>
+    <member refid="classRacional_1a5dae34ac2c6aa5260556dd43208fd962" kind="function"><name>operator*</name></member>
+    <member refid="classRacional_1a1d1cccc4b27d5b232070cfe503565a02" kind="function"><name>operator+=</name></member>
+    <member refid="classRacional_1a3ff869f17b7ba36d10cad60eff8e894d" kind="function"><name>operator==</name></member>
+    <member refid="classRacional_1a33114260605dc5f5659d9a83f9bb6047" kind="function"><name>simplifica</name></member>
+    <member refid="classRacional_1a4335a71aa6c96ff2f0cb5aee0f3961a1" kind="friend"><name>operator&lt;&lt;</name></member>
+    <member refid="classRacional_1a32a42bfb8bd87c71444f292d8f8d09be" kind="friend"><name>operator&gt;&gt;</name></member>
+  </compound>
+  <compound refid="namespacestd" kind="namespace"><name>std</name>
+  </compound>
+  <compound refid="Racional_8cpp" kind="file"><name>Racional.cpp</name>
+    <member refid="Racional_8cpp_1a4335a71aa6c96ff2f0cb5aee0f3961a1" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="Racional_8cpp_1a32a42bfb8bd87c71444f292d8f8d09be" kind="function"><name>operator&gt;&gt;</name></member>
+  </compound>
+  <compound refid="Racional_8h" kind="file"><name>Racional.h</name>
+  </compound>
+  <compound refid="usoRacional_8cpp" kind="file"><name>usoRacional.cpp</name>
+    <member refid="usoRacional_8cpp_1a840291bc02cba5474a4cb46a9b9566fe" kind="function"><name>main</name></member>
+  </compound>
+  <compound refid="repConjunto" kind="page"><name>repConjunto</name>
+  </compound>
+</doxygenindex>

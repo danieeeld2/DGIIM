@@ -1,0 +1,221 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.11">
+  <compounddef id="Racional_8cpp" kind="file" language="C++">
+    <compoundname>Racional.cpp</compoundname>
+    <includes local="no">iostream</includes>
+    <includes refid="Racional_8h" local="yes">Racional.h</includes>
+    <incdepgraph>
+      <node id="0">
+        <label>Racional.cpp</label>
+        <link refid="Racional.cpp"/>
+        <childnode refid="1" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Racional.h</label>
+        <link refid="Racional_8h"/>
+        <childnode refid="1" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>iostream</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacestd">std</innernamespace>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="Racional_8cpp_1a4335a71aa6c96ff2f0cb5aee0f3961a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>ostream &amp;</type>
+        <definition>ostream&amp; operator&lt;&lt;</definition>
+        <argsstring>(ostream &amp;os, const Racional &amp;r)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>ostream &amp;</type>
+          <declname>os</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classRacional" kindref="compound">Racional</ref> &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>os</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>stream de salida </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classRacional" kindref="compound">Racional</ref> a escribir </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="post"><para>Se obtiene en <emphasis>os</emphasis> la cadena (num/den) con <emphasis>num</emphasis>,den los valores del numerador y denominador de <emphasis>r</emphasis> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Racional.cpp" line="62" column="1" bodyfile="Racional.cpp" bodystart="62" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="Racional_8cpp_1a32a42bfb8bd87c71444f292d8f8d09be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>istream &amp;</type>
+        <definition>istream&amp; operator&gt;&gt;</definition>
+        <argsstring>(istream &amp;is, Racional &amp;r)</argsstring>
+        <name>operator&gt;&gt;</name>
+        <param>
+          <type>istream &amp;</type>
+          <declname>is</declname>
+        </param>
+        <param>
+          <type><ref refid="classRacional" kindref="compound">Racional</ref> &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>is</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>stream de entrada </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classRacional" kindref="compound">Racional</ref> que recibe el valor </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>El</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classRacional" kindref="compound">Racional</ref> leído en r </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="pre"><para>La entrada tiene el formato (num/den) con <emphasis>num</emphasis>,<emphasis>den</emphasis> los valores del numerador y denominador </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Racional.cpp" line="67" column="1" bodyfile="Racional.cpp" bodystart="67" bodyend="73"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="Racional_8h" kindref="compound">Racional.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacestd" kindref="compound">std</ref>;</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">//Constructor<sp/>por<sp/>defecto</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7" refid="classRacional_1a05130ab34147ac85a4e340a33c82deb2" refkind="member"><highlight class="normal"><ref refid="classRacional_1a05130ab34147ac85a4e340a33c82deb2" kindref="member">Racional::Racional</ref>(){</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/>num<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/>den<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal">}<sp/></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="comment">//Constructor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="classRacional_1a5b8490366043f82fcc83cb827197fc05" refkind="member"><highlight class="normal"><ref refid="classRacional_1a05130ab34147ac85a4e340a33c82deb2" kindref="member">Racional::Racional</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>d<sp/>){</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/>num<sp/>=<sp/>n;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/>den<sp/>=<sp/>d;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal">}<sp/></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//Constructor<sp/>de<sp/>copia</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="classRacional_1a6c5adcd48e75a23200f2db70bd13101b" refkind="member"><highlight class="normal"><ref refid="classRacional_1a05130ab34147ac85a4e340a33c82deb2" kindref="member">Racional::Racional</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRacional" kindref="compound">Racional</ref>&amp;<sp/>c){</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/>num<sp/>=<sp/>c.num;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/>den<sp/>=<sp/>c.den;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="comment">//Asignación</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="classRacional_1ad5a5b3220853ced644fef769e122cf52" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classRacional_1ad5a5b3220853ced644fef769e122cf52" kindref="member">Racional::asignar</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>d){</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/>num<sp/>=<sp/>n;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/>den<sp/>=<sp/>d;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="comment">//Comparación</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="classRacional_1a585a90e00a35d0d00576af756ab301f0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classRacional_1a585a90e00a35d0d00576af756ab301f0" kindref="member">Racional::comparar</ref>(<ref refid="classRacional" kindref="compound">Racional</ref><sp/>r){</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>((num*r.den<sp/>==<sp/>den*r.num)?1:0);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//Impresión<sp/>en<sp/>cout</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="classRacional_1ab30e69922f714ac6c79ec2628b301274" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classRacional_1ab30e69922f714ac6c79ec2628b301274" kindref="member">Racional::print</ref>(){</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/>cout<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;(&apos;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>this-&gt;num<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;/&apos;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>this-&gt;den<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;)&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="comment">//Operador<sp/>+</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="classRacional_1aa4539b99ed60caa9a107a1c0b4f28aa2" refkind="member"><highlight class="normal"><ref refid="classRacional" kindref="compound">Racional</ref><sp/><ref refid="classRacional_1aa4539b99ed60caa9a107a1c0b4f28aa2" kindref="member">Racional::operator+</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRacional" kindref="compound">Racional</ref><sp/>&amp;r){</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classRacional" kindref="compound">Racional</ref>(num*r.den+den*r.num,<sp/>den*r.den);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="comment">//Operador<sp/>*</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="classRacional_1a5dae34ac2c6aa5260556dd43208fd962" refkind="member"><highlight class="normal"><ref refid="classRacional" kindref="compound">Racional</ref><sp/><ref refid="classRacional_1a5dae34ac2c6aa5260556dd43208fd962" kindref="member">Racional::operator*</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRacional" kindref="compound">Racional</ref><sp/>&amp;r){</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classRacional" kindref="compound">Racional</ref>(num*r.num,<sp/>den*r.den);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="comment">//Operador<sp/>+=</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="classRacional_1a1d1cccc4b27d5b232070cfe503565a02" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classRacional_1a1d1cccc4b27d5b232070cfe503565a02" kindref="member">Racional::operator+=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRacional" kindref="compound">Racional</ref><sp/>&amp;r){</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>num<sp/>=<sp/>num*r.den+den*r.num;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>den<sp/>=<sp/>den*r.den;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//Operador<sp/>==</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="classRacional_1a3ff869f17b7ba36d10cad60eff8e894d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classRacional_1a3ff869f17b7ba36d10cad60eff8e894d" kindref="member">Racional::operator==</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRacional" kindref="compound">Racional</ref><sp/>&amp;<sp/>l){</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>((num*l.den<sp/>==<sp/>den*l.num)?1:0);<sp/></highlight></codeline>
+<codeline lineno="59"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="comment">//Operador<sp/>&lt;&lt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="classRacional_1a4335a71aa6c96ff2f0cb5aee0f3961a1" refkind="member"><highlight class="normal">ostream&amp;<sp/>operator&lt;&lt;<sp/>(ostream<sp/>&amp;<sp/>os,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRacional" kindref="compound">Racional</ref><sp/>&amp;<sp/>r){</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>os<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;(&apos;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>r.num<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;,&apos;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>r.den<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;)&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="comment">//Operador<sp/>&gt;&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="classRacional_1a32a42bfb8bd87c71444f292d8f8d09be" refkind="member"><highlight class="normal">istream&amp;<sp/>operator&gt;&gt;<sp/>(istream&amp;<sp/>is,<sp/><ref refid="classRacional" kindref="compound">Racional</ref>&amp;<sp/>r){</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>caracter;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>numerador,<sp/>denominador;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/>is<sp/>&gt;&gt;<sp/>caracter<sp/>&gt;&gt;<sp/>numerador<sp/>&gt;&gt;<sp/>caracter<sp/>&gt;&gt;<sp/>denominador<sp/>&gt;&gt;<sp/>caracter;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/>r=<sp/><ref refid="classRacional" kindref="compound">Racional</ref>(numerador,denominador);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>is;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="comment">//Simplificación<sp/>a<sp/>forma<sp/>irreducible</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="classRacional_1a33114260605dc5f5659d9a83f9bb6047" refkind="member"><highlight class="normal"><ref refid="classRacional" kindref="compound">Racional</ref><sp/><ref refid="classRacional_1a33114260605dc5f5659d9a83f9bb6047" kindref="member">Racional::simplifica</ref>(){</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>a,<sp/>b;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Casos<sp/>base<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(num<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classRacional" kindref="compound">Racional</ref>(0,den);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(num<sp/>==<sp/>den)</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classRacional" kindref="compound">Racional</ref>(num,den);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(num<sp/>&gt;<sp/>den){</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>a<sp/>=<sp/>num;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>b<sp/>=<sp/>den;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>a<sp/>=<sp/>den;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>b<sp/>=<sp/>num;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Algoritmo<sp/>de<sp/>Euclides<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>r;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keywordflow">do</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>r<sp/>=<sp/>a<sp/>%<sp/>b;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>a<sp/>=<sp/>b;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>b<sp/>=<sp/>r;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(r<sp/>&gt;<sp/>0);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classRacional" kindref="compound">Racional</ref>(num/=a,<sp/>den/=a);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="Racional.cpp"/>
+  </compounddef>
+</doxygen>

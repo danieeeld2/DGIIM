@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.11">
+  <compounddef id="repConjunto" kind="page">
+    <compoundname>repConjunto</compoundname>
+    <title>Rep del TDA Racional</title>
+    <detaileddescription>
+<sect1 id="repConjunto_1invConjunto">
+<title>Invariante de la representación</title>
+<para>El invariante es <emphasis>rep.den!=0</emphasis> </para></sect1>
+<sect1 id="repConjunto_1faConjunto">
+<title>Función de abstracción</title>
+<para>Un objeto válido <emphasis>rep</emphasis> del TDA <ref refid="classRacional" kindref="compound">Racional</ref> representa al valor</para><para>(rep.num,rep.den) </para></sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>
