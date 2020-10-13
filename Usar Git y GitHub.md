@@ -101,7 +101,7 @@ En github podemos añadir archivos markdown, por defectos llamados README, los c
 Si hemos eliminado todo el código de nuestro ordenador y queremos recuperarlo, solo necesitamos ir a GitHub, copiar la direción web del proyecto y ejecutar:
 
 ```bash
-$ git cole <direccion>
+$ git clone <direccion>
 ```
 
 Esto descargará el proyecto
