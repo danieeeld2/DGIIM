@@ -1241,7 +1241,7 @@ Resuelve las siguientes cuestiones:
 4. Obtén el número de bloques de tamaño 4KB que utiliza la rama de la estructura jerárquica de directorios que comienza en el directorio /etc.
 
    ```bash
-   $ du -h /etc/ | grep 4.0K
+   $ du -h /etc/ | grep 4.0K # Si queremos contar líneas wc -l
     du -h /etc/ | grep 4.0K
    4.0K	/etc/rwtab.d
    4.0K	/etc/chkconfig.d
@@ -1329,7 +1329,7 @@ Proporciona las opciones necesarias de la orden **ls** para obtener la informaci
 
 #### 5.4. Archivos especiales de dispositivo
 
-Los dispositivos de nuestro sistema se representan mediante archivos especiales de dispositivo, que pueden ser de bloques o de caracteres.
+Los dispositivos de nuestro sistema se representan mediante archivos especiales de dispositivo, que pueden ser de bloques o de caracteres. Los archivos especiales de bloque  representan  a dispositivos   debloques, que normalmente coinciden con los dispositivos de almacenamiento persistente, losramdisks y los dispositivos loop. Los archivos especiales de caracteres representan a dispositivosde caracteres del tipo puertos serie, paralelo y USB, consola virtual (console),  audio, losdispositivos de terminal (tty*), y muchos más
 
 ```bash
 $ ls -l /dev
