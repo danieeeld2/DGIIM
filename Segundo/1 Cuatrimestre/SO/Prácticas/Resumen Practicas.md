@@ -1373,3 +1373,7 @@ $ ls -li
 14248 crw-r--r-- 1 root root 10, 5 Oct 12 05:18 dispcaracteres
 ```
 
+
+
+## **<u>Sesión 4</u>**
+
