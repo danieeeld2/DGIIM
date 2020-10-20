@@ -1377,3 +1377,147 @@ $ ls -li
 
 ## **<u>Sesión 4</u>**
 
+En esta sesión veremos como lanzar órdenes cuya ejecución se realice en un determinado momento de tiempo o de forma periódica.
+
+El administrador del sistema será el responsable del buen funcionamiento de estos servicios del sistema operativo: el demonio **atd** (proporciona el servicio de ejecución postergada de órdenes) y el demonio **cron** (que proporciona el servicio de ejecución periódica de órdenes)
+
+
+
+### 3.Los procesos demonios
+
+Características de un proceso demonio:
+
+	17. Se ejecuta en background y no está asociado a un terminal o proceso login
+ 	18. Algunos se inician en el arranque del sistema y continúan ajecutándose mientras el sistema está encendido, otros solo se ponen en marcha cuando son necesarios
+ 	19. En caso de que termine por algún imprevisto es muy común que exista un mecanismo que detecte la terminación y lo rearranque.
+ 	20. En muchos casos está a la espera de un evento
+ 	21. En otros casos, tiene encomendada una labor que hay que hacer de forma periódica
+ 	22. Es frecuente que no hagan el trabajo directamente, sino que lanza otros procesos para que lo realicen
+ 	23. En muchos casos se ejecutan con privilegio de superusuario (UID=0)  y tienen por padre al proceso **init** (PID=1)
+
+
+
+#### Actividad: Consulta de información sobre procesos demonio
+
+A partir de la información proporcionada por la orden **ps** encuentre los datos asociados a los demonios **atd** y **crond**, en concreto: quién es su padre, qué terminal tiene asociado y cuál es su usuario.
+
+```bash
+$ ps -ef | grep cron; ps -ef | grep atd
+UID          PID    PPID  C STIME TTY          TIME CMD
+daemon      8170       1  0 09:07 ?        00:00:00 /usr/sbin/atd -f
+daniel      9862    7533  0 09:14 pts/1    00:00:00 grep --color=auto atd
+root        1010       1  0 08:12 ?        00:00:00 /usr/sbin/cron -f
+daniel      9864    7533  0 09:14 pts/1    00:00:00 grep --color=auto cron
+
+# El UID es el id del usuario
+# TTY es la terminal asociada (? significa que no tiene una asociada)
+# PPID es la id del proceso padre
+```
+
+
+
+### 4. Ejecutar tareas a una determinada hora: demonio *atd*
+
+Con el demonio **atd** podemos provocar la ejecución de una orden en un momento de tiempo especificado. Podemos usar las siguientes ódenes:
+
+- **at**: Ejecuta una órden a una determiada hora
+- **atq**: Consulta la lista de órdenes
+- **atrm**: Elimina órdenes
+- **batch**: Ordena la ejecución de órdenes que se ejecutarán cuando la carga del sistema sea baja
+
+
+
+#### 4.1. Orden *at*
+
+Su sintaxis completa es:
+
+```bash
+$ at [-q queue] [-f <script>] [-mldbv] Time
+```
+
+La orden **at** lee órdenes de la entrada estándar o del archivo <script> y provoca su ejecución a la hora especificada. Para ver las posibles hora de expresar time vease el contenido del archivo **/usr/share/doc/at/timespec**
+
+
+
+#### Actividad: Ejecución postergada de órdenes con *at*
+
+Crea un archivo **genera-apunte** que escribe la lista de hijos del directorio home en un archivo de nombre **listahome-`date +Y-%-%j-%T-$$**, es decir, la yuxtaposición del literal "listhome" y el año, día dentro del año, la hora actual y el pid.
+
+Lanza la ejecución del archivo **generate-apunte** un minuto más tarde de la hora actual.
+
+¿En qué directorio se crea el archivo de salida?
+
+
+
+#### Actividad: Ejecución postergada de órdenes con *at*
+
+Lanza varias órdenes **at** utilizando distintas formas de especificar el tiempo como las siguientes (será de utilidad con la opción -v):
+
+a) a medianoche de hoy
+
+```bash
+$ at midnight
+$ at 00:00
+```
+
+b) un minuto después de la medianoche de hoy
+
+```bash
+$ at midnight +1 minute
+```
+
+c) a las 17 horas y 30 minutos de mañana
+
+```bash
+$ at 17:30 +1 day
+$ at 17:30 tomorrow
+```
+
+d) a la misma hora en que estemos ahora pero del día 25 de diciembre del presente año
+
+```bash
+$ at 25.12.2020
+```
+
+e) a las 00:00 del presente año
+
+```bash
+$ at 00:01 01.01.2021
+at: refusing to create job destined in the past
+```
+
+
+
+#### 4.2. Sobre el entorno de ejecución de las órdenes
+
+Cuando sea el momento que se especificó en la orden **at** se lanzará una shell **/bin/sh** para ejecutar el archivo <script> que se indicó (o si no se especificó, se lanza el conjunto de ordenes que se tomaron de la entrada estándar); podemos preguntarnos sobre cuál es el entorno de este nuevo proceso. Para ello véase la siguiente actividad:
+
+
+
+#### Actividad: Cuestiones sobre *at*
+
+El proceso nuevo que se lanza al cumplirse el tiempo especificado:
+
+1. ¿Que directorio de trabajo tiene inicialmente? ¿Hereda el que tenía el proceso que invocó a at o bien es home?
+
+   ```
+   Hereda el directorio del proceso que se invocó a at
+   ```
+
+2. ¿Qué máscara de creación de archivos umask tiene? ¿es la que hereda del padre o la que se usa por omisión?
+
+   ```
+   
+   ```
+
+3. ¿Hereda las variables del proceso padre?
+
+   ```
+   
+   ```
+
+
+
+#### Actividad: Relación padre-hijo con órdenes ejecutada mediante *at*
+
+El proceso nuevo que se lanza al cumpirse el tiempo que se especificó de la orden **at**, ¿de quién es hijo? Investiga lanzando la ejecución retardada deun script que muest
