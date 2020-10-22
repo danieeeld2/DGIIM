@@ -1445,7 +1445,25 @@ Crea un archivo **genera-apunte** que escribe la lista de hijos del directorio h
 
 Lanza la ejecución del archivo **generate-apunte** un minuto más tarde de la hora actual.
 
+```bash
+$ touch generate-apunte.sh
+$ chmod +x generate-apunte.sh
+$vi generate-apunte.sh
+#!/bin/bash
+
+ls ~ > listahome-`date +%Y-%j-%T-$$`
+
+$ at now + 1minute
+at> ./generate-apunte.sh
+
+#También podemos $ at -f ./generate-apunte.sh 9:02
+```
+
 ¿En qué directorio se crea el archivo de salida?
+
+```
+En la carpeta donde la ejecutammos
+```
 
 
 
@@ -1507,17 +1525,144 @@ El proceso nuevo que se lanza al cumplirse el tiempo especificado:
 2. ¿Qué máscara de creación de archivos umask tiene? ¿es la que hereda del padre o la que se usa por omisión?
 
    ```
-   
+   La hereda del padre desde el momento de la invocación
    ```
 
 3. ¿Hereda las variables del proceso padre?
 
    ```
-   
+   El entorno se mantiene desde la invocación, pero no las variables
    ```
 
 
 
 #### Actividad: Relación padre-hijo con órdenes ejecutada mediante *at*
 
-El proceso nuevo que se lanza al cumpirse el tiempo que se especificó de la orden **at**, ¿de quién es hijo? Investiga lanzando la ejecución retardada deun script que muest
+El proceso nuevo que se lanza al cumpirse el tiempo que se especificó de la orden **at**, ¿de quién es hijo? Investiga lanzando la ejecución retardada deun script que muestre la inforación completa sobre los procesos existentes y el pid del proceso actual; el script es el siguiente:
+
+```bash
+#!/bin/bash
+
+nombrearchivo=`date +%Y-%j-%T`
+ps -ef > $nombrearchivo
+echo Mi pid == $$ >> $nombrearchivo
+```
+
+Ejecutamos la script anterior:
+
+```bash
+$ at -f ./script.sh now + 1minute
+warning: commands will be executed using /bin/sh
+job 7 at Tue Oct 20 13:54:00 2020
+
+# Veamos el resultado
+$ cat 2020-294-13\:54\:00 
+UID          PID    PPID  C STIME TTY          TIME CMD
+root           1       0  0 08:12 ?        00:00:12 /sbin/init splash
+root           2       0  0 08:12 ?        00:00:00 [kthreadd]
+root           3       2  0 08:12 ?        00:00:00 [rcu_gp]
+root           4       2  0 08:12 ?        00:00:00 [rcu_par_gp]
+root           6       2  0 08:12 ?        00:00:00 [kworker/0:0H-kblockd]
+root           9       2  0 08:12 ?        00:00:00 [mm_percpu_wq]
+
+...
+```
+
+
+
+#### 4.3. Salida estándar y salida de error estándar
+
+Al lanzar una ejecución asíncrona de una tarea con la orden **at** NO estamos creando un proceso hijo en nuestra shell, por lo que no tendrá ni entrada ni salida estándar ni entrada ni salida de error.
+
+Cuando la orden lanzada de forma retardada sea ejecutada, lo que genere la salida estándar y la salida de error estándar se envía al usuario que envión la orden como  un correo electrónico usando la orden **/usr/bin/sendmail.**
+
+En el caso delanzar la ejecución de órdenes que generan muchos mensajesen la salida estándar o salida de error estándar podríamos registrarlas a **/dev/null** para que se "pierda":
+
+```bash
+$ at now +1 minute
+at> tarcvf /backups/backup.tar . l>> ~/salidas 2> /dev/null
+```
+
+También puede ser conveniente rederigir directamente la salida. Si ejecutamos las ordenes sin estas medidas y da error, no seremos notificados y pasará desapercibido.
+
+
+
+#### Actividad: Script para orden *at*
+
+Construye un script que utilice la orden **find** para generar la salida estándar de los archivos modificados en las últimas 24 horas (partiendo de home y de forma recursiva). La salida deberá escribirse en el archivo "modificados_< año >< dia >< hora >". Utiliza la orden **at** para que se ejecute dentro de un día
+
+```bash
+$ touch script.sh
+$ vi script.sh
+#!/bin/bash
+
+find . -mtime 1 > modificados_`date +%Y-%j-%T`
+
+$ chmod +x script.sh
+$ at now + 1day
+at> ./script.sh
+
+# También se puede at -f ./script.sh
+```
+
+
+
+#### 4.4. Orden *batch*
+
+La orden **batch** es equivalente a **at** excepto que no especificamos la hora de ejecución, sino que el trabajo especificado se ejecutará cuando la carga de trabajos del sistema esté bao cierto valor umbral que se especifica a la hora de lanzar el demonio **atd**
+
+
+
+#### Actividad: Trabajo con la orden *batch*
+
+Lanza los procesos que sean necesarios para conseguir que exista una gran carga de trabajo en el sistema de modo que los trabajos lanzado con la orden **batch** no se estén ejecutando. Utiliza las órdenes oportunas para matar este conjunto de procesos. Experimenta para comprobar como al ir bajando la carga de trabajos habrá un momento en que se ejecutan los trabajos lanzados a la cola batch.
+
+**Pendiente**
+
+
+
+#### 4.5. Orden *at* trabajando con colas
+
+La orden **at** gestiona distintas colas de trabajos que esperan ser ejecutados; se designan con una única letra de la **a** a la **z** y de la **A** a la **Z**. La columna por omisión es **a**, la cola **b** se usa para batch y a partir de ahí las distintas colas van teniendo menor prioridad de la **c** en adelnate.
+
+
+
+#### Actividad: Utilizando las colas de trabajos de *at*
+
+Construye tres scripts que deberás lanzar a las colas **c,d,e** y especificando una hora concreta que esté unos pocos minutos más adelante. Idea qué actuación deben tener dichos script de forma que se ponda de manifiesto que de esas colas la orden más prioritaria es la **c** y la que menos es la **e**.
+
+```bash
+# Usemos por ejemplo la script anterior
+#!/bin/bash
+
+nombrearchivo=`date +%Y-%j-%T`
+ps -ef > $nombrearchivo
+echo Mi pid == $$ >> $nombrearchivo
+
+$ at -q c -f ./script.sh now + 1minute
+$ at -q d -f ./script.sh now + 1minute
+$ at -q e -f ./script.sh now + 1minute
+```
+
+Veamos las prioridades:
+
+```bash
+$ atq -q c
+29Mon Oct 29 13:11:00 2012 c superjes
+$ atq -q d
+30Mon Oct 29 13:11:00 2012 d superjes
+$ atq -q e31
+Mon Oct 29 13:11:00 2012 e superjes
+```
+
+Usando ls en el directorio, efectivamente vemos que se ha ejecutado primero la cola c, luego la d y, por último, la d.
+
+
+
+#### 4.6. Aspectos de administración del demonio *atd*
+
+Los dos archivos de configuración **/etc/at.deny** y **/etc/at.allow** determinan los usuarios del sistema que pueden usar la orden at.
+
+
+
+### 
