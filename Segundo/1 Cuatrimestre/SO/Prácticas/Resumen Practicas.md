@@ -1665,4 +1665,260 @@ Los dos archivos de configuración **/etc/at.deny** y **/etc/at.allow** determin
 
 
 
-### 
+### 5. Ejecuciones periódicas: demonio cron
+
+El demonio **cron** es responsable de ejecutar órdenes con una periocidad determinada. La especificación de las tareas que se desea que ejecute se hace constuyendo un archivo, que deberá tener un determinado formato, que se pasa comunica con el demonio mediante la orden **crontab**.
+
+#### 5.1. Formato de los archivos crontab: especificando órdenes
+
+Cada línea de código de un archivo cronta puede contener estos campos:
+
+​							**minuto	hora	día-del-mes	mes	día-de-la-semana	orden**
+
+Menos el último campo, todos indican la periocidad con la que se ejecuta una orden. A su vez, estos campos pueden contener:
+
+- Un asterisco, que indica cualquier valor posible
+- Un número entero, que activa ese valor determinado
+- Dos enteros separados por un guión, que indican un rango de valores
+- Una serie de enteros o rangos separados por una coma, activando cualquier valos que aparece en la lista
+
+Por ejemplo **1 20 * * 1-5**, significa que se ejecuta a las 20:01 todos los días de lunes a viernes.
+
+Si se indica valores concretos para los campos día-del-mes y  día-de-la-semana se entenderá como una orden **OR**, por ejemplo **0,30 * 13 * 5** significa cada media hora de los viernes y cada media hora del día 13 del mes.
+
+#### 5.2. La orden *crontab*
+
+Se encarga de instalarm desinstalar o listar los trabajos que procesará el demonio cron.
+
+```bash
+$ crontab <file>
+```
+
+
+
+#### Actividad: Relación padre-hijo con órdenes ejecutadas mediante crontab
+
+Lanza un script como la de la actividad de la orden *at* sobre quién es el proceso padre del nuestro, lanza el script construido en dicha actividad con una periocidad de un minuto y analiza los resultados.
+
+```
+Lo mismo que ocurría con at, pero con el demonio cron
+```
+
+
+
+#### Actividad: Ejecución de scripts con *crontab*
+
+Construye un script que sea lanzado con una periocidad de un minuto y que borre los nombres de los archivos que cuelguen del directorio **/tmp/varios** y que comiencen por "core" (cree ese directorio y algunos archivos para poder realizar esta actividad). Utiliza la opción **-v** de la orden **rm** para generar como salida una frase de confirmación de los archivos borrados; queremos que el conjunto de estas salidas se añadan al archivo **/tmp/listacores**.
+
+Prueba la orden **crontab -l** para ver la lista actual de trabajos (consulte la ayuda para ver las restates posibilidades de esta orden para gestionar la lista actual de trabajos).
+
+```bash
+$ mkdir /tmp/varios
+$ cd /tmp/varios
+$ touch core.txt core1 core2 hola.txt noborrar.txt
+$ cd ~
+$ touch script.sh
+$ chmod +x script.sh
+$ vi script.sh
+```
+
+La script será la siguiente:
+
+```bash
+#!/bin/bash
+
+rm -v /tmp/varios/core* >> /tmp/listacores
+```
+
+Lo añadimos al archivo crontab:
+
+```bash
+$ sudo service cron start	# Por si estuviera deshabilitado
+$ contab -e	# Se abrirá un archivo editable, en el que añadimos la siguiente línea
+* * * * * /home/daniel/script.sh
+$crontab -l	# Veremos que se ha añadido a la listas de tareas a ejecutar
+...
+* * * * * ./home/daniel/script.sh
+```
+
+Para eliminar la tarea, simplemente hay que modificar nuevamente el archivo
+
+
+
+#### Actividad: Ejecución de scripts con *crontab (II)*
+
+Para asegurar que el contenido del archivo **/tmp/listacores** no crezca demasiado, queremos que periódicamente se deje dicho archivo solo con sus 10 primeras líneas  (puede ser de utilidad la orden **head**). Construye un script llamado **reducelista** que realice la función anterior y la ejecute con una periocidad de un minuto.
+
+La script en cuestión será:
+
+```bash
+#!/bin/bash
+
+head -n 10 /tmp/listacores > /tmp/listacores1
+rm /tmp/listacores1
+mv /tmp/listacores1 /tmp/listacores
+```
+
+Repetimos los pasos del ejercicio anterior:
+
+```bash
+$ touch script2.sh
+$ vi script2.sh
+$ chmod +c script2.sh
+$ crontab -e 
+* * * * * /home/daniel/script2.sh
+$ crontab -l	# Veremos que se ha añadido
+```
+
+
+
+#### Actividad: Ejecución de scripts con *crontab (III)*
+
+Construye una script que escriba en el archivo **listabusqueda** una nueva línea con la fecha y hora actual y después el valor de la lista de búsqueda, por ejemplo:
+
+​		...
+
+​		2011-297-12:29:10 - /usr/local/bin: /usr/local/bin: /usr/bin...
+
+​		...
+
+Ejecuta  esta script desde el lenguaje de órdenes y también lánzalo como trabajo crontab y compara los resultados, ¿se tiene en ambos casos la misma lista de búsqueda?
+
+```bash
+$ touch script3.sh
+$ chmod +x script3.sh
+$ vi script3.sh
+#!/bin/bash
+
+fecha=`date +%Y-%j-%T`
+
+echo $fecha - $PATH >> /home/daniel/listabusqueda
+$ crontab -e
+PATH=/usr/local/bin:/usr/local/bin:/usr/bin...
+* * * * * /home/daniel/script3.sh
+$ cat listabusqueda
+2020-299-22:15:01 - /usr/local/bin:/usr/local/bin:/usr/bin...
+```
+
+
+
+#### 5.3. Formato de los archivos crontab: especificando variables de entorno
+
+Una línea de un archivo crontab puede ser o bien una línea de especificación de una orden para cron o bien una línea de asignación de variables de entorno (**< nombre >=< valor >**).
+
+Algunas variables de entorno son establecidas automáticamente por el demonio  cron, como las siguientes:
+
+- **SHELL**: se establece a **/bin/sh**
+- **LOGNAME** y **HOME**
+
+
+
+#### Actividad: Variables de entorno en archivos *crontab*
+
+Construye un script que generará un archivo crontab llamado **crontab-reducelista** que deberá contener:
+
+- Como primera línea de asignación a la variable PATH de la lista de búsqueda actual y además el directorio $HOME/SO
+- La indicación a cron de la ejecución con periocidad de 1 minuto del script **reducelista**
+
+Una vez construido **crontab-reducelista**, lánzalo con la orden crontab. Comprueba que con esta nueva lista de búsqueda podremos hacer alusión a **reducelista** especificando únicamente su nombre independientemente del directorio de trabajo donde nos situemos.
+
+El script será el siguiente:
+
+```bash
+#!/bin/bash
+
+echo "SHEL=/bin/bash" > crontab-reducelista
+echo "PATH="`pwd`" /:$HOME/SO:"$PATH >> crontab-reducelista
+echo "* * * * * reducelista" >> crontab-reducelista
+```
+
+Lanzando el script tenemos:
+
+```bash
+$ vi crontab-reducelista
+SHEL=/bin/bash
+PATH=/home/daniel /:/home/daniel/SO:/home/daniel/.local/bin:/usr/local/sbin:/us>
+* * * * * reducelista
+$crontab crontab-reducelista
+```
+
+
+
+#### Actividad: Archivos *crontab* de diferentes usuarios
+
+Vamos a lanzar un archivo crontab cuyo propietario es otro usuario. Visualiza el contenido del archivo **/fenix/depar/lsi/so/ver-entorno** y **/fenix/depar/lsi/so/crontabver**. Comprueba con **ls -l** que propietario es el usuario del **lsi**. Sin copiarlos, úsalos para lanzar la ejecución cada minuto del script  **/fenix/depar/lsi/so/ver-entorno**. Analiza el archivo de salida: ¿de qué línea del archivo **/etc/passwd** se toma **LOGNAME** y **HOME** de la línea del propietario del archivo crontab o de la línea del usuario que lanza el archivo crontab?
+
+**Pendiente**
+
+
+
+#### Actividad: Ejecución de scripts *crontab (IV)*
+
+El objetivo es ejecutar todos los días a las 0 horas 0 minutos una copia de los archivos que cuelguen de **$HOME** que se hayan modificado d¡e las últimas 24 horas. Vamos a programar este salvado incremental utilizando la orden **find**, pero ahora queremos que se copien los archivos encontrados utilizando la orden **cpio:**
+
+​		**< orden find > | cpio -pmduv  /tmp/salvado$HOME**
+
+Comenzamos creando el script:
+
+```bash
+#!/bin/bash
+
+find ~ -mtime 1 | cpio -pmduv /tmp/salvado$HOME
+```
+
+Se lo pasamos a crontab:
+
+```bash
+$ touch script5.sh
+$ chmod +x script5.sh
+$ vi script5.sh	# Creamos el script
+$ crontab -e 
+0 0 * * * /home/daniel/script5.sh
+$ crontab -l # Comprobamos que se ha añadido a la lista
+```
+
+
+
+Una característica interesante de esta orden, que no tiene cp, es que puede tomar de la entrada estándar los archivos origen a copiar.  Con las opciones anteriores, permite replicar la estrucutura original manteniendo metadatos de especial interés como usuario propietario y grupo propietario.
+
+Esto puede ser una labor interesante de programar para un administrador de sistemas, con objeto de tener una copia de los archivos que se han modificado. Por ejemplo un vez al mes se puede hacer un salvado global, y una vez al día un salvado de los archivos modificados.
+
+Una posibilidad interesante es que la copia de seguridad se haga en un dispositivo que acabamos de montar, y, justo al desmontar, lo desmontamos. Esto aumenta la posibilidad de la copia ante posibles ataques:
+
+​		**mount /dev/loop0	/directoriosalvados**
+
+​		**< orden find > | < orden cpio >**
+
+​		**unmount /dev/loop0**
+
+Como última observación, si el dispositivo y punto demontaje usados en esa orden mount, no están en el fstab serán más difíciles de detectar por un intruso que acceda a nuestro sistema.
+
+
+
+#### 5.4. Aspectos de administración del demonio crontab
+
+Los dos archivos de configuración **/etc/cron.deny** y **/etc/cron.allow** determinan qué usuarios pueden ejecutar la orden crontab. Su significado es equivalente a los archivos **/etc/at.deny** y **/etc/at.allow**
+
+
+
+#### Actividad: Gestión de servicio *crond* como usuario root
+
+Prueba las siguientes operaciones con el demonio **crond**:
+
+1. Como usuario root, deshabilita/habilita a un determinado usuario para que pueda utilizar el servicio cron; comprueba que efectivamente funciona.
+
+2. Iniciar y terminar el servicio cron. Prueba las siguientes órdenes para iniciar y terminar este servicios:
+
+   ​	Iniciar el servicio cron: **/sbin/service crond start**
+
+   ​	Terminar el servicio cron: **/sbin/service crond stop**
+
+```bash
+# Añadimos un usuario en /etc/cron.deny
+$ echo prueba >> /etc/cron.deny
+# Accedemos al usuario
+$ su prueba
+# Probamos a usar cron
+You (prueba) are not allowed to use this program (crontab)See crontab(1) for more information
+```
+

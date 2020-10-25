@@ -1,10 +1,10 @@
-/snap/clion/123/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro"
+/snap/clion/129/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" "/home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro"
 -- The C compiler identification is GNU 9.3.0
 -- The CXX compiler identification is GNU 9.3.0
 -- Check for working C compiler: /usr/bin/cc
-CMake Error: Generator: execution of make failed. Make command was: /usr/bin/gmake cmTC_a552d/fast && 
+CMake Error: Generator: execution of make failed. Make command was: /usr/bin/gmake cmTC_c8699/fast && 
 -- Check for working C compiler: /usr/bin/cc - broken
-CMake Error at /snap/clion/123/bin/cmake/linux/share/cmake-3.17/Modules/CMakeTestCCompiler.cmake:60 (message):
+CMake Error at /snap/clion/129/bin/cmake/linux/share/cmake-3.17/Modules/CMakeTestCCompiler.cmake:60 (message):
   The C compiler
 
     "/usr/bin/cc"
@@ -15,8 +15,8 @@ CMake Error at /snap/clion/123/bin/cmake/linux/share/cmake-3.17/Modules/CMakeTes
 
     Change Dir: /home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro/cmake-build-debug/CMakeFiles/CMakeTmp
     
-    Run Build Command(s):/usr/bin/gmake cmTC_a552d/fast && No such file or directory
-    Generator: execution of make failed. Make command was: /usr/bin/gmake cmTC_a552d/fast && 
+    Run Build Command(s):/usr/bin/gmake cmTC_c8699/fast && No such file or directory
+    Generator: execution of make failed. Make command was: /usr/bin/gmake cmTC_c8699/fast && 
     
 
   

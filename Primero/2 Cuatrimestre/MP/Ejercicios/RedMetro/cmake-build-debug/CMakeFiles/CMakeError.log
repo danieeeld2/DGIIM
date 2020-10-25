@@ -5,3 +5,10 @@ Run Build Command(s):/usr/bin/gmake cmTC_a552d/fast && No such file or directory
 Generator: execution of make failed. Make command was: /usr/bin/gmake cmTC_a552d/fast && 
 
 
+Determining if the C compiler works failed with the following output:
+Change Dir: /home/daniel/Git/DGIIM/Primero/2 Cuatrimestre/MP/Ejercicios/RedMetro/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_c8699/fast && No such file or directory
+Generator: execution of make failed. Make command was: /usr/bin/gmake cmTC_c8699/fast && 
+
+
