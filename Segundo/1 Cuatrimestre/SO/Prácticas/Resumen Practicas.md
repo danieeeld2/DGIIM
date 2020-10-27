@@ -204,6 +204,10 @@ Los usuarios especiales son aquellos que no estan asociados a personas fíicas.
 | postgres, mysql, xfs, ...           | Para administrar y ejecutar servicios     |
 | nobody ó nfsnobody                  | Usado por NFS                             |
 
+![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/1.png)
+
+![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/2.png)
+
 
 
 ### 5. Organización del sistema de archivos y gestión básica de archivos
@@ -1261,7 +1265,7 @@ Resuelve las siguientes cuestiones:
 
 El objetivo de los enlaces de archivos es disponer de más de un nombre para los archivos en nuestro espacio de nombres de archivo soportado por la estructura jerárquica de directorios. 
 
-Bajo esta óptica, los enlaces a  archivos pueden considerarse como referencia a otros archivos, bien a su nombre, **enlaces simbólicos**, bien a sus metadatos, **enlaces duros** (Se establece sobre el inodo asociado al archivo en su creación) .
+Bajo esta óptica, los enlaces a  archivos pueden considerarse como referencia a otros archivos, bien a su nombre, **enlaces simbólicos**, bien a sus metadatos (acceso directo, con el distinto inodo al archivo que apunta, luego si eliminas el objeto inicial, no se puede acceder a los datos mediante en enlace simbólico), **enlaces duros** (Se establece sobre el mismo inodo, por tanto para eliminar el archivo hay que eliminar todos los enlacez duros. Si se modifica uno se modifican todos, ya que están sobre el mismo inodo) .
 
 Podemos usar la orden **ls -la** para comprobar que todos los directorios tienen dos enlaces duros:
 
@@ -1279,7 +1283,7 @@ Para crear enlaces duros o enlaces simbólicos sobre un archivo creado previamen
 ```bash
 $ touch archivo.txt
 $ ln archivo.txt hardLink	
-$ ln archivo.txt softLink # -s para softLink
+$ ln -s archivo.txt softLink # -s para softLink
 $ ls -lai
 total 8
   309 drwxr-xr-x  2 root root 4096 Oct 11 06:49 .

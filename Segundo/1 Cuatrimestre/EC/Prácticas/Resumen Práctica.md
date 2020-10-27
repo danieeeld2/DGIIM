@@ -8,7 +8,7 @@
 
 #### Paso de parámetros :
 
-![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/EC/Prácticas/1.png)
+![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/EC/Prácticas/Fotos/1.png)
 
 #### Comandos para programas en C:
 
@@ -114,7 +114,7 @@ Para ver código de C o C++ en ensamblador usar: https://godbolt.org/z/9bT7sb
 
 ### <u>Práctica 1</u>
 
-![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/EC/Prácticas/2.png)
+![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/EC/Prácticas/Fotos/2.png)
 
 #### 
 
@@ -294,7 +294,7 @@ El ensamblador emite código máquina conforme traduce, ocupando posiciones (byt
 
 Los ficheros **.o** no son legibles, ya que contiene código máquina, pero sí se puede desensamblar:
 
-![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/EC/Prácticas/3.png)
+![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/EC/Prácticas/Fotos/3.png)
 
 #### Ejercicio 3: objdump y nm
 
@@ -600,3 +600,8 @@ acabar_L:
 
 ### <u>Práctica 2</u>
 
+Para esta práctica usaremos el último código de la parte anterior
+
+#### 5.1. Sumar N enteros sin signo de 32 bits sobre dos registros de 32 bits usando uno de ellos como acumulador de acarreos (N=16)
+
+En su forma actual **suma.s** ya permite un tamaño variable de la lista. La primera modificación que podemos hacer es cambiar la lista de nueve elementos a una lista que repita 16 veces el número 1. Podemos salvarlo con el nombre **medias.s** y ejecutarlo para comprobar si *./media; echo $?* devuelve 16.
