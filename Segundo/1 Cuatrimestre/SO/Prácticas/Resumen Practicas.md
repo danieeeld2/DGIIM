@@ -149,7 +149,7 @@ Veamos ahora algunas opciones de la orden change:
 
 | Opciones                    | Descripción                                                  |
 | --------------------------- | ------------------------------------------------------------ |
-| change -d ult_dia usuario   | Fcha del último cambio de password                           |
+| change -d ult_dia usuario   | Fecha del último cambio de password                          |
 | change -m min_dias usuario  | Nº días que han de pasar para cambiar la contraseña          |
 | change -M max_dias usuario  | Nº días máximo que puede estar la misma contraseña sin cambiarla |
 | change -W warn_dias usuario | Nº días antes de que la contraseña expire                    |
