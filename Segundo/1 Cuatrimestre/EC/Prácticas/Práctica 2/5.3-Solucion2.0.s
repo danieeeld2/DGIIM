@@ -32,14 +32,15 @@ suma:
 	mov  $0, %r8d		# Hacemos 0 r8d
 	mov  $0, %r9d		# Hacemos 0 r9d
 .Lbucle:
-	mov  (%rdi,%rsi,4), %r8d	# Copiamos el valor del vector en r8d
-	mov   %r8d, %r9d		# Copiamos r8d en r9d
-	sar   $31, %r9d			# Desplazamiento aritmético a la derecha. Nos quedamos con el bit de signo
-	add   %r8d, %eax		# Almacenamos la suma de la parte baja en eax
-	adc   %r9d, %edx		# Almacenamos la suma de la parte alta, más el acarreo, si existe, en edx
+	mov  (%rdi,%rsi,4), %eax	# Copiamos el valor del vector en r8d
+	cltd  				# eax --> edx:eax
+	add   %eax, %r8d		# Almacenamos la suma de la parte baja en eax
+	adc   %edx, %r9d		# Almacenamos la suma de la parte alta, más el acarreo, si existe, en edx
 	inc   %rsi			# Incrementa el valor de rsi en 1
 	cmp   %rsi,%rcx			# Compara el valor de los dos registros
 	jne   .Lbucle			# Se salta si rsi==rcx (fin del bucle)
+	mov   %r8d, %eax		# Copiamos r8d en eax (Resultado de la parte baja)
+	mov   %r9d, %edx		# Copiamos r9d en edx (Resultado de la parte alta)
 
 	ret
 
