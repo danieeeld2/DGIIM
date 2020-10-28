@@ -1,0 +1,1 @@
+En cada carpeta de práctica se encuentra los arhivos originales y la modificación realizada para la solución final de los mismos. Para ver el desarrollo llevvado a cabo, leer Resumen Práctica.md de la sesión correspondiente, donde se explica paso a paso el razonamiento llevado a cabo

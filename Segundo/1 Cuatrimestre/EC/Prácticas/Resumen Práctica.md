@@ -604,4 +604,150 @@ Para esta práctica usaremos el último código de la parte anterior
 
 #### 5.1. Sumar N enteros sin signo de 32 bits sobre dos registros de 32 bits usando uno de ellos como acumulador de acarreos (N=16)
 
-En su forma actual **suma.s** ya permite un tamaño variable de la lista. La primera modificación que podemos hacer es cambiar la lista de nueve elementos a una lista que repita 16 veces el número 1. Podemos salvarlo con el nombre **medias.s** y ejecutarlo para comprobar si *./media; echo $?* devuelve 16.
+En su forma actual **suma.s** ya permite un tamaño variable de la lista. A partir de ahora trabajaremos en un nuevo fichero llamado **media.s**
+
+El primer paso es copiar el contenido de **suma.s** en **media.s**. A continuación, la primera modificación que podemos llevar a cabo es cambiar la expresión de la lista por una en la que aparezca el número 1 repetido 16 veces.
+
+```assembly
+.section .data
+
+/*Cambiamos la lista original a una lista que repite 16 veces el 1*/
+
+lista:      .int 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+longlista:  .int (.-lista)/4
+```
+
+Podemos comprobar que es correcto mediante la siguiente secuencia de comandos en terminal:
+
+```bash
+$ gcc media.s -o media -no-pie -nostartfiles	# Sin sección .start
+$ ./media
+$ echo $?
+16
+```
+
+**¿Qué valor mínimo habría que repetir 16 veces para que se produzca acarreo**
+
+Tenemos que el valor mínimo para que se produzca acarreo al sumar 16 veces es el **0x1000 0000**. Esto es facil de ver sumando mentalmente, pues en las primeras 15 sumas el resultado que tendríamos sería **0xf000 0000**, pero, si volvemos a sumar **0x1000 0000**, el resultado sería **0x0001 0000 0000**, que ya son más de 32 bits, y, entonces, truncaría en los 32 primeros bits, quedando de resultado el **0x0000 0000**.
+
+Podemos comprobarlo facilmente, realizando el siguiente cambio en **media.s**:
+
+```assembly
+.section .data
+lista:		.int 0x10000000, 0x10000000, 0x10000000, 0x10000000, 
+            .int 0x10000000, 0x10000000, 0x10000000, 0x10000000, 
+            .int 0x10000000, 0x10000000, 0x10000000, 0x10000000, 
+            .int 0x10000000, 0x10000000, 0x10000000, 0x10000000
+longlista:	.int (.-lista)/4
+```
+
+```bash
+$ gcc media.s -o media -no-pie -nostartfiles	# Sin sección .start
+$ ./media
+$ echo $?
+0
+```
+
+**¿Se produce acarreo usando 0x0fff ffff?**
+
+Modificamos nuevamente el archivo **media.s**:
+
+```assembly
+.section .data
+lista:		.int 0x0fffffff, 0x0fffffff, 0x0fffffff, 0x0fffffff
+            .int 0x0fffffff, 0x0fffffff, 0x0fffffff, 0x0fffffff
+            .int 0x0fffffff, 0x0fffffff, 0x0fffffff, 0x0fffffff
+            .int 0x0fffffff, 0x0fffffff, 0x0fffffff, 0x0fffffff
+longlista:	.int (.-lista)/4
+```
+
+```bash
+$ gcc media.s -o media -no-pie -nostartfiles	# Sin sección .start
+$ ./media
+$ echo $?
+240
+```
+
+Notemos que al pasar el calor **0x0fff ffff** a binario sería **0b1111111111111111111111111111**, que, si lo pasamos a decimal, sería **4294967280**, que es un valor totalmente distinto, y mucho más alto, al que devuelve. Para comprobar que está sucediendo, vamos a depurar con ***gdb***.
+
+El primer paso es descomentar las funciones **imprim_C** y **acabar_C**, para que el compilador las tome como líneas de código. Una vez hecho eso:
+
+```bash
+$ gcc -g media.s -o media -no-pie -nostartfiles
+$ gdb media
+(gdb)break 41	# El inicio de la subrutina bucle
+Punto de interrupción 1 at 0x7ffff7de5f20: file init-first.c, line 44.
+(gdb)run
+suma = 4294967280 = 0xfffffff0 hex
+```
+
+Como observamos, es el valor que esperábamos obtener. Veamos ahora que ocurría al sumar 16 veces el dato **0x1000 0000**.
+
+```bash
+$ ./media
+suma = 0 = 0x0 hex
+```
+
+Seguimos viendo que se pierde el bit de acarreo, por lo que vamos a tratar de solucionarlo. Para ello, lo que haremos será almacenar el acarreo en otro registro, el cual, luego concatenaremos y cambiaremos el resultado a 64 bits. Para ello, es necesario usar la orden **JNC** para saber cuando hay que incrementar el acarreo:
+
+```assembly
+suma:
+	xor %eax, %eax			#Pone el registro a 0
+	xor %ecx, %ecx			#Pone el registro a 0
+	xor %edx, %edx			#Pone el registro a 0
+.Lbucle:
+	cmp %rcx, %rsi		#Compara el valor de los dos registros
+	je .Lfin	#Salta si la comparación anterior resulta en igualdad (rsi==rcx)
+	add (%rdi,%rcx,4), %eax	#(%rdi,%rcx,4)=(%rdi,%rcx,4)+eax 
+							#(%rdi,%rcx,4) es una posición del vector
+	jnc .Lsin_acarreo		#Salta si no hay acarreo en la operación anterior
+	inc %edx			#Aumenta el valor de edx en 1
+.Lsin_acarreo:
+	inc %rcx			#Aumenta el valor de rcx en 1
+	jmp .Lbucle			#Salta
+.Lfin:
+	ret	
+```
+
+También, vamos a tener qie cambiar el tipo de resultado a **.quad**, para que la salida tenga de tamaño 8 bytes:
+
+```assembly
+.section .data
+lista:		.int 0xffffffff, 0xffffffff
+resultado: .quad 0
+```
+
+Ahora, para concatenar los registros **edx:eax**, tenemos que:
+
+```assembly
+mov %eax, resultado
+mov %edx, resultadotrabajar:
+	mov     $lista, %rdi
+	mov  longlista, %esi
+	call suma		
+	mov  %eax, resultado
+	mov  %edx, resultado+4		# Movemos offset
+	ret
+```
+
+Finalmente, modificamos imprime_C para que nos muestre por pantalla un resultado de 64 bits:
+
+```assembly
+imprim_C:			# requiere libC
+	mov   $formato, %rdi
+	mov   resultado,%rsi
+	mov   resultado,%rdx
+	xor   %eax, %eax	
+	call  printf		# == printf(formato, res, res);
+	ret
+```
+
+Para comprobar que funciona, simplemente:
+
+```bash
+$ gcc media.s -o media -no-pie -nostartfiles
+$ ./media
+suma = 8589934590 = 0x00000001fffffffe
+```
+
+**Para ver el programa completo ir a:** 
