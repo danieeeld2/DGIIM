@@ -19,7 +19,7 @@
 #elif TEST==8
 	.int 0xF8000000, 0xF8000000, 0xF8000000, 0xF8000000
 #elif TEST==9
-	.int 0xF7FFFFFF. 0xF7FFFFFF, 0xF7FFFFFF, 0xF7FFFFFF
+	.int 0xF7FFFFFF, 0xF7FFFFFF, 0xF7FFFFFF, 0xF7FFFFFF
 #elif TEST==10
 	.int 100000000, 100000000, 100000000, 100000000
 #elif TEST==11
@@ -50,7 +50,9 @@
 			.endr
 longlista:	.int   (.-lista)/4
 resultado:	.quad   0
-  formato: 	.asciz	"suma = %lld = 0x%16llx\n"
+  formato: 	.ascii "resultado \t =   %18ld (sgn)\n"
+  		.ascii "\t\t = 0x%18lx (hex)\n"
+  		.asciz "\t\t = 0x %08x %08x\n"
 
 .section .text
 _start: .global _start
