@@ -777,6 +777,8 @@ suma:
 
 La orden **adc** toma el valor del acarreo y lo suma al destino junto a otro valor que pasemos. De esra forma, conseguimos sumar el valor del acarreo en la parte significativa y el resto en la menos significativa. 
 
+**Fichero completo:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%202/5.2-Solucion.s
+
 **<u>Inciso:</u>**
 
 Antes de probar si esto funciona, notemos que a lo largo de la sesión se nos pide probar como responde el programa dependiendo de la inicializaciń del dato lista. Para evitar estar perdiendo el tiempo  reescribiendo la inicialización, existen varios métodos para aligerar el cambio de inicialización, como:
@@ -887,6 +889,10 @@ Probemos ahora a hacer una batería de test. Para ello usaremos la script vista 
   			.asciz "\t\t = 0x %08x %08x\n"
 ```
 
+**Fichero completo:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%202/5.2-ConTest.s
+
+**Script**: https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%202/5.2-test.sh
+
 Al ejecutar el script obtenemos:
 
 ```bash
@@ -953,3 +959,174 @@ __TEST09__-----------------------------------
 Como vemos, el **test 9** simplemente sirve para eliminar, indirectamente el ejecutable. Por otro lado, fijate en que en el **test 8** hay varios warnings. Esto se debe a que habíamos colocado un valor que no cabía en 32 bits, por lo que lo trunca para así poder realizar sumas de números de 32 bits.
 
 El **test 5**, pese a que no da error, es erróneo, ya que nuestro programa no trabaja con signos.
+
+#### 5.3. Sumar N enteros con signo de 32 bits sobre dos registros de 32 bits (mediante extesión natural del signo) (N=16)
+
+Partimos nuevamente del archivo original, sin modificar y trabajemos desde 0 para ir repasando.
+
+**Archivo:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%202/5.1-Original.s
+
+Comenzamos haciendo la siguiente serie de cambios:
+
+```assembly
+.section .data
+	lista:          .int    -1, -1 
+	resultado:		.quad	0	# Necesitamos 32+32 bits
+	formato: 	.asciz	"suma = %lld = 0x%16llx\n"
+# ------------------- #
+
+trabajar:
+	mov     $lista, %rdi	# Contiene la lista
+	mov  longlista, %rcx	# Contiene la longitud de la lista
+	call suma		# == suma(&lista, longlista);
+	mov  %eax, resultado
+	mov  %edx, resultado+4	# Para que se copien en la parte superior, que es la que nos interesa. +4 significa que se salta 4 bytes
+	ret
+
+#####################################################
+# long long suma(int *lista, int n)
+#    edx:eax	       rdi   esi
+####################################################
+
+suma:
+	mov  $0, %eax		# Hacemos 0 eax
+	mov  $0, %edx		# Hacemos 0 edx
+	mov  $0, %rsi		# Hacemos 0 esi
+	mov  $0, %r8d		# Hacemos 0 r8d
+	mov  $0, %r9d		# Hacemos 0 r9d
+.Lbucle:
+	mov  (%rdi,%rsi,4), %eax	# Copiamos el valor del vector en eax
+	mov   %eax, %edx		# Copiamos eax en edx
+	sar   $31, %edx			# Desplazamiento aritmético a la derecha. Nos quedamos con el bit de signo
+	add   %eax, %r8d		# Almacenamos la suma de la parte baja en r8d
+	adc   %edx, %r9d		# Almacenamos la suma de la parte alta, más el acarreo, si existe, en r9d
+	inc   %rsi			# Incrementa el valor de rsi en 1
+	cmp   %rsi,%rcx			# Compara el valor de los dos registros
+	jne   .Lbucle			# Se salta si rsi==rcx (fin del bucle)
+	mov   %r8d, %eax		# La parte baja del resultado la dejamos en eax
+	mov   %r9d, %edx		# La parte alta del resultado la dejamos en edx
+
+	ret
+
+##################################################################################
+
+imprim_C:			# requiere libC
+	mov   $formato, %rdi
+	mov   resultado,%rsi
+	mov   resultado,%rdx
+	mov          $0,%eax	# varargin sin xmm
+	call  printf		# == printf(formato, res, res);
+	ret
+
+
+```
+
+ **Archivo final**: https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%202/5.3-Solucion.s
+
+Al igual que el apartado anterior, podemos modificar la lista para hacer un test, que nos permita comprobar que el funcionamiento del programa es el correcto. Para ello, realizamos el siguiente cambio:
+
+```assembly
+.section .data
+#ifndef TEST
+#endif
+	.macro linea
+#if TEST==1
+	.int -1 ,-1 ,-1, -1
+#elif TEST==2
+	.int 0x04000000, 0x04000000, 0x04000000, 0x04000000
+#elif TEST==3
+	.int 0x08000000, 0x08000000, 0x08000000, 0x08000000
+#elif TEST==4
+	.int 0x10000000, 0x10000000, 0x10000000, 0x10000000
+#elif TEST==5
+	.int 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff
+#elif TEST==6
+	.int 0x80000000, 0x80000000, 0x80000000, 0x80000000
+#elif TEST==7
+	.int 0xF0000000, 0xF0000000, 0xF0000000, 0xF0000000
+#elif TEST==8
+	.int 0xF8000000, 0xF8000000, 0xF8000000, 0xF8000000
+#elif TEST==9
+	.int 0xF7FFFFFF. 0xF7FFFFFF, 0xF7FFFFFF, 0xF7FFFFFF
+#elif TEST==10
+	.int 100000000, 100000000, 100000000, 100000000
+#elif TEST==11
+	.int 200000000, 200000000, 200000000, 200000000
+#elif TEST==12
+	.int 300000000, 300000000, 300000000, 300000000
+#elif TEST==13
+	.int 2000000000, 2000000000, 2000000000, 2000000000
+#elif TEST==14
+	.int 3000000000, 3000000000, 3000000000, 3000000000
+#elif TEST==15
+	.int -100000000, -100000000, -100000000, -100000000
+#elif TEST==16
+	.int -200000000, -200000000, -200000000, -200000000
+#elif TEST==17
+	.int -300000000, -200000000, -200000000, -200000000
+#elif TEST==18
+	.int -2000000000, -2000000000, -2000000000, -2000000000
+#elif TEST==19
+	.int -3000000000, -3000000000, -3000000000, -3000000000
+#else
+	.error "Definir TEST valido"
+#endif
+	.endm
+			
+	lista:		.irpc i,1234
+			linea
+			.endr
+    formato: 	.ascii "resultado \t =   %18ld (sgn)\n"
+```
+
+**Archivo modificado completo**: https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%202/5.3-ConTest.s
+
+Para ponerlo en marcha, usaremos la siguiente script:
+
+```bash
+#!/bin/bash
+
+for i in $(seq 1 19); do
+	rm salida
+	gcc -x assembler-with-cpp -D TEST=$i -no-pie -nostartfiles 5.3-ConTest.s -o salida
+	printf "__TEST%02d__%35s\n" $i "" | tr " " "-" ; ./salida
+done
+```
+
+**Script**: https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%202/5.3-test.sh
+
+Si lo ejecutamos, veremos claramente que el **TEST14** y el **TEST19** son erróneos. 
+
+```bash
+__TEST14__-----------------------------------
+resultado 	 =         -20719476736 (sgn)
+		 = 0x  fffffffb2d05e000 (hex)
+		 = 0x 00000010 2d05e000
+__TEST19__-----------------------------------
+resultado 	 =         -32000000000 (sgn)
+		 = 0x  fffffff88ca6c000 (hex)
+		 = 0x 00000010 8ca6c000
+5.3-ConTest.s: Mensajes del ensamblador:
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+5.3-ConTest.s:50: Aviso: valora 0xffffffff4d2fa200 truncado a 0x4d2fa200
+
+```
+
+Por un lado, el 14 nos da un resultado negativo, cuando se trataba de una suma de positivos. Este error se debe a que se ha producido un desbordamiento, es decir, hemos superado el número más grande que podíamos representar. Por otro lado, en el 19, el número eleigo no cabe en un registro de 32 bits, por lo que el compilador lo trunca.
+
+#### 5.4. Media y resto de N enteros con signo de 32 bits calculada usando registros de 32 bits (N=16)
+
