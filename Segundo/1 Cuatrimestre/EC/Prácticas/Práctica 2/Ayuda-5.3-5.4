@@ -1,0 +1,68 @@
+Hasta el momento habíamos trabajado con valores sin signos. Si ahora quisiérmaos representar números negativos, tendríamos que usar el complemento A2:
+
+Para 32 bits:
+
+-1 ------>  1  -------> 0x00 00 00 01  (hexadecimal)
+	Complemento---> 0xff ff ff fe --> e ---->  1110
+	Sumo 1--------> +	    1 --> 1 ---->     1
+                       ---------------------------------
+			0xff ff ff ff --> e+ --->  1111
+
+max -------------> 0xff ff ff ff ---> 32 bits unsigned
+max -------------> 0x7f ff ff ff ---> 32 bits unsigned  ---> 7 ---> 0111 ---> El primer bit debe ser 0 para ser positivo
+
+
+Para 64 bits es lo mismo, pero rellenando con 0 a la izquierda:
+
+-1-1 ------>  1  -------> 0x00 00 00 00 00 00 00 01  (hexadecimal)
+	  Complemento---> 0xff ff ff ff ff ff ff fe --> e ---->  1110
+	  Sumo 1--------> +			  1 --> 1 ---->     1
+			-----------------------------------------------
+			  0xff ff ff ff ff ff ff ff --> e+1 -->  1111
+			   ------------ -----------
+				edx	    eax
+
+
+#####  HEXADECIMAL ######
+#	0000	0	#
+#	0001	1	#
+#	0010	2	#
+#	0011	3	#
+#	0100	4	#
+#	0101	5	#
+#	0110	6	#
+#	0111	7	#
+#	1000	8	#
+#	1001	9	#
+#	1010	A	#
+#	1011	B	#
+#	1100	C	#
+#	1101	D	#
+#	1110	E	#
+#	1111	F	#
+#########################
+
+
+Como pasar de 32 a 64 bits:
+Existen varias maneras, veamos algunas de ellas:
+
+- Usando instrucciones que lo hacen automáticamente por nosotros
+	c_t_  _ se debe sustituir por b,w,l,d,q (conver _ to _)
+	8 --> 16 bits --> cbtw 		al ---> ax
+	Interpreta automáticamente si es positivo, en cuyo caso rellena con 0 la parte alta de ax
+				   si es negativo, se rellena con 1 la parte alta de ax
+
+	32 --> 64 bits --> cltd		eax --> edx:eax
+
+- Hacer lo mismo que el anterior, pero con instrucciones normales
+	mov %eax, %edx	#Copia del mismo número de 32 bits
+	sar  $31, %edx  #Despalamiento aritmético a la derecha para quedarnos con el bit de signo
+
+	Este método tiene la ventaja de que nos deja elegir el registro en el que trabajamos
+	Curiosidad: La orden sar tal como la hemos escrito, pasa el bit mas significativo al que menos y rellena el resto de bits con su valor
+
+- Usando el comando movs:
+	movs_ _, donde _ se debe sustituir por b,w,l,d,q
+
+	El equivalente para conseguir eax --> edx:eax, que es movsld, no existe, luego se utiliza el que se aproxima más, que es movlq eax --> rax
+ 
