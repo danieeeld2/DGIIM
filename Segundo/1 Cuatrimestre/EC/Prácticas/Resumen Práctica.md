@@ -600,9 +600,9 @@ acabar_L:
 
 ### <u>Práctica 2</u>
 
-Para esta práctica usaremos el último código de la parte anterior
-
 #### 5.1. Sumar N enteros sin signo de 32 bits sobre dos registros de 32 bits usando uno de ellos como acumulador de acarreos (N=16)
+
+Empezamos tomando el **archivo necesario para trabajar** esta sección: https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%202/5.1-Original.s
 
 En su forma actual **suma.s** ya permite un tamaño variable de la lista. A partir de ahora trabajaremos en un nuevo fichero llamado **media.s**
 
@@ -750,4 +750,206 @@ $ ./media
 suma = 8589934590 = 0x00000001fffffffe
 ```
 
-**Para ver el programa completo ir a:** 
+**Para ver el programa completo ir a:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%202/5.1-Solucion.s
+
+#### 5.2. Sumar N enteros si signo de 32 bits sobre dos registros de 32 bits mediante extesión de ceros (N=16)
+
+Sabemos que un número E sin signo de N bits puede ser extendido a N+M bits sin más que añadirle M bits a cero como parte más significativa (a la izquierda). En nuestro caso, para este ejercicio, deseamos sumar al acumulador **edx:eax**, de 32+32 bits, un elemento de la lista, E, de 32 bits. Como E no tiene signo, podemos extenderlo a 64 bits imaginando 32 bits a la izquierda. Para sumar estos dos números en doble precisión (haciendo suma de 32 bits), comenzamos sumando la parte menos significativa, puesto que puede haber acarreo, y luego sumamos las partes significativas.
+
+Simplemente, tenemos que realizar un simple cambio en la línea de código:
+
+```assembly
+suma:
+	xor %eax, %eax			#Pone el registro a 0
+	xor %ecx, %ecx			#Pone el registro a 0
+	xor %edx, %edx			#Pone el registro a 0
+.Lbucle:
+	cmp %rcx, %rsi				#Compara el valor de los dos regustros
+	je .Lfin					#Salta si la comparación anterior (rsi==rcx)
+	add (%rdi,%rcx,4), %eax		#(%rdi,%rcx,4)=(%rdi,%rcx,4)+eax, 
+								#donde (%rdi,%rcx,4) es una posición del vector
+	adc $0, %edx				#edx=edx+0+cf
+	inc %rcx					#Aumenta en 1 rl valor de rcx
+	jmp .Lbucle					#Salta
+.Lfin:
+	ret	
+```
+
+La orden **adc** toma el valor del acarreo y lo suma al destino junto a otro valor que pasemos. De esra forma, conseguimos sumar el valor del acarreo en la parte significativa y el resto en la menos significativa. 
+
+**<u>Inciso:</u>**
+
+Antes de probar si esto funciona, notemos que a lo largo de la sesión se nos pide probar como responde el programa dependiendo de la inicializaciń del dato lista. Para evitar estar perdiendo el tiempo  reescribiendo la inicialización, existen varios métodos para aligerar el cambio de inicialización, como:
+
+- Dejar comentada una línea de cada ejemplo para poder copiar y pegarla rapidamente las veces que la necesitemos
+
+- Dejar comentada la inicialización completa y descomentarla cuando sea necesario
+
+- Usar las directivas **irpc** y **.macro**:
+
+  ```assembly
+  .section .data
+  	.macro linea
+  		#	.int 1,1,1,1
+  		#	.int 0x0fffffff, 0x0fffffff, 0x0fffffff, 0x0fffffff
+  		...  ...
+  	.endm
+  lista: .irpc i,1234
+  	    linea
+  	    .endr
+  	    
+  # Basta con descomentar la línea que necesites
+  ```
+
+- La estructura aterior se puede ampliar con condicionales:
+
+  ```assembly
+  .section .data
+  #ifndef TEST
+  #define TEST 9
+  #endif
+  	.macro
+  	#if TEST==1
+  		.int 1,1,1,1
+  	#elif TEST==2
+  		.int 0x0fffffff, 0x0fffffff, 0x0fffffff, 0x0fffffff
+  	#else
+  		.error "Definir un TEST dentro del rango aceptado"
+  	#endif
+  	.endm
+  ```
+
+  De esta forma se pueden crear test para comprobar el funcionamiento del programa:
+
+  ```bash
+  for i in $(seq 1 9); do 
+  	rm unsigned
+  	gcc -x assembler-with-cpp -D TEST=$i -no-pie -nostartfiles media.s -o media
+  	printf "____TEST%02d____%35s\n" $i " " | tr " " "-"; ./media
+  done
+  ```
+
+  Muy importante quitar comentarios con '#' y quitar la línea **#define TEST valor**.
+
+Volviendo a nuestro programa, veamos que funciona:
+
+```bash
+$ gcc media.s -o media -no-pie -nostartfiles
+$ ./media
+suma = 8589934590 = 0x00000001fffffffe
+```
+
+Probémoslo para otra inicalización, por ejemplo la lista de 16 veces **0x0fff ffff**:
+
+```bash
+$ gcc media.s -o media -no-pie -nostartfiles
+$ ./media
+suma = 4294967280 = 0x00000000fffffff0
+```
+
+Probemos ahora a hacer una batería de test. Para ello usaremos la script vista anteriormente y la siguiente batería:
+
+```assembly
+.section .data
+#ifndef TEST
+#endif
+	.macro linea
+#if TEST==1
+	.int 1, 1, 1, 1
+#elif TEST==2
+	.int 0x0fffffff, 0x0fffffff, 0x0fffffff, 0x0fffffff
+#elif TEST==3
+	.int 0x10000000, 0x10000000, 0x10000000, 0x10000000
+#elif TEST==4
+	.int 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff
+#elif TEST==5
+	.int -1, -1, -1, -1
+#elif TEST==6
+	.int 200000000, 200000000, 200000000, 200000000
+#elif TEST==7
+	.int 300000000, 300000000, 300000000, 300000000
+#elif TEST==8
+	.int 5000000000, 5000000000, 5000000000, 5000000000
+#else
+	.error "Definir TEST valido"
+#endif
+	.endm
+			
+	lista:		.irpc i,1234
+			linea
+			.endr
+
+	longlista:	.int (.-lista)/4
+	resultado:	.quad   0
+  	formato: 	
+  			.ascii "resultado \t =   %18lu (uns)\n"
+  			.ascii "\t\t = 0x%18lx (hex)\n"
+  			.asciz "\t\t = 0x %08x %08x\n"
+```
+
+Al ejecutar el script obtenemos:
+
+```bash
+rm: no se puede borrar 'unsigned': No existe el archivo o el directorio
+__TEST01__-----------------------------------
+resultado 	 =                   16 (uns)
+		 = 0x                10 (hex)
+		 = 0x 00000010 00000000
+__TEST02__-----------------------------------
+resultado 	 =           4294967280 (uns)
+		 = 0x          fffffff0 (hex)
+		 = 0x 00000010 00000000
+__TEST03__-----------------------------------
+resultado 	 =           4294967296 (uns)
+		 = 0x         100000000 (hex)
+		 = 0x 00000010 00000000
+__TEST04__-----------------------------------
+resultado 	 =          68719476720 (uns)
+		 = 0x         ffffffff0 (hex)
+		 = 0x 00000010 00000000
+__TEST05__-----------------------------------
+resultado 	 =          68719476720 (uns)
+		 = 0x         ffffffff0 (hex)
+		 = 0x 00000010 00000000
+__TEST06__-----------------------------------
+resultado 	 =           3200000000 (uns)
+		 = 0x          bebc2000 (hex)
+		 = 0x 00000010 00000000
+__TEST07__-----------------------------------
+resultado 	 =           4800000000 (uns)
+		 = 0x         11e1a3000 (hex)
+		 = 0x 00000010 00000000
+5.2-ConTest.s: Mensajes del ensamblador:
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+5.2-ConTest.s:28: Aviso: valora 0x12a05f200 truncado a 0x2a05f200
+__TEST08__-----------------------------------
+resultado 	 =          11280523264 (uns)
+		 = 0x         2a05f2000 (hex)
+		 = 0x 00000010 00000000
+5.2-ConTest.s: Mensajes del ensamblador:
+5.2-ConTest.s:28: Error: Definir TEST valido
+5.2-ConTest.s:28: Error: Definir TEST valido
+5.2-ConTest.s:28: Error: Definir TEST valido
+5.2-ConTest.s:28: Error: Definir TEST valido
+__TEST09__-----------------------------------
+./test.sh: línea 6: ./unsigned: No existe el archivo o el directorio
+
+```
+
+Como vemos, el **test 9** simplemente sirve para eliminar, indirectamente el ejecutable. Por otro lado, fijate en que en el **test 8** hay varios warnings. Esto se debe a que habíamos colocado un valor que no cabía en 32 bits, por lo que lo trunca para así poder realizar sumas de números de 32 bits.
+
+El **test 5**, pese a que no da error, es erróneo, ya que nuestro programa no trabaja con signos.
