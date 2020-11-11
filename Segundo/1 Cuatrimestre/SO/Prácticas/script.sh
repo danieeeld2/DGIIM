@@ -12,5 +12,9 @@ fi
 
 top -p $1 -b -n 1 > top.txt # Redireccionamos la salida
 
+# Ejecutar fuera de la script at 25.12.2020
+# at> ./script <pid>
+# ctrl+D
+
 exit
 
