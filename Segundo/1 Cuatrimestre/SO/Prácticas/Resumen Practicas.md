@@ -4,6 +4,8 @@
 
 ------
 
+## <u>MÓDULO 1</u>
+
 ## <u>Sesión 1</u>
 
 Convertirse en administrador del sistema implica entrar al mismo como usuario **root**.
@@ -29,7 +31,7 @@ Un usuario es una "persona" que trabaja en el sistema mediante una cuenta de usu
 
 - Un identificador de usuario (**UID**), que es un número entero que le asigna el sistema, internamente, a cada usuario y que lo representa.
 
-- El grupo o grupos a los que pertenece (**GID**). Todo usuario tiene asignado un **grupo principal**, que aparece en el archivo ***/etc/psswd***, pero puede pertenecer a más de un grupo, loscuales se llaman **grupos suplementarios**, que se encuentra en ***/etc/group***.
+- El grupo o grupos a los que pertenece (**GID**). Todo usuario tiene asignado un **grupo principal**, que aparece en el archivo ***/etc/passwd***, pero puede pertenecer a más de un grupo, loscuales se llaman **grupos suplementarios**, que se encuentra en ***/etc/group***.
 
   
 
@@ -143,18 +145,18 @@ Como hemos comentado anteriormente,  podemos establecer restricciones de envejec
 
 
 
-Los valores los establece el administrador con las órdenes **change** o con **passwd**. Recordemos que el archivo **/etc/login.defs** tiene los valores por defecto.
+Los valores los establece el administrador con las órdenes **chage** o con **passwd**. Recordemos que el archivo **/etc/login.defs** tiene los valores por defecto.
 
 Veamos ahora algunas opciones de la orden change:
 
-| Opciones                    | Descripción                                                  |
-| --------------------------- | ------------------------------------------------------------ |
-| change -d ult_dia usuario   | Fecha del último cambio de password                          |
-| change -m min_dias usuario  | Nº días que han de pasar para cambiar la contraseña          |
-| change -M max_dias usuario  | Nº días máximo que puede estar la misma contraseña sin cambiarla |
-| change -W warn_dias usuario | Nº días antes de que la contraseña expire                    |
-| change -I inac_dias usuario | Nº de días después de que la contraseña expire               |
-| change -E exp_dias usuario  | Fecha  en la cuenta expira y se deshabilita automáticamente  |
+| Opciones                   | Descripción                                                  |
+| -------------------------- | ------------------------------------------------------------ |
+| chage -d ult_dia usuario   | Fecha del último cambio de password                          |
+| chage -m min_dias usuario  | Nº días que han de pasar para cambiar la contraseña          |
+| chage -M max_dias usuario  | Nº días máximo que puede estar la misma contraseña sin cambiarla |
+| chage -W warn_dias usuario | Nº días antes de que la contraseña expire                    |
+| chage -I inac_dias usuario | Nº de días después de que la contraseña expire               |
+| chage -E exp_dias usuario  | Fecha  en la cuenta expira y se deshabilita automáticamente  |
 
 
 
@@ -234,7 +236,7 @@ La información que se muestra en ***/etc/fstab*** es muy útil para comprender 
 Otro directorio muy útil para obtener información es el **/proc**, el cual soporta el sistemas de archivos virtual **proc**. Este directorio contiene archivos de texto que permiten acceder a la información de estado del sistema. Los archivos mas interesantes que podemos encontrar son:
 
 - **/proc/filesystems**: Enumera todo los tipos de sistemas de archivos disponibles
-- **/proc/mounts**: Muestra los sistemas de archivos mostrados actualmente
+- **/proc/mounts**: Muestra los sistemas de archivos montados actualmente
 
 
 
@@ -1926,3 +1928,180 @@ $ su prueba
 You (prueba) are not allowed to use this program (crontab)See crontab(1) for more information
 ```
 
+
+
+## <u>MÓDULO 2</u>
+
+Para el módulo 2 utilizaremos bastante **C** y **bash**, por lo que te recomiendo tener la siguiente documentación a mano:
+
+- Documentación de **libc** o **glibc**, que contiene las llamadas al sistema, la biblioteca de matemáticas y las hebras POSIX. Podemos consultar la documentación en **libc.info** o **libc.html**.
+- Manual de C para consultar diferencias con C++
+- **man** como manual de línea del sistema
+
+Destacar para la orden man la siguiente tabla, que nos permitirá localizar información más rápidamente
+
+```bash
+$ man <numero_seccion> <orden>
+```
+
+![3](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/3.png)
+
+**NOTA 1:** Como se trata de C, compilaremos con **gcc** (no g++). Habreis visto su uso en la asignatura **Estructura de Computadoras**
+
+**NOTA 2:** Todas estasfunciones. en caso de error, devuelven en la variable **errno** el código de error producido, el cual se puede imprimir con ayuda de la función **perror**. Esta función devuelve un literal descriptivo de las circunstancias del error y se le puede pasar como argumento un mensaje que se pueda pasar por pantalla junto al error del sistema. En el archivo **<errno.h>** se encuentra una lista completa de todas las circunstancias de error contempladas por todas las llamadas al sistema.
+
+Otras opciones son:
+
+```c
+#include <err.h>
+	void err(int eval, const char *fmt, ...);
+#include <stdarg.h>
+	void verr(int eval, const char *fmt, va_list args)
+```
+
+**NOTA 3**: Una orden útil para rastrear la ejecución del programa es **strace**. Ejecuta el programa que se pasa como argumento y proporciona información de las llamadas al sistema que han sido invocadas (junto con el valor de los argumentos y el valor de retorno) y de las señales recibidas.
+
+
+
+## <u>SESIÓN 5</u>
+
+### 3. Entrada/Salida de archivos regulares
+
+La mayor parte de las entradas/salidas (E/S) en UNIX pueden realizarse utilizando solamente 5 llamadas: **open**, **read**, **write**, **lseek** y **close**. Las funciones descritas en esta sección se conocen normalmente como **entrada/salida sin búfer.** La expresión "sin búfer" se refiere a que cada read o write invoca una llamada al sistema en el núcleo y no se almacena en un búfer de la biblioteca.
+
+Para el núcleo, todos los archivos abiertos son identificados por medio de **descriptores de archivos**, que se trata de un entero no negativo. Cuando abrimos un archivo (**open**) que ya existe o creamos uno (**create**) un nuevo archivo, el núcleo devuelve un descriptor de archivo.
+
+Por convenio, la shell de Linux asocia:
+
+- 0 a la entrada estándar de un proceso
+- 1 a la salida estándar
+- 2 a la salida de error estándar
+
+Para realizar un programa conforme al estándar POSIX 2.10, debemos utilizar las siguientes constantes simbólicas ,definidas en <**unistd.h**>: **STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO**
+
+Cada archivo abierto tiene una *posición de lectura/escritura actual* ("***current file offset***"). Está representado por un número no negativo, que mide el número de bytes desde el comienzo del archivo.Las operaciones de lectura y escritura  comienzan noralmente en la posición actual y provocan un incremento de dicha posición, igual al número de bytes leidos o escritos. Por defecto, esta posición se inicializa a 0 cuando se abre un archivo, a menos que se especifique la opción **O_APPEND**. La posición actual de un archiv puede cambiarse llamando al sistema **leek**.
+
+#### Actividad: Trabajo con llamadas de gestión y procesamiento de archivos regulares
+
+Recomiendo, previamente, leer mirar en man las llamadas al sistema de las órdenes anteriores.
+
+**<u>Ejercicio 1</u>**: ¿Qué hace el siguiente programa?. Probad tras la ejecución del programa las siguientes órdenes del shell: **$ cat archivo** y **$ od -c archivo** .
+
+```c
+/*tarea1.c
+Trabajo con llamadas al sistema del Sistema de Archivos ''POSIX 2.10 compliant''
+Probad tras la ejecución del programa: $>cat archivo y $> od -c archivo
+*/
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<stdio.h>
+#include<errno.h>
+
+char buf1[]="abcdefghij";
+char buf2[]="ABCDEFGHIJ";
+
+int main(int argc, char *argv[])
+    int fd;
+if( (fd=open("archivo",O_CREAT|O_WRONLY,S_IRUSR|S_IWUSR))<0) {        printf("\nError %d en open",errno);
+ perror("\nError en open");        
+ exit(-1);
+}
+
+if(write(fd,buf1,10) != 10) {        
+    perror("\nError en primer write");        
+    exit(-1);
+}
+
+if(lseek(fd,40,SEEK_SET) < 0) {        
+    perror("\nError en lseek");
+    exit(-1);
+}
+
+if(write(fd,buf2,10) != 10) {        
+    perror("\nError en segundo write");        
+    exit(-1);
+}
+
+close(fd);
+
+return 0;
+}
+```
+
+
+
+**<u>Ejercicio 2</u>**. Implementa un programa que realice la siguiente funcionalidad. El programa acepta como argumento el nombre de un archivo (*pathname*), lo abre y lo lee en bloques de tamaño 80 Byttes, y crea un archivo de salida, **salida.txt**, en el que debe aparecer la siguiente información:
+
+```
+Bloque 1
+// Aquí van los primeros 80 Bytes del archivo pasado como argumento
+Bloque 2
+// Aquí van los siguientes 80 Bytes del archivo pasado como argumento
+
+...
+
+Bloque 3 
+// Aqui van los siguientes 80 Bytes del archivo pasado como argumento
+```
+
+Si no se pasa un argumento al programa se debe utilizar la entrada estándar como archivo de entrada
+
+**Modificación adicional:** ¿Cómo tendrías que modificar el programa para que una vez finalizada la escritura en el archivo de salida y antes de cerrarlo, pudiésemos inidicar en su primera línea el número de etiquetas "Bloque i" escritas de forma que tuvieran esta apariencia?
+
+```
+El número de bloques es <nº _bloques>
+Bloque 1
+// Aquí van los primeros 80 Bytes del archivo pasado como argumento
+Bloque 2
+// Aquí van los siguientes 80 Bytes del archivo pasado como argumento
+```
+
+
+
+### 4. Metadatos de un archivo
+
+#### 4.1. Tipos de archivos
+
+Linux soporta los siguientes tipos de archivos:
+
+- **Archivo regular:** Contiene datos de cualquier tipo. No existe distinción para el kernel entre los datos binarios o de texto.
+- **Archivo directorio:** Archivo que contiene nombre de otros archivos (incluidos otros directorios) y punteros a información de dichos archivos. Cualquier proceso que tenga permisos de lectura puede leer el contenido de un directorio, pero solo el núcleo puede escribir en un directorio.
+- **Archivo especial de dispositivo de caracteres**
+- **Archivo especial de dispositivo de bloques** : Como los discos duros
+
+(Todos los dispositivos de un sistema están representados por archivos especiales de caracteres o de bloques)
+
+- **FIFO:** Un tipo de archivo utilizado para comunicación entre procesos (IPC).
+- **Enlace simbólico: ** Un tipo de archivo que apunta a otro archivo
+- **Socket: ** Un tipo de archivo usado para comunicación en red entre procesos
+
+#### 4.2. Estructura *stat*
+
+Los metadatos de un archivo, se pueden obtener con la llamada al sistema **stat**, que utiliza la estructura de datos llamadas **stat**, para almacenar dicha información. Utiliza la siguiente representación:
+
+![4](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/4.png)
+
+El valor **st_blocks** da tamaño del fichero en bloques de 512 bytes. El valor **st_blksize** da el tamaño de bloque "preferido" para operaciones de E/S eficientes sobre el sistema de ficheros. 
+
+No todos los sistemas de archivos en Linux implementan todos los campos de hora. Por lo general, **st_atime** es modificado por **mknod(2)**, **utime(2)**, **read(2)**, **write(2)** y **truncate(2)**
+
+Normalmente, **st_mtime** es modificado por **mknod(2)**, **utime(2)**, **read(2)**, **write(2)**. No se cambia por modificaciones en el propietario, grupo, cuenta de enlaces físicos o modo.
+
+Por lo general, **st_ctime** es modificado al escribir o poner información del inodo
+
+![5](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/5.png)
+
+![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/6.png)
+
+#### 4.3. Permisos de acceso a archivos
+
+El valor de **st_mode** codifica además del tipo de archivo, los permisos de acceso del archivo, independientemente del tipo de archivo que se trate. Disponemos de tres categorías: user (**owner**), **group** y **other**, para establecer los permisos de lectura, escritura y ejecución.
+
+- Cada vez que queremos abrir cualquier tipo de archivo (usaremos su pathname o el directorio actual o una variable) tenemos que disponer de permiso de ejecución en cada directorio mencionado en el pathname. Por esto se suele llamar al bit de permiso de ejecución de directorios, bit de acceder
+- El permiso de lectura para un archivo determinado si podemos abrir para la lectura un archivo existente: los flas **O_RDONLY** y **O_RDWR** para la llamada open
+- El permiso de escritura para un archivo determinado si podemos abrir para escritura un archivo existente: los flags **O_WRONLY** y **O_RDWR** para la llamada open
+- Debemos tener permiso de escritura en un archivo para poder especificar el flag **O_TRUNC** en la llamada open
+- No podemos crear un nuevo archivo en un directorio a menos que tengamos permisos de escritura y ejecución de dicho directorio
+- Para borrar un archivo existente necesitamos permisos de escritura y ejecución en el directorio que contiene el archivo. No necesitamos permisos de lectura o escritura en el archivo.
+- El permiso de ejecución para un archivo debe estar activado si queremos ejecutar el archivo usando cualquier función de la familia **exec** o si es una script de un shell. Además, el archivo debe ser regular.
