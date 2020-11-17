@@ -8,7 +8,7 @@
 
 #### Paso de parámetros :
 
-![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/EC/Prácticas/Fotos/1.png)
+![](./Imagenes/1.png)
 
 #### Comandos para programas en C:
 
@@ -114,7 +114,7 @@ Para ver código de C o C++ en ensamblador usar: https://godbolt.org/z/9bT7sb
 
 ### <u>Práctica 1</u>
 
-![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/EC/Prácticas/Fotos/2.png)
+![](./Imagenes/2.png)
 
 #### 
 
@@ -294,7 +294,7 @@ El ensamblador emite código máquina conforme traduce, ocupando posiciones (byt
 
 Los ficheros **.o** no son legibles, ya que contiene código máquina, pero sí se puede desensamblar:
 
-![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/EC/Prácticas/Fotos/3.png)
+![](./Imagenes/3.png)
 
 #### Ejercicio 3: objdump y nm
 
@@ -1130,3 +1130,144 @@ Por un lado, el 14 nos da un resultado negativo, cuando se trataba de una suma d
 
 #### 5.4. Media y resto de N enteros con signo de 32 bits calculada usando registros de 32 bits (N=16)
 
+Analizado directamente en el código. **Ver:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%202/5.4-Solucion.s
+
+
+
+### <u>Práctica 3</u>
+
+#### 2. Convención de llamada SystemV AMD64 ABI![5](./Imagenes/5.png)
+
+![](./Imagenes/6.png)
+
+**Código original:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%203/Ejercicios/suma.s
+
+![](./Imagenes/7.png)
+
+![](./Imagenes/8.png)
+
+![](./Imagenes/9.png)
+
+![](./Imagenes/10.png)
+
+#### 3. Ensamblador en-línea (inline assambley) con asm()
+
+Hay ocasiones en las que puede resultar interesante introducir unas pocas instrucciones de lenguaje ensamblador entre (en-línea con) el código C.
+
+Para ello disponemos del comando asm, el cual, tiene dos posibles modos de utilización:
+
+```
+Básica:	asm("<Sentencia en ensamblador>")
+Extendida: asm("<sentencia asm>":<salidas>:<entradas>:<sobreescritas>)
+```
+
+Aunque en principio, el mecanismo está pensado para una única  sentencia ensamblador, se pueden concatenar varias sentencias, terminando cada una en **\n\t**.
+
+#### Ejercicio 7:suma_07_Casm
+
+En resumidas cuentas, en este ejercicio nos pedían modificar el código C anterior e incluir parte del algoritmo a ensamblador. Recordemos que tenemos que usar la convención *SystemV*. 
+
+**Código en C:**https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%203/Ejercicios/suma.c
+
+El resultado propuesto en clase es el siguiente:
+
+```c
+/* Incluir asm de forma genérica en un código de C */
+
+// Tenemos nuestro código en C
+
+int lista[] = {1, 2, 10,  1,2,0b10,  1,2,0x10};
+int longlista = sizeof(lista)/sizeof(int);
+int resultado = 0;
+
+int suma(int *array, int len){
+	/* Código en C:
+		int i, res = 0;
+		for(int i=0; i<len; i++)
+			res += array[i];
+		return res;
+	*/
+
+	/* En este primer caso, incluimos el código en ensamblador de forma básica,
+	   es decir, incluimos el código sin especificar registros y haciendo toda la 
+	   función en asm
+	*/
+
+	asm("   xor %eax, %eax             \n\t"	// Ponemos registro a 0
+		"   xor %edx, %edx             \n\t"	// Ponemos registro a 0
+		"0: cmp %edx, %esi             \n\t"	// Comparamos los dos registros
+		"   je  if                     \n\t"	// Salta si vale 0, es decir edx = esi
+		"   add (%rdi, %rdx, 4), %eax  \n\t"	// Suma el nuevo elemento
+		"   inc %edx                   \n\t"	// Incrementa el registro en uno
+		"   jmp 0b                     \n\t"	// Vuelve a 0: cmp
+		"1:                            \n\t"	// Sale de la función
+		);
+}
+
+int main(){
+	resultado = suma(lista, longlista);
+}
+```
+
+**Archivo disponible:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%203/Ejercicios/1.c
+
+Como puedes intuir, es bastane difícil ganarle en rendimiento al compilador, por lo que esto es ineficiente. Normalmente, se utiliza simplemente una o un par de líneas de código ensamblador, pero para ello necesitamos coordinarnos con el gcc, porque:
+
+- Se modifican variables
+- Necesitan el valor de alguna variable, constante...
+- Modificación estado CPU
+
+Por ello, utilizamos la forma extendida de asm.
+
+![](./Imagenes/12.png)
+
+![](./Imagenes/11.png)
+
+#### Ejercicio 8: suma_08_Casm
+
+Ahora, vamos a reducir el código ensamblador, limitándolo a aquellas partes más relevantes, que sepamos que es más difícil que el compilador haga por su cuennta a la perfección
+
+```c
+#include<stdlib.h>	// Para exit()
+#include<stdio.h>	// para printf()
+
+int lista[]={1,2,10, 1,2,0b10, 1,2,0x10};
+int longlista=sizeof(lista)/sizeof(int);
+int resultado = 0;
+
+int suma(int *array, int len){
+	int res = 0;
+	/* Las declaraciones e inicializaciones de variables, así como
+	   el manejo del bucle y retorno del valor, lo hace mejor el compilador, luego,
+	   dejamos esa parte esrita en C
+	*/
+	for(int i=0; i<len; ++i){
+		/* La parte más interesante para hacer en ensamblador es la propia suma aritmética.
+		   Como, en principio, no sabemos que registros usa el compilador, lo mejor es
+		   escribir la versión extendida de asm y coordinarnos con el compilador.
+
+		   Recordemos que:
+		   Extendida: asm("<sentencia asm>" : <salidas> : <entradas> : <sobrescritos>)
+		   Salidas: [<nombre ASM >] "=<restricción>" (<nombre C >)
+		   Entradas: [<nombre ASM >] "<restricción>" (<expresión C >)
+		   Sobrescritos: "<reg>" | "cc" | "memory"
+
+		*/
+
+		asm("add (%[a], %[i], 4), %[r]"
+			:[r] "+r" (res)
+			:[a] "r"  (array), [i] "r" ((long)i)	// Necesitamos que todo sea 64 bits
+			// Los sobreescritos no hace falta, porque en el propio código asm no se sobrescriben
+			)
+	}
+	return res;
+}
+
+int main(){
+	resultado=suma(lista,longlista);
+	printf("resultado = %d = %0x hex\n", resultado, resultado);
+	exit(0);
+}
+```
+
+**Código:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/EC/Pr%C3%A1cticas/Pr%C3%A1ctica%203/Ejercicios/9.c

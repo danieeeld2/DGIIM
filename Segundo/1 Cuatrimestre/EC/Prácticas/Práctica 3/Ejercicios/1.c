@@ -19,7 +19,7 @@ int suma(int *array, int len){
 	   función en asm
 	*/
 
-	asm("   xor %eax, %eax                 \n\t"	// Ponemos registro a 0
+	asm("   xor %eax, %eax             \n\t"	// Ponemos registro a 0
 		"   xor %edx, %edx             \n\t"	// Ponemos registro a 0
 		"0: cmp %edx, %esi             \n\t"	// Comparamos los dos registros
 		"   je  if                     \n\t"	// Salta si vale 0, es decir edx = esi
