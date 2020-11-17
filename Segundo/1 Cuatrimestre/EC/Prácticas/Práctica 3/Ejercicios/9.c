@@ -26,7 +26,7 @@ int suma(int *array, int len){
 
 		asm("add (%[a], %[i], 4), %[r]"
 			:[r] "+r" (res)
-			:[a] "r"  (array), [i] "r" (i)
+			:[a] "r"  (array), [i] "r" ((long)i)	// Necesitamos que todo sea 64 bits
 			// Los sobreescritos no hace falta, porque en el propio código asm no se sobrescriben
 			)
 	}
@@ -38,3 +38,8 @@ int main(){
 	printf("resultado = %d = %0x hex\n", resultado, resultado);
 	exit(0);
 }
+
+/* 	Aclaración:
+	Si no pasáramos nombres opcionales (etiquetas) a las restricciones, a cada una
+	se le asigna un número, por ejemplo a [r] "+r" (res) se le asigna %0
+*/
