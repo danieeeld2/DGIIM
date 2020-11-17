@@ -28,7 +28,7 @@ int suma(int *array, int len){
 			:[r] "+r" (res)
 			:[a] "r"  (array), [i] "r" ((long)i)	// Necesitamos que todo sea 64 bits
 			// Los sobreescritos no hace falta, porque en el propio código asm no se sobrescriben
-			)
+			);
 	}
 	return res;
 }
