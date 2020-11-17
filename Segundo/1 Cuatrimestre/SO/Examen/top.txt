@@ -1,0 +1,8 @@
+top - 20:58:49 up  6:17,  1 user,  load average: 1,44, 2,13, 2,26
+Tareas:   1 total,   1 ejecutar,    0 hibernar,    0 detener,    0 zombie
+%Cpu(s):  8,2 usuario,  2,2 sist,  0,0 adecuado, 88,0 inact,  0,0 en espera,  0,
+MiB Mem :  15856,3 total,   2640,2 libre,   4220,1 usado,   8996,1 búfer/caché
+MiB Intercambio:   2048,0 total,   2048,0 libre,      0,0 usado.  11111,4 dispon
+
+    PID USUARIO   PR  NI    VIRT    RES    SHR S  %CPU  %MEM     HORA+ ORDEN
+  21363 daniel    20   0 9260388 402196 171304 R  93,3   2,5  48:35.85 Web Con+

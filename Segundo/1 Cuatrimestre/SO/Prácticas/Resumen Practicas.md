@@ -2029,7 +2029,29 @@ return 0;
 }
 ```
 
+```
+El programa comienza creando dos arrays, buf1 y buf2, que contienen 10 caracteres cada uno. A ontinuación, entra en el main y crea un entero, fd, al cual le asigna el valor de la llamada al sistema open del archivo "archivo", con los flags O_CREAT(se crea si no existe), O_TRUNC(si existe el fichero y tiene habilitada la escritura, lo sobreescribe a tamaño 0), O_WRONLY(decimos que solo se permite escritura), S_IRUSR(comprobamos que el usuario tiene permiso de lectura) y, por último, S_IWUSR(comprobamos que el usuario tiene permiso de escritura). 
+Si existe algún error en la apertura, imprime los dos mensajes correspondientes por pantalla y, a continuación, acaba el programa, devolviendo -1
 
+A continuación, escribe los 10 primeros caracteres, correspondientes a buf1. Si existe algún error(no se escriben los 10 caracteres) manda un mensaje de error y acaba el programa, devolviendo -1
+
+Después, con lseek, ponemos el puntero del archivo en la posiión 40(bytes) desde SEEK_SET(inicio del fichero), de esta forma el puntero se situa despues de los caracteres escritos anteriormente. Además, manda un mensaje de error y hhubiera algún fallo y acaba el programa devolviendo -1
+
+Por último, repite el mismo procedimiento de buf1, pero con buf2 y cierra el fichero
+
+Acaba el programa retornando 0
+```
+
+```bash
+$ cat archivo
+abcdefghijABCDEFGHIJ
+
+$ od -c archivo
+0000000   a   b   c   d   e   f   g   h   i   j  \0 \0  \0  \0  \0  \0
+0000020  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0
+0000040  \0  \0  \0  \0  \0  \0  \0  \0   A   B   C   D   E   F   G   H0000060   I   J
+0000062
+```
 
 **<u>Ejercicio 2</u>**. Implementa un programa que realice la siguiente funcionalidad. El programa acepta como argumento el nombre de un archivo (*pathname*), lo abre y lo lee en bloques de tamaño 80 Byttes, y crea un archivo de salida, **salida.txt**, en el que debe aparecer la siguiente información:
 
@@ -2057,7 +2079,71 @@ Bloque 2
 // Aquí van los siguientes 80 Bytes del archivo pasado como argumento
 ```
 
+```c
+#include<unistd.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<errno.h>
+#include<string.h>
 
+int main(int argc, char *argv[]){
+	int fdin;
+	int fdout;
+	char string[] = "El número de bloque es %d\n";
+	char buffer[80];
+	char block[20];
+	int i = 1;
+	int leidos = 0;
+	char output[strlen(string)+2];
+
+
+	// Primero tenemos que hacer un control del número de argumentos que se toman
+	if(argc == 2){
+		if((fdin = open(argv[1], O_WRONLY, S_IRUSR|S_IWUSR)) < 0){	// Si es menos que 0 da fallo. Ver los flags em el guión
+			printf("Error %d en open\n", errno);	// Mensaje de error
+			perror("Error en open\n");
+			exit(-1);	// Salimos del programa, devolviendo -1 (significa que ha fallado)
+		}
+	} else{
+		fdin = STDIN_FILENO;	// Al escritor de entrada (fdin) le asignamos la entrada estándar de teclado
+	}
+
+	if((fdout = open("salida.txt", O_CREAT|O_TRUNC|O_WRONLY, S_IRUSR|S_IWUSR)) < 0){	// Ver flags en guión
+		printf("Error %d en open\n", errno);
+		perror("Error en open\n");
+		exit(-1);
+	}
+
+	// Reservamos el espacio para escribir posteriormente la cadena , hasta que sepamos %d
+	lseek(fdout, strlen(string)+2, SEEK_SET);	// Reservamos desde el inicio hasta lo que ocupa la cadena +2(para el número y \n)
+
+	// Realizamos la lectura
+	while(((leidos = read(fdin, buffer, 80)) != 0)){	// Leemos en bloques de 80, tal y como pide el ejercicio
+		sprintf(block, "\nBloque %d\n", i);	// Mete dicha linea en la cadena bloque
+		write(fdout, block, strlen(block));	// Escribimos block en el archivo de salida
+		write(fdout, buffer, leidos);		// Escribimos los 80 bytes que habíamos leido previamente en el archivo de salida
+		i++;					// Aumentamos el contador para leer el siguiente bloque
+	}
+
+	lseek(fdout, 0, SEEK_SET);	// Devolvemos el puntero al principio para escribir la línea que nos habíamos saltado
+	sprintf(output, string, i-1);	// Concatena string y cambia %d por i-1 (El menos uno es para corregir el índice)
+	write(fdout, output, strlen(output));	// Lo escribimos en el archivo de salida
+
+	if(close(fdin) == -1){
+		printf("Error %d en close\n", errno);
+		perror("Error en close\n");
+		exit(-1);
+	}
+
+	return EXIT_SUCCESS;
+}
+
+```
+
+**Puedes descargar el archivo aquí**:
 
 ### 4. Metadatos de un archivo
 
@@ -2099,9 +2185,497 @@ Por lo general, **st_ctime** es modificado al escribir o poner información del 
 El valor de **st_mode** codifica además del tipo de archivo, los permisos de acceso del archivo, independientemente del tipo de archivo que se trate. Disponemos de tres categorías: user (**owner**), **group** y **other**, para establecer los permisos de lectura, escritura y ejecución.
 
 - Cada vez que queremos abrir cualquier tipo de archivo (usaremos su pathname o el directorio actual o una variable) tenemos que disponer de permiso de ejecución en cada directorio mencionado en el pathname. Por esto se suele llamar al bit de permiso de ejecución de directorios, bit de acceder
-- El permiso de lectura para un archivo determinado si podemos abrir para la lectura un archivo existente: los flas **O_RDONLY** y **O_RDWR** para la llamada open
+- El permiso de lectura para un archivo determinado si podemos abrir para la lectura un archivo existente: los flags **O_RDONLY** y **O_RDWR** para la llamada open
 - El permiso de escritura para un archivo determinado si podemos abrir para escritura un archivo existente: los flags **O_WRONLY** y **O_RDWR** para la llamada open
 - Debemos tener permiso de escritura en un archivo para poder especificar el flag **O_TRUNC** en la llamada open
 - No podemos crear un nuevo archivo en un directorio a menos que tengamos permisos de escritura y ejecución de dicho directorio
 - Para borrar un archivo existente necesitamos permisos de escritura y ejecución en el directorio que contiene el archivo. No necesitamos permisos de lectura o escritura en el archivo.
 - El permiso de ejecución para un archivo debe estar activado si queremos ejecutar el archivo usando cualquier función de la familia **exec** o si es una script de un shell. Además, el archivo debe ser regular.
+
+#### Actividad 3.2. Trabajo con llamada al sistema de la familia stat
+
+**<u>Ejercicio 3</u>**: ¿Qué hace el siguiente código?
+
+```c
+/*tarea2.c
+Trabajo con llamadas al sistema del Sistema de Archivos ''POSIX 2.10 compliant''
+*/
+
+#include<sys/types.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include<sys/stat.h>
+#include<stdio.h>
+#include<errno.h>
+#include<string.h>
+
+int main(int argc, char *argv[])
+{
+int i;
+struct stat atributos;
+char tipoArchivo[30];
+if(argc<2) {
+printf("\nSintaxis de ejecucion: tarea2 [<nombre_archivo>]+\n\n");
+exit(-1);
+}
+for(i=1;i<argc;i++) {
+	printf("%s: ", argv[i]);
+	if(lstat(argv[i],&atributos) < 0) {
+		printf("\nError al intentar acceder a los atributos de 				%s",argv[i]);
+		perror("\nError en lstat");
+}
+    else{
+        if(S_ISREG(atributos.st_mode)) strcpy(tipoArchivo,"Regular");
+		else if(S_ISDIR(atributos.st_mode)) 										strcpy(tipoArchivo,"Directorio");
+		else if(S_ISCHR(atributos.st_mode)) 										strcpy(tipoArchivo,"Especial de caracteres");
+		else if(S_ISBLK(atributos.st_mode)) 										strcpy(tipoArchivo,"Especial de bloques");
+		else if(S_ISFIFO(atributos.st_mode)) 										strcpy(tipoArchivo,"Cauce con nombre (FIFO)");
+		else if(S_ISLNK(atributos.st_mode)) 										strcpy(tipoArchivo,"Enlace relativo (soft)");
+        else if(S_ISSOCK(atributos.st_mode)) 										strcpy(tipoArchivo,"Socket");
+        else strcpy(tipoArchivo,"Tipo de archivo desconocido");
+		printf("%s\n",tipoArchivo);
+    }
+}
+return 0;
+}
+```
+
+```
+El programa crea un struct con la orden stat (almacena metadatos de los archivos). Primero comprueba que el número de argumentos es correcto. A continuación, toma los archivos que le pasmos como argumento y almacena sus atributos (metadatos) en atributos. Por último, compara con una serie de flags para ver que tipo de archivo es el que le hemos pasado
+```
+
+**¿Diferencia entre stat y lstat?**
+
+```
+Funcionan igual,pero si hacemos lstat a un enlaze simbólico, se analiza el propio enlaze y no el archivo al que apunta, en cambio, stat sobre un enlace simbólico, analiza el archivo al que apunta el enlace
+```
+
+**<u>Ejercicio 4</u>**: Define una macro en lenguaje C que tenga la misma funcionalidad que la macro **S_ISREG(mode)** usando para ello los flags en **<sys/stat.h>** para el campo **st_mode** la **struct_stat** y comprueba que  funciona en un programa en un programa simple. Consulta en un libro de C o en internet cómo se especifica una macro con argumento en C.
+
+```C
+#include<unistd.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<errno.h>
+#include<string.h>
+
+#define S_ISREG2(mode) ((mode & S_IFMT) == S_IFREG)
+
+/* Aqui lo que hemos hecho es definir una macro. Le pasamos un modo
+y mediante una operación binaria se compara con la máscara del sistema. Si el resultado
+da lugar a la máscara S_IFREG, significa que es regular, luego devuelve true, en caso contrario, devuelve false, que es justo lo que queremos
+*/
+
+int main(int argc, char *argv[]){
+	struct stat atributes;
+	
+	// Control de argumentos
+	if(argc != 2){
+		printf("Error en el número de argumentos\n");
+		exit(-1);
+	}
+	
+	if(lstat(argv[1], &atributes) < 0){	// Almacenamos los metadatos
+		printf("Error en lstat\n");
+		exit(-1);
+	}
+	
+	if(S_ISREG2(atributes.st_mode)){	// S_ISREG2 es la macro que hemos creado
+		printf("Es regular\n");
+	}else{
+		printf("No es regular\n");
+	}
+
+	return EXIT_SUCCESS;	// También vale rturn 0
+}
+
+```
+
+```bash
+$ touch regular.txt
+$ gcc 1.3.c 
+$ ./a.out regular.txt
+Es regular
+
+$ ls -l
+-rw-r--r-- 1 daniel staff 0 Nov 10 09:47 regular.tst
+#-rw-r--r-- dice el tipo de archivo y los permisos
+```
+
+
+
+## <u>SESIÓN 6</u>
+
+### 2. Llamadas al sistema relacionadas con los permisos de los archivos
+
+#### 2.1. La llamada al sistema *umask*
+
+La llamada al sistema **umask** fija la máscara de creación de permisos para el proceso y devuelve el valor previamente establecido. El argumento de la llamada puede formarse mediante una combinación **OR** de las nuevas constantes de permisos (**rwx** para **ugo**) vistas anteriormente
+
+```
+NOMBRE
+	umask -establece la máscara de creación de ficheros
+SINOPSIS
+	#include<sys/types.h>
+	#include<sys/stat.h>
+	mode_t umask(mode_t mask);
+DESCRIPCIÖN
+	umask establece la máscara de usuario a mask &0777
+	
+	La máscara de usuario es usada por open(2) para establecer los 		permisos iniciales del archivo que se va a crear. 					Específicamente, los permisos presentes en la máscara se 			desactivan del argumento mode de open
+VALOR DEVUELTO
+	Está llamada al sistema siempre tiene éxito y devuelve el valor 	anterior de la máscara
+```
+
+#### 2.2. Las llamadas al sistema *chmod* y *fchmod*
+
+Estas dos funciones nos permiten cambiar los permisos de acceso para un archivo que existe en el sistema de archivos. La llamada **chmod** sobre un archivo especificado por su pathname mientras que la función **fchmod** opera sobre un archivo que ha sido previamente abierto con **open**.
+
+![7](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/7.png)
+
+![8](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/8.png)
+
+#### Actividad 2.1. Trabajo con llamadas de cambio de permisos
+
+**<u>Ejercicio 1</u>**: ¿Qué hace el siguiente programa?
+
+```c
+/*
+tarea3.c
+Trabajo con llamadas al sistema del Sistema de Archivos ''POSIX 2.10 compliant''
+Este programa fuente está pensado para que se cree primero un programa con la
+parte de CREACION DE ARCHIVOS y se haga un ls -l para fijarnos en los permisos y
+entender la llamada umask.
+En segundo lugar (una vez creados los archivos) hay que crear un segundo programa
+con la parte de CAMBIO DE PERMISOS para comprender el cambio de permisos relativo a los permisos que actualmente tiene un archivo frente a un establecimiento de
+permisos absoluto.
+*/
+#include<sys/types.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<stdio.h>
+#include<errno.h>
+
+int main(int argc, char *argv[])
+{
+int fd1,fd2;
+struct stat atributos;
+//CREACION DE ARCHIVOS
+    
+// ----r-x--- 
+// S_IRGRP (00040)
+// S_IWGRP (00020)
+// S_IXGRP (00010)
+// modo & ~umask --> Que permiso que quieres tener
+// modo & umask  --> Permisos que no quieres tene
+// modo = suma las macros
+// máscara por defecto en el sistema es 00022
+// modo = 00070 & 00022 = umask   --> 00020
+// modo = 00070 & ~00022 = ~umask --> 00050  (00070-00020)
+if( (fd1=open("archivo1",O_CREAT|O_TRUNC|O_WRONLY,S_IRGRP|S_IWGRP|S_IXGRP))<0)
+{
+printf("\nError %d en open(archivo1,...)",errno);
+perror("\nError en open");
+exit(-1);
+}
+    
+// ----rwx---
+// Igual que el caso de arriba, pero la máscara vale 0
+// modo = 00070 & ~00000 = ~umask --> 00070
+umask(0);
+if( (fd2=open("archivo2",O_CREAT|O_TRUNC|O_WRONLY,S_IRGRP|S_IWGRP|S_IXGRP))<0)
+{
+printf("\nError %d en open(archivo2,...)",errno);
+perror("\nError en open");
+exit(-1);
+}
+//CAMBIO DE PERMISOS
+if(stat("archivo1",&atributos) < 0) {
+printf("\nError al intentar acceder a los atributos de archivo1");
+perror("\nError en lstat");
+exit(-1);
+}
+if(chmod("archivo1", (atributos.st_mode & ~S_IXGRP) | S_ISGID) < 0) {
+perror("\nError en chmod para archivo1");
+exit(-1);
+}
+if(chmod("archivo2",S_IRWXU | S_IRGRP | S_IWGRP | S_IROTH) < 0) {
+perror("\nError en chmod para archivo2");
+exit(-1);
+}
+close(fd1);
+close(fd2);
+return 0;
+}
+```
+
+### 3. Fuciones de manejo de directorios
+
+Aunque los directorios se pueden leer utilizando las mismas llamadas al sistema que para lo archivos normale, como la estructura de los directorios puede cambiar de un sistema a otro, los programas en este caso no serían transportables. Para solucionar este problema, se va a utilizar una biblioteca estándar de funciones de manejo de directorios que se presentan de forma resumida a continuación:
+
+- **opendir**: Se le pasa **pathname** del directorio a abrir, y devuelve un puntero a la estructura de tipo **DIR**, llamada stream de directorio. El tipo **DIR** está definido en **<dirent.h>**.
+
+- **readdir**: Lee la entrada donde este situado el puntero de lectura de un directorio ya abierto cuyo stream se pasa a la función. Después de la lectura adelanta el puntero una posición. Devuelve la entrada leída a través de un puntero a una estructura (**struct dirent**), o devuelve **NULL** si llega al final del directorio o se produce un error.
+
+- **closedir**: Cierra un directorio, devolviendo **0** si tiene éxito, en caso contrario devuelve **-1**
+
+- **seekdir**: Permite situar el puntero de lectura de un directorio (se tiene que usar en combinación con **telldir**)
+
+- **telldir**: Devuelve la posición del putero de lectura de un directorio
+
+- **rewinddir**: Posición el puntero de lectura al principio del directorio
+
+  ![9](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/9.png)
+
+#### Actividad 2.2 Trabajo con funciones estándar de manejo de directorios
+
+**<u>Ejercicio 2</u>**: Realiza un programa en C utilizando las llamadas al sistema necesarias que acepte como entrada:
+
+- Un argumento que representa el **pathname** de un directorio.
+- Otro argumento que es un **número octal de 4 dígitos** (similar al que se puede utilizar para cambiar los permisos en la llamada al sistema **chmod**). Para convertir este argumento tipo cadena a un tipo númerico puedes utilizarla función **strtol**. Consulta el manual en línea para conocer sus argumentes.
+
+El programa tiene que usar el número octal indicado en el segundo argumento para cambiar los permisos de todos los archivos que se encuentren en el directorio indicado en el primer argumento.
+
+#define regla1(mode) ((((mode) & ~S_IFMT) & 011) == S_IFXGRPOTH)
+
+void buscar_dir(DIR *dir, char pathname[], int *reg, int *tamanio){
+	struct stat atributes;
+	struct dirent *ed;
+	DIR *dir2;
+	char cadena[500];
+
+```c
+while((ed=readdir(dir)) != NULL){
+	// Ignoramos el directorio actual y el superior
+	if(strcmp(ed->d_name, ".") != 0 && strcmp(ed->d_name, ". .") != 0){
+		sprintf(cadena, "%s%s", pathname, ed->d_name);
+
+		if(lstat(cadena, &atributes) < 0){
+			printf("\nError al intentar acceder a los atributos de archivo");
+			perror("\nError en lstat");
+			exit(-1);
+		}
+
+		if(S_ISDIR(atributes.st_mode)){
+			if ((dir2 = opendir(cadena)) == NULL)
+				printf("\nerror al abrir el directorio: [%s]\n", cadena);
+			else
+				buscar_dir(dir2, cadena, rEl programa debe proporcionar en la salida estándar una línea para cada archivo del directorio que esté formado por:
+```
+< nombre_de_archivo > : < permisos_antiguos > < permisos_nuevos >
+
+Si no se pueden cambiar los permisos de un determinado archivo se debe especificar la siguiente información en la línea de salida:
+
+< nombre_de_archivo > : < errno > < permisos_antiguos > 
+
+```c
+#include<sys/types.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<stdio.h>
+#include<errno.h>
+#include<sys/types.h>
+#include<dirent.h>
+
+int main(int argc, char *argv[]){
+	char *pathname;
+	DIR *dir;
+	unsigned int permisos;
+	struct dirent *ed;
+	struct stat atributos;
+	char cadena[1000];
+	char cadena2[2000];
+	extern int errno;
+
+
+	// Comprobamos que el número de argumentos es correcto
+	if(argc != 3){
+		printf("Error en los argumentos\n");
+		printf("Uso: ejercicio.c <pathname> <permisos>\n");
+		exit(-1);
+	}
+
+	pathname = argv[1];
+	dir = opendir(pathname);
+	permisos = strtol(argv[2], NULL, 8);	// Pasar el argumento a octal
+
+	/*  long int strtol(const char *nptr, char **endptr, int base);
+		
+		The  strtol()  function converts the initial part of the string in nptr
+        to a long integer value according to the given base, which must be  be‐
+        tween 2 and 36 inclusive, or be the special value 0.
+	*/
+
+	if (dir == NULL){
+		printf("ERROR, no se ha podido abrir el directorio\n");
+		exit(-1);
+	}
+
+	readdir(dir);	// Lee el directorio
+	ed=readdir(dir);	// Lee el archivo /. del directorio
+
+	/* The  readdir()  function returns a pointer to a dirent structure repre‐
+       senting the next directory entry in the directory stream pointed to  by
+       dirp.   It  returns NULL on reaching the end of the directory stream or
+       if an error occurred
+    */
+
+    while((ed=readdir(dir))!= 0){
+    	sprintf(cadena, "%s/%s", pathname, ed->d_name);
+
+    	/* La función spritnf formatea la cadena
+    	   sprintf ( string $format [, mixed $args [, mixed $... ]] ) : string
+
+    	   %* representa el formato. En nuestro caso, s significa que hace
+    	   un formateo a string
+    	*/
+
+    	if(lstat(cadena, &atributos) < 0){
+    		printf("\nError al intentar acceder a los atributos de la cadena ");
+    		printf("%s\n",cadena);
+    		perror("Error en lstat\n");
+    		exit(-1);
+    	}
+
+    	if(S_ISREG(atributos.st_mode)){
+    		sprintf(cadena2, "%s", ed->d_name);
+    		printf("%s: %o ", cadena2, atributos.st_mode);	// %o formateo a octal
+
+    		chmod(cadena, permisos);
+
+    		if(chmod(cadena,permisos) < 0){
+    			printf("Error: %s %o\n",cadena, permisos);
+
+    			/* The strerror() function returns a pointer to a  string  that  describes
+       			   the  error  code  passed  in  the  argument  errnum
+				   
+				   errno return number of last error
+				   The  value  in  errno  is significant only when the return value of the
+       			   call indicated an error
+
+       			*/
+    		}else{
+    			stat(cadena,&atributos);
+    			printf("%o \n",atributos.st_mode);
+    		}
+    	}
+    }
+
+    closedir(dir);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Version del profesor:**
+
+```c
+#include<sys/types.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<stdio.h>
+#include<errno.h>
+#include<sys/types.h>
+#include<dirent.h>
+
+int main(int argc, char *argv[]){
+	DIR *dir;
+	struct dirent *entrada;
+	struct stat atributos;
+	int permisosNuevos, permisosAntiguos;
+	char pathname[500];
+
+	if(argc != 3){
+		exit(-1);
+	}
+
+	dir = opendir(argv[1]);
+	permisosNuevos = strtol(argv[2], NULL, 8);
+
+	while((entrada = readdir(dir)) != 0){
+		sprintf(pathname, "%s/%s", argv[1], entrada->d_name);
+		lstat(pathname, &atributos);
+		permisosAntiguos = atributos.st_mode;
+
+		if(chmod(pathname, permisosNuevos) == 0){
+			printf("%s: %o %o\n", entrada->d_name, permisosAntiguos, permisosNuevos);
+		}else{
+			printf("%s: %d %o", entrada->d_name, errno, permisosAntiguos);
+		}
+	}
+
+	closedir(dir);
+
+	return 0;
+}
+```
+
+**Si quisieramos que se salte algun directorio, usamos la siguiente orden: **
+
+```c
+if(strcmp(ed->d_name, ".") != 0 && strcmp(ed->d_name, ". .") != 0)
+// De esta forma no leemos estos dos archivos 
+```
+
+**<u>Ejercicio 3</u>**: Programa una nueva orden que recorra la jerarquía de subdirectores existentes a partir de uno dado como argumento y devuelva la cuenta de todos aquellos archivos regulares que tengan permiso de ejecución para el **grupo** y para **otros**. Además del nombre de los archivos encontrados, deberá devolver sus números de inodo y la suma total  de espacio ocupado por dichos archivos. El formato de la nueva orde será:
+
+​	$> ./buscar < pathname >
+
+donde **< pathname >** especifica la ruta del directorio a partir del cual queremos que empiece a analizar la estructura del árbol de subdirectorios. En caso de que no se le de argumento, tomará como punto de partida del directorio actual. Ejemplo de la salida después de ejecutar el programa:
+
+```
+Los i-nodos son:
+	./a.out 55
+	./bin/ej 123
+	./bin/ej2 87
+	...
+	Existen 24 archivos regulares con permiso x para grupo y otros 
+	El tamaño total ocupado por dichos archivos es 2345674 bytes
+```
+
+#### Actividad 2.3 Trabajo con la llamada nftw() para recorrer un sistema archivos
+
+Resumen del manual de Linux para esta llamada:
+
+![10](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/10.png)
+
+![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/11.png)
+
+El siguiente programa muestra un ejemplo de uso de la función. En este caso, utilizamos **nftw** para recorrer el directorio pasado como argumento, salvo que no se especifique, en cuyo caso, actuamos sobre el directorio actual. Para cada elemento  atravesado se invoca a la función **visitar()** que impreme el pathname y el modo en octal. Observa que para que el recorrido sea completo la función **visitar** debe devolver 0, sino se detendría la búsqueda.
+
+```c
+/* Programa que recorre un sub-árbol con la función nftw */
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<errno.h>
+#include<string.h>
+
+#include <ftw.h>
+
+int visitar(const char* path, const struct stat* stat, int flags, struct FTW*
+ftw) {
+	printf ("Path: %s Modo: %o",path, stat->st_mode);
+	return 0;
+}
+
+int main(int argc, char** argv) {
+	if (nftw(argc >= 2 ? argv[1] : ".", visitar, 10, 0) != 0) {
+	perror("nftw");
+	}
+}
+```
+
+**<u>Ejercicio 4</u>**: Implementa de nuevo el programa **buscar** del ejercicio 3 utilizando la llamada al sistema **nftw**
