@@ -24,6 +24,7 @@ int main(){
 	bool encontrado;
 
 	cout << "Introduce los elementos de la lista" << endl;
+  cout << "@ para finalizar" << endl;
 	do{
 		cin >> aux;
 		if(aux != "@")

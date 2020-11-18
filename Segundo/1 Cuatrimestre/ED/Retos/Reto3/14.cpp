@@ -23,12 +23,15 @@ int main(){
     string elem = "0";
 
     cout << "Introduce una lista de enteros: " << endl;
+    cout << "@ para finalizar" << endl;
     while(elem != "@"){
         cin >> elem;
         if(elem != "@")
             L.push_back(stoi(elem));
     }
+
     cout << "Introduce una pila de enteros: " << endl;
+    cout << "@ para finalizar" << endl;
     elem = "0";
     while(elem != "@"){
         cin >> elem;
@@ -50,6 +53,7 @@ int main(){
         S.pop();
     }
 
+    cout <<endl;
     return 0;
 }
 

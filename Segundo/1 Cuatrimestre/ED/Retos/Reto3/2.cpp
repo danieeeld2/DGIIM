@@ -21,26 +21,28 @@ int main(){
     list<list<int>> LL;
     list<int> L;
     list<int> aux;
-    int elem = 0;
+    string elem;
     bool retorno;
 
     cout << "Introduce la lista de listas: " << endl;
-    while(elem != -1){
+    cout << "Itroduce & para indicar fin de una lista e introduce @ para indicar fin de la lista de listas" << endl;
+    do{
         cin >> elem;
-        if(elem != -1 && elem != -2)
-            aux.push_back(elem);
-        if(elem == -2){
+        if(elem != "@" && elem != "&")
+            aux.push_back(stoi(elem));
+        if(elem == "&"){
             LL.push_back(aux);
             aux.clear();
         }
-    }
-    elem = 0;
+    }while(elem != "@");
+    
     cout << "Introduce la sublista: " << endl;
-    while(elem!=-1){
+    cout << "Introduce @ para fin de la lista" << endl;    
+    do{
         cin >> elem;
-        if(elem != -1)
-            L.push_back(elem);
-    }
+        if(elem != "@")
+            L.push_back(stoi(elem));
+    }while(elem != "@");
     
     retorno = contenido(LL, L);
 

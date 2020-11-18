@@ -1932,6 +1932,8 @@ You (prueba) are not allowed to use this program (crontab)See crontab(1) for mor
 
 ## <u>MÓDULO 2</u>
 
+**Antes de comenzar, todos los códigos de los ejercicios están disponibles en: ** https://github.com/danieeeld2/DGIIM/tree/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C
+
 Para el módulo 2 utilizaremos bastante **C** y **bash**, por lo que te recomiendo tener la siguiente documentación a mano:
 
 - Documentación de **libc** o **glibc**, que contiene las llamadas al sistema, la biblioteca de matemáticas y las hebras POSIX. Podemos consultar la documentación en **libc.info** o **libc.html**.
@@ -2679,3 +2681,83 @@ int main(int argc, char** argv) {
 ```
 
 **<u>Ejercicio 4</u>**: Implementa de nuevo el programa **buscar** del ejercicio 3 utilizando la llamada al sistema **nftw**
+
+```c
+/* Programa que recorre un sub-árbol con la función nftw */
+/* Se basa en modificar el ejercicio anterior */
+
+#define _XOPEN_SOURCE 500
+/* 	Documentación del man:
+	Feature Test Macro Requirements for glibc (see feature_test_macros(7)):
+
+       nftw(): _XOPEN_SOURCE >= 500
+*/
+#include<sys/types.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<stdio.h>
+#include<errno.h>
+#include<sys/types.h>
+#include<dirent.h>
+#include<string.h>
+#include<libgen.h>
+#include<ftw.h>
+
+int contador = 0;
+int tam = 0;
+
+
+/*	Documentación manual:
+	ftw, nftw - file tree walk
+
+	int nftw(const char *dirpath,
+               int (*fn) (const char *fpath, const struct stat *sb,
+                          int typeflag, struct FTW *ftwbuf),
+               int nopenfd, int flags);
+*/
+
+int buscar(const char* path, const struct stat *atributes, int flags, struct FTW* ftw);
+
+int main(int argc, char *argv[]){
+	if(nftw(argc >= 2 ? argv[1] : ".", buscar, 10, 0) != 0){
+		perror("nftw");
+	}
+}
+
+/*	Documentación manual:
+	nftw()  walks  through the directory tree that is located under the di‐
+       rectory dirpath, and calls fn() once for each entry in  the  tree.   By
+       default,  directories  are  handled before the files and subdirectories
+       they contain (preorder traversal).
+
+    The  typeflag argument passed to fn() is an integer that has one of the
+       following values:
+
+       FTW_F  fpath is a regular file.
+
+       FTW_D  fpath is a directory.
+
+*/
+
+int buscar(const char* path, const struct stat *atributes, int flags, struct FTW* ftw){
+	for(int i=0; i<ftw->level; i++)
+		printf("\t");
+
+	if(flags == FTW_D){
+		printf("El directorio %s\t%ld", path, atributes->st_ino);
+		printf("que contiene:\n");
+	}
+	else if(flags == FTW_F)
+		printf("%s\t%ld\n", path, atributes->st_ino);
+
+	if((atributes->st_mode & S_IXOTH) == S_IXOTH && (atributes->st_mode & S_IXGRP) == S_IXGRP){
+		contador++;
+		tam += atributes->st_size;
+	}
+
+	return 0;
+}
+```
+
