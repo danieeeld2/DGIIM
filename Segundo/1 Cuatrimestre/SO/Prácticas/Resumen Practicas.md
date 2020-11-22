@@ -2761,3 +2761,307 @@ int buscar(const char* path, const struct stat *atributes, int flags, struct FTW
 }
 ```
 
+
+
+## <u>Sesión 7</u>
+
+### 2. Creación de procesos
+
+#### 2.1. Identificadores de proceso
+
+Cada proceso tiene un único identificador de proceso (PID) que es un número entero no negativo. Existen algunos procesos especiales, como el **init** (PID=1). El proceso **init** (proceso demonio o hebra núcleo) es el encargado de inicializar el sistema UNIX y ponerlo a disposición de los programas de aplicación, después de que se haya cargado el núcleo. El programa encargado de dicha labor suele ser el **/sbin/init** que normalmente lee los archivos de inicialización dependientes del sistema (que se encuentra en **/etc/rc***) y lleva al sistema acierto estado. Este proceso no finaliza hasta que se detiene al sistema  operativo y no es un proceso de sistema sino una normal aunque se ejeute con privilegios de superusuario (root). El proceso **init** es el proceso raíz e la jerarquía de procesos del sistema, que se genera debido a las relacionesentre proceso creador (padre) y proceso creado (hijo).
+
+Además del identificador de proceso, existen los siguientes identificadores asociaos al proceso y que se detallan a continuación, junto con las llamadas al sistema que los devuelven.
+
+```c
+#include <unistd.h>
+#include <sys/types.h>
+
+pid_t getpid(void); // devuelve el PID del proceso que la invoca.
+
+pid_t getppid(void); // devuelve el PID del proceso padre del proceso que
+// la invoca.
+
+uid_t getuid(void); // devuelve el identificador de usuario real del
+// proceso que la invoca.
+
+uid_t geteuid(void); // devuelve el identificador de usuario efectivo del
+// proceso que la invoca.
+
+gid_t getgid(void); // devuelve el identificador de grupo real del proceso
+// que la invoca.
+
+gid_t getegid(void); // devuelve el identificador de grupo efectivo del
+// proceso que la invoca.
+```
+
+El siguiente programa utiliza las funciones para obtener el pid de un proceso y el pid de su proceso padre. Pruébalo y observa sus resultados.
+
+```c
+#include <sys/types.h>
+#include <stdio.h>
+#include <unistd.h>
+
+void main(void)
+{
+    pid_t id_proceso;
+    pid_t id_padre;
+    
+    id_proceso = getpid();
+    id_padre = getppid();
+    
+    printf("Identificador de proceso: %d\n", id_proceso);
+    printf("Identificador del proceso padre: %d\n", id_padre);
+}
+```
+
+El identificador de usuario real, **UID**, proviene de la comprobación que realiza el programa **logon** sobre cada usuario que intenta acceder al sistema proporcionando la pareja: **login, password**. El sistema utiliza este par de valores para identificadar la línea del archivo de passwords (**/etc/passwd**) correspondiente al usuario y para comprobar la clave en el archivo de shadow passwords.
+
+El UID efectivo (**euid**) se corresponde con el UID real salvo en el caso en el que el proceso ejecute un programa con el bit SUID activado, en cuyo caso se corresponderá con el UID del propietario del archivo ejecutable.
+
+El significado del GID real y efectivo es similar al del UID real y efectivo pero para del grupo principal del usuario. El grupo principal es el que aparece en la línea correspondiente al login del usuario  en el archivo de passwords. El siguiente programa obtiene esta información sobre el proceso que las ejecuta. Pruebalo y  observa sus resultados:
+
+```c
+#include <sys/types.h>
+#include <stdio.h>
+#include <unistd.h>
+void main(void)
+{
+printf("Identificador de usuario: %d\n", getuid());
+printf("Identificador de usuario efectivo: %d\n", geteuid());
+printf("Identificador de grupo: %d\n", getgid());
+printf("Identificador de grupo efectivo: %d\n", getegid());
+}
+```
+
+#### 2.2. Llamada al sistema fork
+
+La única forma de que el núcleo de UNIX cree un nuevo proceso es que un proceso, que ya exista, ejecute **fork** (exceptuando los procesos especiales, algunas de los cuales hemos comentado brevemente en el punto anterior).
+
+El nuevo proceso que se crea tras la ejecución de la llamada **fork** se denomina *proceso hijo*, Esta llamada al sisema se ejecuta una sola vez, pero devuelve un valor distinto en cada uno de los procesos (padre e hijo). La única diferencia entre los valores devueltos es que en el proceso hijo el valor es 0 y en el proceso padre (el que ejecutó la llamada) el valor es el PID del hijo (La razón de esto, es que un proceso padre puede tener más de un proceso hijo. De esta forma, podemos identificar los distintos hijos. La razón por la que **fork** devuelve un 0 al proceso hijo se debe a que un proceso solamente puede tener un único padre), con lo que el hijo siempre puede ejecutar **getppid** para obtener el PID de su padre.
+
+Desde el punto de vista de laprogramación, el hecho de que se devuelva un valor distinto en el proceso padre y en el hijo nos va a ser muy útil, de cara a poder ejecutar distintas partes de código una vez finalizada la llamada **fork**.
+
+**NOTA:** Existía una llamada al sistema similar a **fork**, **vfork**, que tenía un significado un poco diferente a ésta. Tenía la misma secuencia de llamada y los mismos valores de retorno que **fork**, pero **vfork** estaba diseñada para crear un nuevo proceso cuando el propósito del nuevo proceso era ejecutar, **exec**, un nuevo progama. **vfork** creaba el nuevo proceso sin copiar el espacio de direcciones del padre en el hijo, ya que el hijo no iba a hacer referencia a dicho espacio de direcciones sino que realizaba un **exec**, y mientras eso ocurría, el proceso padre permanecía bloqueado.
+
+#### Actividad 3.1. Trabajo con la llamada al sistema *fork*
+
+**<u>Ejercicio 1</u>**. Implementa un programa en C que tenga como argumento un número entero. Este programa debe crear un proceso hijo que se encargará de comprobar si dicho número es un número par o impar e informará al usuario con un mensaje que enviará por la salida estándar. A su vez, el proceso padre comprobará si dicho número es divisible por 4, e informará si lo es o no usando igualmente la salida estándar.
+
+
+
+**<u>Ejercicio 2</u>**. ¿Qué hace el siguiente programa? Intenta enteder lo que ocurre con las variables y sobre todo con los mensajes por pantalla cuando el núcleo tiene activo/desactivado el mecanismo de buferring.
+
+```c
+/*
+tarea4.c
+Trabajo con llamadas al sistema de Control de Procesos "POSIX 2.10 compliant"
+Prueba el programa tal y como está. Después, elimina los comentarios (1) y
+pruébalo de nuevo.
+*/
+
+#include<sys/types.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<errno.h>
+
+int global=6;
+char buf[]="cualquier mensaje de salida\n";
+
+int main(int argc, char *argv[]){
+int var;
+pid_t pid;
+var=88;
+if(write(STDOUT_FILENO,buf,sizeof(buf)+1) != sizeof(buf)+1) {
+	perror("\nError en write");
+	exit(-1);
+}
+
+//(1)if(setvbuf(stdout,NULL,_IONBF,0)) {
+// 		perror("\nError en setvbuf");
+// }
+
+printf("\nMensaje previo a la ejecución de fork");
+if( (pid=fork())<0) {
+	perror("\nError en el fork");
+	exit(-1);
+} else if(pid==0) {
+	//proceso hijo ejecutando el programa
+	global++;
+	var++;
+} else //proceso padre ejecutando el programa
+	sleep(1);
+	printf("\npid= %d, global= %d, var= %d\n", getpid(),global,var);
+	exit(0);
+}
+```
+
+**Nota 1:** El núcleo no realiza buffering de salida con la llamada al sistema **write**. Esto quiere decir que cuando usamos **write(STDOUT_FILENO,buf,tam)**, los datos se escriben directmanete en la salida estándar sin ser almacenados en un búfer temporal. Sin embargo, el núcleo si realiza *buffering* de la salida en las funciones de la biblioteca estándar de E/S del C, en la cual está **pritnf**. Para deshabilitar el buffering en la biblioteca estándar de E/S se utiliza la siguiente función:
+
+```c
+int setvbuf(FILE *stream, char *buf, int mode, size_T size)
+```
+
+**Nota 2:** En la parte de llamadas al sistema para el sistema de archivos vimos que en Linux se definen tres macores **STDIN_FILENO**, **STDOUT_FILENO** Y **STDERR_FILENO** PARA PODER UTILIZAR LAS LLAMADAS AL SISTEMA **read** y **write** (que trabajan con **descriptores de archivo**) sobre la entrada estándar, la salida estandar y el error estándar del proceso. Además, en <stdio.h> se definen tres flujos (**STREAM**) para poder trabajar sobre estos archivos especiales usando las funciones de la biblioteca de E/S del C: **stdin, stdout, stderr**
+
+```c
+extern FILE *stdin;
+extern FILE *stdout;
+extern FILE *stderr
+```
+
+**<u>Ejercicio 3</u>**. Indica qué tipo de jerarquías de procesos se generan mediante la ejecución de cada uno de los siguientes fragmentos de código. Comprueba tu solución implementando un código, para generar 20 procesos en cada caso, en donde cada proceso imprima su PID y el del padre, PPID.
+
+```c
+/*
+Jerarquía de procesos tipo 1
+*/
+for (i=1; i < nprocs; i++) {
+	if ((childpid= fork()) == -1) {
+        fprintf(stderr, "Could not create child %d: 						%s\n",i,strerror(errno));
+        exit(-1);
+	}
+    if (childpid)
+    break;
+}
+
+/*
+Jerarquía de procesos tipo 2
+*/
+
+for (i=1; i < nprocs; i++) {
+    if ((childpid= fork()) == -1) {
+        fprintf(stderr, "Could not create child %d: 						%s\n",i,strerror(errno));
+        exit(-1);
+    }
+    if (!childpid)
+    	break;
+}
+```
+
+#### Actividad 3.2. Trabajo con las llamadas a sistema *wait*, waitpid y *exit*
+
+Consulta en el manual en línea las llamadas **wait** **waitpid** y **exit** para ver sus posibilades de sincronización entre el proceso padre y su(s) proceso(s) hijo(s) y realiza los siguientes ejercicios:
+
+**<u>Ejercicio 4.</u>** Implementa un programa que lance cinco procesos hijo. Cada uno de ellos se identificará en la salida estándar, mostrando un mensaje del tipo *Soy el hijo PID*. El proceso padre simplemente tendrá que esperar la finalización de todos sus hijos y cada vez que detecte la finalización de uno de sus hijos escribirá en la salida estándar un mensaje del tipo:
+
+```c
+	Acaba de finalizar mi hijo con <PID>
+	Solo me quedan <NUM_HIJOS> hijos vivos
+```
+
+**<u>Ejercicio 5.</u>** Implementa una modificación sobre el anterior programa en la que el proceso padre espera primero a los hijos creados en orden impar (1º,3º,5º) y después a los hijos pares (2º y 4º).
+
+### 3. Familia de llamadas al sistema *exec*
+
+Un posible uso de la llamada **fork** es la creación de un proceso (el hijo) que ejecute un programa distinto al que está ejecutando al programa padre, utilizando para esto una de las llamadas al sistema de la familia  **exec**.
+
+Cuando un proceso ejecuta una llamada **exec**, el espacio de direcciones de usuario del proceso se reemplaza completamente por un nuevo espacio de direcciones; el del programa que se le pasa como argumento, y este programa comienza a ejecutarse en el contexto del proceso hijo empezando en la función **main**. El **PID** del proceso no cambia ya que no se crea ningún proceso nuevo.
+
+```c
+#include <unistd.h>
+
+extern char **environ;
+
+int execl(const char *path, const char *arg, ...);
+int execlp (const char *file, const char *arg, ...);
+int execle(const char *path, const char *arg , ..., char * const envp[]);
+int execv(const char *path, char *const argv[]);
+int execvp(const char *file, char *const argv[]);
+```
+
+El primer argumento de estas llamadas es el camino del archivo ejecutable.
+
+El **const char *arg** y los puntos suspensivos siguientes, en las funciones **execl, execlp** y **execle**, son los argumentos (incluyendo su propio nombre) del programa a ejecutar: **arg0, arg1, ..., argn**. Todos juntos, describen una lista de uno o más punteros a cadenas de caracteres terminadas en cero. El primer argumento, por convenio, debe apuntar al nombre de archivo asociado con el programa que se esté ejecutando. La lista de argumentos debe ser terminado por un puntero **NULL**.
+
+La función **execle** especifica *el entero del proceso que ejecutará el programa* mediante un parámetro adicional que va detrás del puntero **NULL** que termin la lista de argumentos de la lista de parámteros o el puntero al vector **argv**. Este parámetro adicional es un vector de punteros a cadenas de caracteres acabadas en cero y debe ser terminada por un puntero **NULL**.
+
+Las otras funciones obtienen el entorno para la nueva imagen de proceso de la variable externa **environ** en el proceso en curso.
+
+Algunas particularidades de las funciones que hemos descrito previamente:
+
+- Las funciones **execlp** y **execvp** actuarán de forma similar al shell si la ruta especificada no es un nombre de camino absoluto o relativo. La lista de búsqueda es la especificada en el entorno por la variable **PATH**. Si esta variable no está especificada, se emplea la ruta predeterminada: "**:/bin:/usr/bin**"
+- Si a un archivo se le deniega el permiso (**execve** devuelve **EACCES**), estas funciones continuarán buscando en el resto de la lista de búsqueda. Si no se encuentra otro archivo devolverán el valor **EACCES** en la variable global **errno**
+- Si no se reconoce la cabecera de un archivo (la función **execve** devuelve **ENOEXEC**), estas funciones ejecutarán el shell con el camino del archivo como su primer argumento
+- La funciones **exec** fallarán de forma generalizada en los siguientes casos
+- El sistema operativo no tiene recursos suficientes para crear el nuevo espacio de direcciones de usurio
+- Utilizamos de forma errónea el paso de argumentos a las distintas funciones de l familia **exec**
+
+#### Actividad 3.3. Trabajo con la familia de llamadas al sistema exec
+
+Consulta en el manual en línea la distintas funciones de la familia **exec** y fijate bien en las diferencias en cuanto a paso de parámetros que existen entre ellas.
+
+**<u>Ejercicio 6</u>**. ¿Qué hace el siguiente programa?
+
+```c
+/*
+tarea5.c
+Trabajo con llamadas al sistema del Subsistema de Procesos conforme a POSIX 2.10
+*/
+#include<sys/types.h>
+#include<sys/wait.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<errno.h>
+
+int main(int argc, char *argv[]){
+
+	pid_t pid;
+	int estado;
+	if( (pid=fork())<0) {
+		perror("\nError en el fork");
+		exit(-1);
+	}
+	else if(pid==0) { //proceso hijo ejecutando el programa
+		if( (execl("/usr/bin/ldd","ldd","./tarea5",NULL)<0)) {
+			perror("\nError en el execl");
+		}
+		exit(-1);
+	}
+	wait(&estado);
+	/*
+	<estado> mantiene información codificada a nivel de bit sobre el motivo de
+	finalización del proceso hijo que puede ser el número de señal o 0 si alcanzó su
+	finalización normalmente.
+	Mediante la variable estado de wait(), el proceso padre recupera el valor
+	especificado por el proceso hijo como argumento de la llamada exit(), pero
+	desplazado 1 byte porque el sistema incluye en el byte menos significativo el
+	código de la señal que puede estar asociada a la terminación del hijo. Por eso se
+	utiliza estado>>8 de forma que obtenemos el valor del argumento del exit() del
+	hijo.
+	*/
+	printf("\nMi hijo %d ha finalizado con el estado %d\n",pid,estado>>8);
+	exit(0);
+}
+```
+
+**<u>Ejercicio 7</u>**. Escribe un programa que acepte como argumentos el nombre de un programa, sus argumentos si los tiene, y opcionalmente la cadena "bg". Nuestro programa deberá ejecutar el programa pasado como primer argumento en *foreground* si no se especifica la cadena "bg" y en *background* en caso contrario. Si el programa tiene argumentos hay que ejecutarlo con éstos.
+
+### 4. La llamada *clone*
+
+A partir de este momento consideramos que **tid** es el identificador de hebra de un proceso. **fork()** se implementa a través de **clone()** que permite crear procesos e hilos con un grado mayor en el control de sus propiedades. La sintaxis para esta función es
+
+```c
+#define _GNU_SOURCE
+#include <sched.h>
+int clone(int (*func) (void *), void *child_stack, int flags, void *func_arg,
+...
+/* pid_t *ptid, struct user_desc *tls, pid_t *ctid */ );
+	Retorna: si éxito, el PID del hijo; -1, si error
+```
+
+Cuando invocamos a **clone**, se crea un nuevo proceso hijo que comienza ejecutando la función dada por **func** (no la siguiente instrucción como ocurre con **fork**), a la que se le pasa el argumento indicado en **func_arg**. El hijo finaliza cuando la función indicada retorna o cuando haga un **exit**. También, debemos pasar como argumento un puntero a la pila que debe utilizar el hijo, en el argumetno **child_stack** y que previamente hemos reservado.
+
+Uno de los argumentos más interesantes de **clone()** son los indicadores de clonación (argumento **flags**). Estos tienen dos usos, el byte de orden menos sirve para especificar la señal de terminación del hijo, que normalmente suele ser **SIGHLD**. Si esta a cero, no se envía señal. Una diferencia con **fork()**, es que en ésta no podemos seleccionar la señal, que siempre es **SIGCHLD**.
+
+![](./Imagenes/12.png)
+
+Veamos un ejemplo:
+
+![](./Imagenes/13.png)
+
+En el programa anterior, hemos utilizado la llamada de Linux que citamos anteriormente, **gettid()**, que devuelve el identificador de una gebra, **tid**.
+
+Si ejecutamos este proceso podemos observar como padre e hijo están en el mismo grupo, puesto que su PID es igual, tal como establece el indicador **CLONE_THREAD**. aDEMÁS, COMO HEMOS ESTABLECIDO, **CLONE_VM**, el espacio de memoria es el mismo, por loq que la variable es la misma en ambos.
+
+![](./Imagenes/14.png)
