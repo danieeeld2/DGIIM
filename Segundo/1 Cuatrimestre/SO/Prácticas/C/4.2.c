@@ -37,7 +37,6 @@ int main(int argc, char *argv[]){
 		var++;
 	} else{ //proceso padre ejecutando el programa
 		sleep(1);
-		printf("\npid= %d, global= %d, var= %d\n", getpid(),global,var);
-	}
+	printf("\npid= %d, global= %d, var= %d\n", getpid(),global,var);
 	exit(0);
 }
