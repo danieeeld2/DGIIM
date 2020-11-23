@@ -450,17 +450,17 @@ int main(int argc, char *argv[])
 	          << std::setw(GAP) << "timexn(us)"
 	          << std::endl;
 
-	test(popcount00, "popcount00(empty)");
-	test(popcount01, "popcount01(for)");
-	test(popcount02, "popcount02(while)");
-	test(popcount03, "popcount03(inline)");
-	test(popcount04, "popcount04(inline v2)");
-	test(popcount05, "popcount05(0'hallaron)");
-	test(popcount06, "popcount06(gus)");
-	test(popcount07, "popcount07(wikipedia)");
-	test(popcount08, "popcount08(Wegner)");
-	test(popcount09, "popcount09(lt8)");
-	test(popcount10, "popcount10(lt8 v2)");
-	test(popcount11, "popcount11(lt8 v3)");
-	test(popcount12, "popcount12(lt8 v4)");
+	test(popcount00, "popcount00");
+	test(popcount01, "popcount01");
+	test(popcount02, "popcount02");
+	test(popcount03, "popcount03");
+	test(popcount04, "popcount04");
+	test(popcount05, "popcount05");
+	test(popcount06, "popcount06");
+	test(popcount07, "popcount07");
+	test(popcount08, "popcount08");
+	test(popcount09, "popcount09");
+	test(popcount10, "popcount10");
+	test(popcount11, "popcount11");
+	test(popcount12, "popcount12");
 }
