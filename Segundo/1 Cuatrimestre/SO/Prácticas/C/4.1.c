@@ -38,6 +38,12 @@ int main(int argc, char *argv[]){
 	       by one of the processes do not affect the other.
 	*/
 
+	/*	El fork hace que a partir de dicho punto el proceso padre
+		y el del hijo ejecuten el código (usando el mismo contexto). El tiempo
+		de ejecución para cada uno depende de lo que determine el
+		sistema (wait)
+	*/
+
 	if(pid < 0){
 		printf("Fallo en fork. Un PID debe ser un entero no negativo\n");
 		perror("Fallo en el fork\n");
@@ -54,7 +60,7 @@ int main(int argc, char *argv[]){
 			else
 				printf("El número %d introducido es par\n", numero);
 		}
-		else if(pid > 0){
+		else if(pid > 0){	// Significa que es un proceso padre
 			printf("Soy el proceso padre y mi pid es: %d y el de mi hijo es %d\n", getpid(), pid);
 
 			printf("Vamos a comprobar si el número introducido es divisible por 4\n");
