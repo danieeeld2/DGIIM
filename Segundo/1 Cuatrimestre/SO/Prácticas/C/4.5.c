@@ -42,6 +42,7 @@ int main(int argc, char *argv[]){
 				*/
 
 				i--;
+				// printf("\nAcaba de finalizar mi hijo con PID %d y con estado %d\n", pid, estado);
 				printf("Acaba de finalizar mi hijo con PID %d\n", pid);
 				printf("Solo me quedan %d hijos vivos\n", i);
 			}
