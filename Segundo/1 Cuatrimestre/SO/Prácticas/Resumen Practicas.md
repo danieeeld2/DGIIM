@@ -2838,9 +2838,9 @@ printf("Identificador de grupo efectivo: %d\n", getegid());
 
 La única forma de que el núcleo de UNIX cree un nuevo proceso es que un proceso, que ya exista, ejecute **fork** (exceptuando los procesos especiales, algunas de los cuales hemos comentado brevemente en el punto anterior).
 
-El nuevo proceso que se crea tras la ejecución de la llamada **fork** se denomina *proceso hijo*, Esta llamada al sisema se ejecuta una sola vez, pero devuelve un valor distinto en cada uno de los procesos (padre e hijo). La única diferencia entre los valores devueltos es que en el proceso hijo el valor es 0 y en el proceso padre (el que ejecutó la llamada) el valor es el PID del hijo (La razón de esto, es que un proceso padre puede tener más de un proceso hijo. De esta forma, podemos identificar los distintos hijos. La razón por la que **fork** devuelve un 0 al proceso hijo se debe a que un proceso solamente puede tener un único padre), con lo que el hijo siempre puede ejecutar **getppid** para obtener el PID de su padre.
+El nuevo proceso que se crea tras la ejecución de la llamada **fork** se denomina *proceso hijo*, Esta llamada al sistema se ejecuta una sola vez, pero devuelve un valor distinto en cada uno de los procesos (padre e hijo). La única diferencia entre los valores devueltos es que en el proceso hijo el valor es 0 y en el proceso padre (el que ejecutó la llamada) el valor es el PID del hijo (La razón de esto, es que un proceso padre puede tener más de un proceso hijo. De esta forma, podemos identificar los distintos hijos. La razón por la que **fork** devuelve un 0 al proceso hijo se debe a que un proceso solamente puede tener un único padre), con lo que el hijo siempre puede ejecutar **getppid** para obtener el PID de su padre.
 
-Desde el punto de vista de laprogramación, el hecho de que se devuelva un valor distinto en el proceso padre y en el hijo nos va a ser muy útil, de cara a poder ejecutar distintas partes de código una vez finalizada la llamada **fork**.
+Desde el punto de vista de la programación, el hecho de que se devuelva un valor distinto en el proceso padre y en el hijo nos va a ser muy útil, de cara a poder ejecutar distintas partes de código una vez finalizada la llamada **fork**.
 
 **NOTA:** Existía una llamada al sistema similar a **fork**, **vfork**, que tenía un significado un poco diferente a ésta. Tenía la misma secuencia de llamada y los mismos valores de retorno que **fork**, pero **vfork** estaba diseñada para crear un nuevo proceso cuando el propósito del nuevo proceso era ejecutar, **exec**, un nuevo progama. **vfork** creaba el nuevo proceso sin copiar el espacio de direcciones del padre en el hijo, ya que el hijo no iba a hacer referencia a dicho espacio de direcciones sino que realizaba un **exec**, y mientras eso ocurría, el proceso padre permanecía bloqueado.
 
@@ -2848,7 +2848,101 @@ Desde el punto de vista de laprogramación, el hecho de que se devuelva un valor
 
 **<u>Ejercicio 1</u>**. Implementa un programa en C que tenga como argumento un número entero. Este programa debe crear un proceso hijo que se encargará de comprobar si dicho número es un número par o impar e informará al usuario con un mensaje que enviará por la salida estándar. A su vez, el proceso padre comprobará si dicho número es divisible por 4, e informará si lo es o no usando igualmente la salida estándar.
 
+```c
+#include<unistd.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<errno.h>
 
+int main(int argc, char *argv[]){
+
+	if(argc != 2){
+		printf("El programa necesita como argumento un número entero\n");
+		perror("Error en los parámetros\n");
+		exit(-1);
+	}
+
+	pid_t pid;
+
+	pid = fork();	// Creación de un proceso hijo a través de fork
+
+	/*	NAME
+       		fork - create a child process
+
+		SYNOPSIS
+	       #include <sys/types.h>
+	       #include <unistd.h>
+
+	       pid_t fork(void);
+
+		DESCRIPTION
+	       fork()  creates  a new process by duplicating the calling process.  The
+	       new process is referred to as the child process.  The  calling  process
+	       is referred to as the parent process.
+
+	       The child process and the parent process run in separate memory spaces.
+	       At the time of fork() both memory spaces have the same content.  Memory
+	       writes,  file  mappings (mmap(2)), and unmappings (munmap(2)) performed
+	       by one of the processes do not affect the other.
+	*/
+
+	if(pid < 0){
+		printf("Fallo en fork. Un PID debe ser un entero no negativo\n");
+		perror("Fallo en el fork\n");
+		exit(-1);
+	}
+	else{
+		if(pid == 0){	// Significa que es un proceso hijo
+			printf("Soy el proceso hijo y mi pid es: %d y el de mi padre es %d\n", getpid(), getppid());
+
+			printf("Vamos a comprobar si el número es par o impar:\n");
+			int numero = atoi(argv[1]);
+			if((numero%2) == 1)
+				printf("El número %d introducido es impar\n", numero);
+			else
+				printf("El número %d introducido es par\n", numero);
+		}
+		else if(pid > 0){
+			printf("Soy el proceso padre y mi pid es: %d y el de mi hijo es %d\n", getpid(), pid);
+
+			printf("Vamos a comprobar si el número introducido es divisible por 4\n");
+			int numero = atoi(argv[1]);
+			if(numero%4 == 0)
+				printf("El número %d introducido es divisible por 4\n", numero);
+			else printf("El número %d introducido es indivisible por 4\n", numero);	
+		}
+	}
+
+	/*	NAME
+       		getpid, getppid - get process identification
+
+		SYNOPSIS
+	       #include <sys/types.h>
+	       #include <unistd.h>
+
+	       pid_t getpid(void);
+	       pid_t getppid(void);
+
+		DESCRIPTION
+	       getpid() returns the process ID (PID) of the calling process.  (This is
+	       often used by routines that generate unique temporary filenames.)
+
+	       getppid() returns the process ID of the parent of the calling  process.
+	       This will be either the ID of the process that created this process us‐
+	       ing fork(), or, if that process has already terminated, the ID  of  the
+	       process  to which this process has been reparented (either init(1) or a
+	       "subreaper" process defined via the prctl(2) PR_SET_CHILD_SUBREAPER op‐
+	       eration).
+	*/
+
+	return EXIT_SUCCESS;
+}
+```
+
+**Enlace del ejercicio resuelto:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/4.1.c
 
 **<u>Ejercicio 2</u>**. ¿Qué hace el siguiente programa? Intenta enteder lo que ocurre con las variables y sobre todo con los mensajes por pantalla cuando el núcleo tiene activo/desactivado el mecanismo de buferring.
 
@@ -2910,6 +3004,8 @@ extern FILE *stdout;
 extern FILE *stderr
 ```
 
+**Enlance del ejercicio resuelto**: https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/4.2.c
+
 **<u>Ejercicio 3</u>**. Indica qué tipo de jerarquías de procesos se generan mediante la ejecución de cada uno de los siguientes fragmentos de código. Comprueba tu solución implementando un código, para generar 20 procesos en cada caso, en donde cada proceso imprima su PID y el del padre, PPID.
 
 ```c
@@ -2939,6 +3035,10 @@ for (i=1; i < nprocs; i++) {
 }
 ```
 
+**Enlaces del ejercicio resuelto: ** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/4.3a.c
+
+https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/4.3b.c
+
 #### Actividad 3.2. Trabajo con las llamadas a sistema *wait*, waitpid y *exit*
 
 Consulta en el manual en línea las llamadas **wait** **waitpid** y **exit** para ver sus posibilades de sincronización entre el proceso padre y su(s) proceso(s) hijo(s) y realiza los siguientes ejercicios:
@@ -2950,7 +3050,11 @@ Consulta en el manual en línea las llamadas **wait** **waitpid** y **exit** par
 	Solo me quedan <NUM_HIJOS> hijos vivos
 ```
 
+**Enlaces del ejercicio resuelto: **https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/4.4.c
+
 **<u>Ejercicio 5.</u>** Implementa una modificación sobre el anterior programa en la que el proceso padre espera primero a los hijos creados en orden impar (1º,3º,5º) y después a los hijos pares (2º y 4º).
+
+**Enlace del ejercicio resuelto:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/4.5.c
 
 ### 3. Familia de llamadas al sistema *exec*
 
@@ -2994,48 +3098,53 @@ Consulta en el manual en línea la distintas funciones de la familia **exec** y 
 **<u>Ejercicio 6</u>**. ¿Qué hace el siguiente programa?
 
 ```c
-/*
-tarea5.c
-Trabajo con llamadas al sistema del Subsistema de Procesos conforme a POSIX 2.10
-*/
-#include<sys/types.h>
-#include<sys/wait.h>
+//tarea5.c
+//Trabajo con llamadas al sistema del Subsistema de Procesos conforme a POSIX 2.10
+
+#include<sys/types.h>	
+#include<sys/wait.h>	
 #include<unistd.h>
 #include<stdio.h>
 #include<errno.h>
+#include <stdlib.h>
 
-int main(int argc, char *argv[]){
 
-	pid_t pid;
-	int estado;
-	if( (pid=fork())<0) {
-		perror("\nError en el fork");
-		exit(-1);
+int main(int argc, char *argv[])
+{
+pid_t pid;
+int estado;
+
+if( (pid=fork())<0) {
+	perror("\nError en el fork");
+	exit(EXIT_FAILURE);
+}
+else if(pid==0) {  //proceso hijo ejecutando el programa
+	if( (execl("/usr/bin/ldd","ldd","./tarea5")<0)) {
+		perror("\nError en el execl");
+		exit(EXIT_FAILURE);
 	}
-	else if(pid==0) { //proceso hijo ejecutando el programa
-		if( (execl("/usr/bin/ldd","ldd","./tarea5",NULL)<0)) {
-			perror("\nError en el execl");
-		}
-		exit(-1);
-	}
-	wait(&estado);
-	/*
-	<estado> mantiene información codificada a nivel de bit sobre el motivo de
-	finalización del proceso hijo que puede ser el número de señal o 0 si alcanzó su
-	finalización normalmente.
-	Mediante la variable estado de wait(), el proceso padre recupera el valor
-	especificado por el proceso hijo como argumento de la llamada exit(), pero
-	desplazado 1 byte porque el sistema incluye en el byte menos significativo el
-	código de la señal que puede estar asociada a la terminación del hijo. Por eso se
-	utiliza estado>>8 de forma que obtenemos el valor del argumento del exit() del
-	hijo.
-	*/
-	printf("\nMi hijo %d ha finalizado con el estado %d\n",pid,estado>>8);
-	exit(0);
+}
+wait(&estado);
+/*
+<estado> mantiene información codificada a nivel de bit sobre el motivo de finalización del proceso hijo 
+que puede ser el número de señal o 0 si alcanzó su finalización normalmente.
+Mediante la variable estado de wait(), el proceso padre recupera el valor especificado por el proceso hijo como argumento de la llamada exit(), pero desplazado 1 byte porque el sistema incluye en el byte menos significativo 
+el código de la señal que puede estar asociada a la terminación del hijo. Por eso se utiliza estado>>8 
+de forma que obtenemos el valor del argumento del exit() del hijo.
+*/
+
+printf("\nMi hijo %d ha finalizado con el estado %d\n",pid,estado>>8);
+
+exit(EXIT_SUCCESS);
+
 }
 ```
 
+**Enlace del ejercicio resuelto:**https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/4.6.c
+
 **<u>Ejercicio 7</u>**. Escribe un programa que acepte como argumentos el nombre de un programa, sus argumentos si los tiene, y opcionalmente la cadena "bg". Nuestro programa deberá ejecutar el programa pasado como primer argumento en *foreground* si no se especifica la cadena "bg" y en *background* en caso contrario. Si el programa tiene argumentos hay que ejecutarlo con éstos.
+
+**Enlace del ejercicio resuelto:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/4.7.c
 
 ### 4. La llamada *clone*
 
