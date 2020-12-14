@@ -1394,12 +1394,12 @@ El administrador del sistema será el responsable del buen funcionamiento de est
 Características de un proceso demonio:
 
 	17. Se ejecuta en background y no está asociado a un terminal o proceso login
- 	18. Algunos se inician en el arranque del sistema y continúan ajecutándose mientras el sistema está encendido, otros solo se ponen en marcha cuando son necesarios
- 	19. En caso de que termine por algún imprevisto es muy común que exista un mecanismo que detecte la terminación y lo rearranque.
- 	20. En muchos casos está a la espera de un evento
- 	21. En otros casos, tiene encomendada una labor que hay que hacer de forma periódica
- 	22. Es frecuente que no hagan el trabajo directamente, sino que lanza otros procesos para que lo realicen
- 	23. En muchos casos se ejecutan con privilegio de superusuario (UID=0)  y tienen por padre al proceso **init** (PID=1)
+	18. Algunos se inician en el arranque del sistema y continúan ajecutándose mientras el sistema está encendido, otros solo se ponen en marcha cuando son necesarios
+	19. En caso de que termine por algún imprevisto es muy común que exista un mecanismo que detecte la terminación y lo rearranque.
+	20. En muchos casos está a la espera de un evento
+	21. En otros casos, tiene encomendada una labor que hay que hacer de forma periódica
+	22. Es frecuente que no hagan el trabajo directamente, sino que lanza otros procesos para que lo realicen
+	23. En muchos casos se ejecutan con privilegio de superusuario (UID=0)  y tienen por padre al proceso **init** (PID=1)
 
 
 
@@ -3174,3 +3174,1187 @@ En el programa anterior, hemos utilizado la llamada de Linux que citamos anterio
 Si ejecutamos este proceso podemos observar como padre e hijo están en el mismo grupo, puesto que su PID es igual, tal como establece el indicador **CLONE_THREAD**. aDEMÁS, COMO HEMOS ESTABLECIDO, **CLONE_VM**, el espacio de memoria es el mismo, por loq que la variable es la misma en ambos.
 
 ![](./Imagenes/14.png)
+
+
+
+## <u>Sesión 8</u>
+
+### 2. Concepto y tipos de cauce
+
+Un cauce es un mecanismo para la comunicación de información y sincronización de entre procesos. Los datos pueden ser enviados (escritos) por varios procesos al cauce, y, a su vez, recibidos (leidos) por otros procesos.
+
+La sincronización básica que ocurre se debe a que los datos no pueden ser consumidos mientras no sean enviados al cauce. Así pues, un proceso que intenta leer datos de un cauce se bloquea si actualmente no existen dichos datos, es decir, no se ha escrito aún en el cauce por parte de los procesos productores o si los datos ya han sido tomados por los procesos consumidores.
+
+Existen dos tipos de cauce:
+
+- **Cauce sin nombre**:
+  - No tienen archivo asociado en el sistema de archivs de disco, solo tiene un archivo temporal cargado en memoria principal.
+  - Utilizan la llamada a la orden **pipe** y, automáticamente, devuelve dos descriptores, el de lectura y escritura.
+  - Los cauces sin nombre solo pueden ser utilizados como mecanismo de comunicación entre el proceso que crea el cauce sin nombre y los procesos descendentes creados a partir de la creación del cauce.
+  - El cauce sin nombre se cierra y elimina automáticamente por el núcleo cuando los contadores asociados a los números de productores y consumidores que los tienen en uso valen simultáneamente 0.
+- **Cauce con nombre o archivo FIFO**:
+  - Se crea usando las llamadas **mknod** y **mkfifo** en el sistema de archivos en disco como un archivo especial.
+  - Los procesos abren y cierran un archivo FIFO usando su nombre mediante las llamadas **open** y **close**.
+  - Cualesquiera procesos pueden compartir datos utilizando las ya conocidas llamadas al sistema **read** y **write** sobre el cauce con nombre previamente abierto. Es decir, los cauces con nombre permiten comunicar a procesos que no tienen un antecesor común en la jerarquía de procesos UNIX.
+  - El archivo FIFO permanece en el sistema de archivos una vez realizada todas las E/S de los procesos que lo han utilizado como mecanismo de comunicación, hasta que se borre explícitamente usando la llamada a **unlink**.
+
+### 3. Cauces con nombre
+
+#### 3.1. Creación de archivos FIFO
+
+Una vez creado el nombre de cualquier proceso puede abrirlo para lectura y/o escritura, de la misma forma que un archivo regular (El cauce debe estar abierto en ambos extremos para realizar operaciones de escritura-lectura).
+
+Para crear un archivo FIFO se usa:
+
+```c
+int mknod (const char *FILENAME, mode_t MODE, dev_t DEV)
+```
+
+La llamada al sistema **mknod** crea un archivo de nombre especial <FILENAME>. El parámetro <MODE> especifica los valores que serán almacenados en el campo <st_mode> del i-nodo correspondiente:
+
+- *S_IFCHR*: Dispositivo orientado a caracteres.
+- *S_IFBLK*: Dispositivo de bloques.
+- *S_IFSOCK*: Dispositivo socket.
+- *S_IFIFO*: Dispositivo FIFO.
+
+El argumento <DEV> especifica a qué dispositivo se refiere el archivo especial.
+
+Además, en concreto, para la creación de un archivo FIFO, existe la siguiente orden:
+
+```c
+int mkfifo (const char *FILENAME, mode_t MODE)
+```
+
+Esta llamada crea un archivo FIFO cuyo nombre es **FILENAME**. El argumento **MODE** se usa para establecer los permisos del archivo.
+
+Los archivos FIFO se eliminan con la llamada al sistema **unlink**.
+
+#### 3.2. Utilización de un cauce FIFO
+
+Las operaciones de E/S sobre un archivo FIFO son esencialmente las mismas que utilizadas con los archivos regulares, salvo que no podemos hacer uso de **lseek**, debido a la filosofía de trabajo FIFO (primero en entrar, primero en salir). Por otro lado, hay que tener en cuenta que la llamada a **read** es bloqueante para los procesos consumidores cuando no hay datos de leer en el cauce, y se debloquea, devolviendo 0, cuanfo toos los procesos que tenían abierto el cauce en modo escritura (productores) lo han cerrado o terminado.
+
+#### Actividad 4.1. Trabajo con cauces con nombre
+
+**<u>Ejercicio 1:</u>** Consulte en el manual las llamadas al sistema para la creación de archivos especiales en general (**mknod**) y la específica para archivos FIFO (**mkfifo**).Pruebe a ejercutar el siguiente código correspondiente a dos programas que modelan el problema del productor/consumidor, los cuales utilizan como mecanismo de comunicación un cauce FIFO. Determine en qué orden y manera se han de ejecutar los dos programas para su correcto funcionamiento y cómo queda reflejado en el sistema que estamos utilizando un cauce FIFO.
+
+```c
+//consumidorFIFO.c
+//Consumidor que usa mecanismo de comunicacion FIFO.
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#define ARCHIVO_FIFO "ComunicacionFIFO"
+
+int main(void)
+{
+    int fd;
+    char buffer[80];// Almacenamiento del mensaje del cliente.
+    int leidos;
+
+    //Crear el cauce con nombre (FIFO) si no existe
+    umask(0);
+    mknod(ARCHIVO_FIFO,S_IFIFO|0666,0);
+    //también vale: mkfifo(ARCHIVO_FIFO,0666);
+
+    //Abrir el cauce para lectura-escritura
+    if ( (fd=open(ARCHIVO_FIFO,O_RDWR)) <0) {
+        perror("open");
+        exit(EXIT_FAILURE);
+    }
+
+    //Aceptar datos a consumir hasta que se envíe la cadena fin
+    while(1) {
+        leidos=read(fd,buffer,80);
+        if(strcmp(buffer,"fin")==0) {
+        close(fd);
+        return EXIT_SUCCESS;
+    }
+        printf("\nMensaje recibido: %s\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+```c
+//productorFIFO.c
+//Productor que usa mecanismo de comunicacion FIFO
+
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<errno.h>
+#define ARCHIVO_FIFO "ComunicacionFIFO"
+
+int main(int argc, char *argv[])
+{
+    int fd;
+
+    //Comprobar el uso correcto del programa
+    if(argc != 2) {
+        printf("\nproductorFIFO: faltan argumentos (mensaje)");
+        printf("\nPruebe: productorFIFO <mensaje>, donde <mensaje> es una cadena de 			caracteres.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    //Intentar abrir para escritura el cauce FIFO
+        if( (fd=open(ARCHIVO_FIFO,O_WRONLY)) <0) {
+        perror("\nError en open");
+        exit(EXIT_FAILURE);
+    }
+
+    //Escribir en el cauce FIFO el mensaje introducido como argumento
+    if( (write(fd,argv[1],strlen(argv[1])+1)) != strlen(argv[1])+1) {
+        perror("\nError al escribir en el FIFO");
+        exit(EXIT_FAILURE);
+    }
+
+    close(fd);
+    return EXIT_SUCCESS;
+}
+```
+
+**Veamos pues la solución:**
+
+Notemos que primero se ejecuta el consumidor, entre otras razones, porque es el encargado de crear el archivo FIFO.
+
+El programa funciona de la siguiente manera:
+
+Una vez iniciado el proceso consumidor, pasamos a ejecutar el productor pasándole como parámetro entre comillas el string a escribir. La llamada al read en el consumidor es bloqueante, luego el consumidor esperará ahí hasta recibir un mensaje por parte del productor, mediante el archivo FIFO. Este bucle se ejecutará hasta que le pasemos la cadena "fin".
+
+![](./Imagenes/1.gif)
+
+**Código:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/5.1.consumidor.c
+
+https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/5.1.productor.c
+
+### 4. Cauces sin nombre
+
+#### 4.1. Esquema de funcionamiento
+
+Al ejecutar la llamada al sistema **pipe** para crear un cauce sin nombre, el núcleo automáticamente instala dos descriptores, el de envío de datos (**write**) al cauce y el que se usa para obtener daros (**read**).
+
+![](./Imagenes/15.png)
+
+El esquema anterior muestra como e crean los constructores, pero carece de utilidad práctica, ya que los mecanismos de comunicación tienen sentido entre dos o más procesos, por lo que podemos ampliar el esquema de la siguiente manera:
+
+![](./Imagenes/16.png)
+
+En este momento, se debe tomar la decisión sobre en qué dirección queremos que viajen los datos. Los dos procesos deben adecuarse a la decisión y cerrar los correspondientes extremos no necesarios.
+
+#### 4.2. Creación de cauces
+
+Para la creación de un cauce sin nombre usaremos la llamada **pipe**, la cual toma como argumento de un vector dos valores enteros **int fd[2]**. Si la llamada tiene éxito, el vector contendrá dos nuevos descriptores de archivo. Por defecto, se suele tomar **fd[0]** como descriptor de lectura y **fd[1]** como el de escritura.
+
+El descriptor de archivo 0 (**STDIN_FILENO**) de cualquier proceso UNIX direcciona la entrada estándar (**stdin**) que se asigna por defecto al teclado y, el descriptor de archivos 1 (**STDOUT_FILENO**) direcciona la salida estándar (**stdout**) asignada, por defecto, a la consola.
+
+Si deseamos conseguir redireccionar la entrada o salida estándar al descriptor de lectura o escritura, podemos usar las llamadas al sistema **close**, **dup**, **dup2**.
+
+La llamada **dup** se encarga de duplicar el descriptor indicado como parámetro de entrada. La llamada **dup2** hace lo mismo, peroevita posibles condiciones de carrera
+
+#### 4.3. Notas finales sobre cauces con y sin nombre
+
+- La llamada al sistema **pipe** debe realizarse antes que la llamada al **fork**. En caso contrario, el proceso hijo no heredará los descriptores del cauce.
+- Un cauce sin nombre o un archivo FIFO tienen que estar abiertos, simultáneamente, por ambos extremos para permitir la lectura/escritura. Puede ocurrir:
+  - El primer proceso que abre el cauce es el proceso lector. Entonces la llamada **open** bloquea a dicho proceso hasta que algún otro escriba en el cauce.
+
+#### Actividad: Trabajo con cauces sin nombre
+
+**<u>Ejercicio 2</u>**: Consulte en el manual en línea la llamada al sistema **pipe** para la creación de cauces sin nombre. Pruebe a ejecutar el siguiente programa que utiliza un cauce sin nombre y describa la función que realiza. 
+
+```c
+#include<sys/types.h>
+#include<fcntl.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<errno.h>
+#include<string.h>
+
+int main(int argc, char *argv[])
+{
+int fd[2], numBytes;
+pid_t PID;
+char mensaje[]= "\nEl primer mensaje transmitido por un cauce!!\n";
+char buffer[80];
+
+pipe(fd); // Llamada al sistema para crear un cauce sin nombre
+
+if ( (PID= fork())<0) {
+	perror("fork");
+	exit(EXIT_FAILURE);
+}
+if (PID == 0) {
+	//Cierre del descriptor de lectura en el proceso hijo
+	close(fd[0]);
+	// Enviar el mensaje a traves del cauce usando el descriptor de escritura
+	write(fd[1],mensaje,strlen(mensaje)+1);
+	exit(EXIT_SUCCESS);
+}
+else { // Estoy en el proceso padre porque PID != 0
+	//Cerrar el descriptor de escritura en el proceso padre
+	close(fd[1]);
+	//Leer datos desde el cauce.
+	numBytes= read(fd[0],buffer,sizeof(buffer));
+	printf("\nEl numero de bytes recibidos es: %d",numBytes);
+	printf("\nLa cadena enviada a traves del cauce es: %s", buffer);
+}
+
+return EXIT_SUCCESS;
+}
+```
+
+**Solución:** 
+
+```c
+/*	PIPE(2)                    Linux Programmer's Manual                   PIPE(2)
+
+	NAME
+	       pipe, pipe2 - create pipe
+
+	SYNOPSIS
+	       #include <unistd.h>
+
+	   pipe()  creates  a pipe, a unidirectional data channel that can be used
+	   for interprocess communication.  The array pipefd is used to return two
+	   file  descriptors  referring to the ends of the pipe.  pipefd[0] refers
+	   to the read end of the pipe.  pipefd[1] refers to the write end of  the
+	   pipe.   Data  written  to  the write end of the pipe is buffered by the
+	   kernel until it is read from the read end of the pipe.  For further de‐
+	   tails, see pipe(7).
+
+   RETURN VALUE
+       On success, zero is returned.  On error, -1 is returned, errno  is  set
+       appropriately, and pipefd is left unchanged.
+
+       On Linux (and other systems), pipe() does not modify pipefd on failure.
+       A requirement standardizing this behavior was  added  in  POSIX.1-2016.
+       The  Linux-specific pipe2() system call likewise does not modify pipefd
+       on failure.
+
+
+*/
+
+/*	En este programa creamos un cauce sin nombre mediante la llamada al sistema pipe. A 
+	continuación, creamos el proceso hijo, mediante la llamada a fork para que herede el 
+	contexto del padre. 
+
+	En nuestro caso se van a pasar datos del hijo al padre, es decir, el hijo es el
+	productor y el padre el consumidor. Por tanto, se cierra el descriptor de escritura
+	del padre y el de lectura del hijo. 
+*/
+```
+
+```bash
+$ gcc ejercicio.c
+$ ./a.out
+
+El numero de bytes recibidos es: 47
+La cadena enviada a traves del cauce es: 
+El primer mensaje transmitido por un cauce!!
+```
+
+**Código:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/5.2.c
+
+**<u>Ejercicio 3</u>**: Redirigiendo las entradas y salidas estándares de los procesos a los cauces podemos escribir un programa en lenguaje C que permita comunicar órdenes existentes sin necesidad de reprogramarlas, tal como hace la shel. En particular, ejecute el siguiente programa que ilustra la comunicación entre proceso padre e hijo a través de un cauce sin nombre redirigiendo la entrada estándar y la salida estándar del padre y el hijo, respectivamente.
+
+```c
+#include<sys/types.h>
+#include<fcntl.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<errno.h>
+
+int main(int argc, char *argv[]) 
+{
+int fd[2];
+pid_t PID;
+
+pipe(fd); // Llamada al sistema para crear un pipe
+
+if ( (PID= fork())<0) {
+	perror("fork");
+	exit(EXIT_FAILURE);
+}
+if(PID == 0) { // ls
+	//Establecer la direccion del flujo de datos en el cauce cerrando
+	// el descriptor de lectura de cauce en el proceso hijo
+	close(fd[0]);
+
+	//Redirigir la salida estandar para enviar datos al cauce
+	//--------------------------------------------------------
+	//Cerrar la salida estandar del proceso hijo
+	close(STDOUT_FILENO);
+
+	//Duplicar el descriptor de escritura en cauce en el descriptor
+	//correspondiente a la salida estandar (stdout)
+	dup(fd[1]);
+	execlp("ls","ls",NULL);
+}
+else { // sort. Estoy en el proceso padre porque PID != 0
+
+	//Establecer la dirección del flujo de datos en el cauce cerrando
+	// el descriptor de escritura en el cauce del proceso padre.
+	close(fd[1]);
+
+	//Redirigir la entrada estándar para tomar los datos del cauce.
+	//Cerrar la entrada estándar del proceso padre
+	close	(STDIN_FILENO);
+
+	//Duplicar el descriptor de lectura de cauce en el descriptor
+	//correspondiente a la entrada estándar (stdin)
+	dup(fd[0]);
+	execlp("sort","sort",NULL);
+}
+
+return EXIT_SUCCESS;
+}
+```
+
+**Solución:**
+
+```c
+/*	Comenzamos creando un cauce sin nombre, mediante la llamada al sistema pipe.
+	A continuación, creamos el proceso hijo, mediante la llamada a fork, parq ue herede
+	el contexto del padre.
+
+	En nuestro caso, el programa simulará la orden de terminal ls | sort. Para ello,
+	el hijo se encargará de ejecutar la orden ls. Como solo nos interesa la salida, cerramos
+	su descriptor de entrada. Además, nos interesa que la salida de la orden
+	no salga por la salida estándar, por lo que cerramos la misma y, con la orden dup, duplicamos
+	el descriptor de escritura. De esta forma, ahora la salida "estándar" será el cauce (fichero)
+	temporal creado por la orden pipe.
+
+	Por otro lado, el padre hace básicamente lo mismo. Es importante saber que la orden
+	dup es bloqueante, sino podría ocurrir que el padre ejecutase la orden sort, antes de que el
+	hijo ejecutara ls.
+
+	NAME
+       dup, dup2, dup3 - duplicate a file descriptor
+
+	SYNOPSIS
+       #include <unistd.h>
+
+       int dup(int oldfd);
+       int dup2(int oldfd, int newfd);
+
+	DESCRIPTION
+       The  dup() system call creates a copy of the file descriptor oldfd, us‐
+       ing the lowest-numbered unused file descriptor for the new descriptor.
+
+       After a successful return, the old and new file descriptors may be used
+       interchangeably.   They  refer  to  the same open file description (see
+       open(2)) and thus share file offset and file status flags; for example,
+       if the file offset is modified by using lseek(2) on one of the file de‐
+       scriptors, the offset is also changed for the other.
+*/
+```
+
+**Código:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/5.3.c
+
+**<u>Ejercicio 4</u>**: Compare el siguiente programa con el anterior y ejecútelo. Describa la principal diferencia, si existe, tanto de su código como en el resultado de la ejecución.
+
+```c
+#include<sys/types.h>
+#include<fcntl.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<errno.h>
+
+int main(int argc, char *argv[])
+{
+int fd[2];
+pid_t PID;
+
+pipe(fd); // Llamada al sistema para crear un pipe
+
+if ( (PID= fork())<0) {
+	perror("\nError en fork");
+	exit(EXIT_FAILURE);
+}
+if (PID == 0) { // ls
+	//Cerrar el descriptor de lectura de cauce en el proceso hijo
+	close(fd[0]);
+
+	//Duplicar el descriptor de escritura en cauce en el descriptor
+	//correspondiente a la salida estandr (stdout), cerrado previamente en
+	//la misma operacion
+	dup2(fd[1],STDOUT_FILENO);
+	execlp("ls","ls",NULL);
+}
+else { // sort. Proceso padre porque PID != 0.
+	//Cerrar el descriptor de escritura en cauce situado en el proceso padre
+	close(fd[1]);
+
+	//Duplicar el descriptor de lectura de cauce en el descriptor
+	//correspondiente a la entrada estándar (stdin), cerrado previamente en
+	//la misma operación
+	dup2(fd[0],STDIN_FILENO);
+	execlp("sort","sort",NULL);
+}
+
+return EXIT_SUCCESS;
+}
+```
+
+**Solución**: 
+
+```c
+/*	Este programa hace exáctamente lo mismo que el anterior, pero combina
+	la llamada a close y dup en una sola orden, que es dup2, que, además,
+	garantiza que no existan errores de carrera.
+
+	dup2()
+       The dup2() system call performs the same task as dup(), but instead  of
+       using  the lowest-numbered unused file descriptor, it uses the file de‐
+       scriptor number specified in newfd.  If the file descriptor  newfd  was
+       previously open, it is silently closed before being reused.
+*/
+```
+
+**Código:**
+
+**<u>Ejercicio 5</u>**: 
+
+![](./Imagenes/17.png)
+
+```c
+#include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
+int main(int argc, char *argv[]){
+	// [minA, maxA], [minB, maxB]
+	int minA, minB;
+	int maxA, maxB;
+	int fdE1[2], fdE2[2], fdM[2];
+	pid_t PID1, PID2;
+	int valor;
+
+	if (argc != 3){
+		printf("Sintaxis de ejecución: ./maestro <a> <b>\n");
+		exit(-1);
+	}
+
+	minA = strtol(argv[1], NULL, 10);	// Convierte string a int
+	maxB = strtol(argv[2], NULL, 10);	// Convierte string a int
+
+	// Creación de los cauces sin nombre
+	pipe(fdE1);
+	pipe(fdE2);
+	pipe(fdM);
+
+	if((PID1 = fork()) == 0){
+		// hijo 1 == esclavo 1
+		// Cerramos los descrpitores del esclavo 2, ya que no se comunican entre ellos
+		close(fdE2[0]);
+		close(fdE2[1]);
+
+		// Cerramos el resto de descriptores que no necesitemos
+		close(fdE1[1]);
+		close(fdM[0]);
+
+		// Esclavo 1 --> Maestro
+		// Usamos la llamada a dup2 para cerrar la E/S estándar y que se utilice el cauce
+		dup2(fdE1[0], STDIN_FILENO);
+		dup2(fdM[1], STDOUT_FILENO);
+
+		execl("./esclavo", "esclavo", NULL);
+	} else if((PID2 = fork()) == 0){
+		// hijo 2 == esclavo 2
+		// Cerramos los descrpitores del esclavo 1, ya que no se comunican entre ellos
+		close(fdE1[0]);
+		close(fdE1[1]);
+
+		// Cerramos el resto de descriptores que no necesitemos
+		close(fdE2[1]);
+		close(fdM[0]);
+
+		// Esclavo 1 --> Maestro
+		// Usamos la llamada a dup2 para cerrar la E/S estándar y que se utilice el cauce
+		dup2(fdE2[0], STDIN_FILENO);
+		dup2(fdM[1], STDOUT_FILENO);
+
+		execl("./esclavo", "esclavo", NULL);
+
+	} else{
+		// Padre
+		close(fdE1[0]);
+		close(fdE2[0]);
+
+		// Calculamos el intervalo 
+		maxA = (minA + maxB)/2;
+		minB = maxA+1;
+
+		// Escritura en el intervalo [minA, maxA] en el hijo 1 (esclavo1)
+		write(fdE1[1], &minA, sizeof(int));
+		write(fdE1[1], &maxA, sizeof(int));
+
+		// Escritura en el intervalo [minB, maxB] en el hijo 2 (esclavo2)
+		write(fdE2[1], &minB, sizeof(int));
+		write(fdE2[1], &maxB, sizeof(int));
+
+		while((read(fdM[0], &valor, sizeof(int))) != 0){
+			printf("%d\n", valor);
+		}
+	}
+
+	return EXIT_SUCCESS;
+
+}
+```
+
+**Script:**
+
+```c
+#include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
+
+int esPrimo(int num);
+
+int main(int argc, char *argv[]){
+	int min, max;
+	int i;
+
+	read(STDIN_FILENO, &min, sizeof(int));
+	read(STDIN_FILENO, &max, sizeof(int));
+	// Recordemos que con dup2 hemos hecho que el maestro escriba en
+	// la entrada estándar
+
+	for(i = min; i <= max; i++){
+		if(esPrimo(i)){
+			write(STDOUT_FILENO, &i, sizeof(int));
+		}
+	}
+
+	return EXIT_SUCCESS;
+}
+
+int esPrimo(int num){
+	int i;
+	int bandera = 1;
+
+	if(num == 0 || num == 1 || num == 4)
+		return bandera;
+	for(i=2; i<num/2; i++)
+		if(num%i == 0)
+			bandera = 0;
+
+	return bandera;
+}
+```
+
+**Código:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/5.5.c
+
+https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/5.5.esclavo.c
+
+
+
+## <u>Sesión 9</u>
+
+### 2. Señales
+
+Las señales constituyen un mecanismo básico de sincronización que utiliza el núcleo de Linux para indicar a los procesos la ocurrencia de determinados eventos síncronos/asíncronos con su ejecución. Además de las señales por parte del núcleo, los procesos pueden enviarse señales para la notificación de cierto evento y para determinar que acción realizarán como respuesta a la recepción de una señal determinada.
+
+Un manejador de señal es una función definida en el programa que se invoca cuando se entrega una señal al proceso. Su invocación puede interrumpir el flujo de control del proceso en cualquier instante.
+
+![](./Imagenes/18.png)
+
+Se dice que una señal es **depositada** cuando el proceso inicia una acción en base a ella, y se dice que una señal está **pendiente** si ha sido generada, pero todavía no ha sido depositada. Además un proceso puede bloquear la recepción de una o varias señales a la vez.
+
+Las señales bloqueadas de un proceso se almacenan en un conjunto de señales llamada **máscara de bloqueo de señales**. No se debe confundir una señal **bloqueada** con una señal **ignorada**, ya que una señal ignorada es desechada por el proceso, mientras que la bloqueada permanecerá pendiente y será depositada cuando el proceso la desbloquee.
+
+La lista de señales y su tratamiento por defecto se puede consultar con **man 7 signal**.
+
+![](./Imagenes/19.png)
+
+![](./Imagenes/20.png)
+
+- **Term:** Termina el proceso.
+- **Ign:** Ignora la señal.
+- **Core:** Termina el proceso y realiza un volcado de memoria.
+- **Stop:** Detiene el proceso
+- **Cont:** Que el proceso continue su ejecución si está parado.
+
+Las llamadas al sistema que podemos utilizar en Linux para trabajar con señales principalmente:
+
+- **kill:** Envia una señal a un proceso o conjunto de procesos.
+- **sigaction:** Establece la acción que realizará un proceso como respuesta a la recepción de una señal. Las únicas señales que no pueden cambiar su acción por defecto son: **SIGKILL** y **SIGSTOP**.
+- **sigprocmask:** Cambia la lista de señales bloqueadas.
+- **sigpending:** Examen de las señales pendientes.
+- **sigsuspend:** Reemplaza temporalmente la máscara de señal para el proceso con la dada por el argumento *mask* y luego suspende el proceso hasta que se recibe una señal.
+
+#### 2.1. La llamada kill
+
+La llamada **kill** se puede utilizar para enviar cualquier señal a un proceso o grupo de procesos.
+
+**Sipnosis**
+
+```c
+#include<sys/types.h>
+#include<signal.h>
+
+int kill(pid_t pid, int sig);
+```
+
+**Argumentos**
+
+- Si **pid** es positivo, se envia la señal **sig** al proceso con identificador **pid**, devolviendo 0 en caso de éxito y un valor negativo en caso de error.
+- Si **pid** es 0, entonces **sig** se envía a cada proceso en el grupo de proceso actual.
+- Si **pid** es igual a -1, entonces se envía la señal **sig** a cada proceso, excepto al primero, desde los números más altos en la tablla de procesos hasta los más bajos.
+- Si **pid** es menor que -1, entonces se envía **sig** a cada proceso del grupo de procesos **-pid**
+- Si **sig** es 0, no se envía ninguna señal, pero se hace la comprobación de errores.
+
+#### 2.2. La llamada sigaction
+
+Se emplea para cambiar la acción tomada por un proceso cuando recibe una determinada señal.
+
+**Sinopsis**
+
+```c
+int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
+```
+
+**Argumentos**
+
+- **signum** especifica la señal.
+- Si **act** no es **NULL**, la nueva acción para la señal signum se instala como **act**.
+- Si **oldact** no es **NULL**, la acción anterior se guarda en oldact
+
+**Valor de retorno**
+
+- 0 en caso de éxito y -1 en caso de error.
+
+**Estructuras de datos**
+
+```c
+struct sigaction{
+	void (*sa_handler)(int);
+    void (*sa_sigaction)(int, siginfo_t*, void *);
+    sigset_t sa_mask;
+    int sa_flags;
+    void (*sa_restorer)(void);
+}
+```
+
+- **sa_handler**: Acción que va asociada a la señal *signum*, pudiendo ser:
+
+  - **SIG_DEL**: Acción predeterminada
+  - **SIG_IGN**: Ignora la señal
+  - o un puntero a una función manejadora para la señal
+
+- **sa_mask**: Establece una máscara de señales que debería bloquearse durante la ejecución del manejador de señal. Se usan las siguientes funciones:
+
+  ![](./Imagenes/21.png)
+
+![](./Imagenes/22.png)
+
+- **sa_flags**: Especifica un conjunto de opciones que modifican el comportamiento del proceso de manejo de señales. Se forma por la aplicación del operador de bits OR a cero o más de las siguientes constantes:
+
+  ![](./Imagenes/23.png)
+
+![](./Imagenes/24.png)
+
+Los siguientes ejemplos ilustran el uso de la llamada al sistema **sigaction** para establecer un manejador para la señal **SIGINT** que se genera cuando se pulsa **<ctrl+c>**.
+
+```c
+#include <stdio.h>
+#include <signal.h>
+
+int main()
+{
+	struct sigaction sa;
+	sa.sa_handler = SIG_IGN; // ignora la señal
+	sigemptyset(&sa.sa_mask); 
+
+	//Reiniciar las funciones que hayan sido interrumpidas por un manejador 
+	sa.sa_flags = SA_RESTART; 
+
+	if (sigaction(SIGINT, &sa, NULL) == -1){ 
+		printf("error en el manejador");}
+		while(1);
+	}
+}
+```
+
+```c
+#include <stdio.h>
+#include <signal.h>
+
+static int s_recibida=0;
+static void handler (int signum){
+	printf("\n Nueva accion del manejador \n");
+	s_recibida++;
+}
+
+int main(){
+	struct sigaction sa;
+	sa.sa_handler = handler; // ignora la seal
+	sigemptyset(&sa.sa_mask); 
+
+	//Reiniciar las funciones que hayan sido interrumpidas por un manejador 
+	sa.sa_flags = SA_RESTART; 
+
+	if (sigaction(SIGINT, &sa, NULL) == -1){ 
+		printf("error en el manejador");}
+		while(s_recibida<3);
+	}
+}
+```
+
+#### Actividad: Trabajo con las llamadas al sistema sigaction y kill
+
+A continuación se muestra el código fuente de dos programas. El programa **envioSignal** permite el envío de una señal a un proceso identificado por medio de su **PID**. El prorama **reciboSignal** se ejecuta en background y permite la recepción de señales.
+
+**<u>Ejercicio 1</u>**: Compila y ejecuta los siguientes programas y trata de entender su funcionamiento.
+
+```c
+/*
+ envioSignal.c
+ Trabajo con llamadas al sistema del Subsistema de Procesos conforme a POSIX 2.10
+ Utilización de la llamada kill para enviar una señal:
+ 0: SIGTERM
+ 1: SIGUSR1
+ 2: SIGUSR2
+  a un proceso cuyo identificador de proceso es PID.
+ SINTAXIS: envioSignal [012] <PID> 
+*/
+
+
+#include <sys/types.h> //POSIX Standard: 2.6 Primitive System Data Types 
+#include<limits.h> //Incluye <bits/posix1_lim.h> POSIX Standard: 2.9.2 //Minimum    //Values Added to <limits.h> y <bits/posix2_lim.h>
+#include <unistd.h> //POSIX Standard: 2.10 Symbolic Constants         <unistd.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <errno.h>
+int main(int argc, char *argv[])
+ {
+          long int pid;
+          int signal;
+          if(argc<3) {
+          printf("\nSintaxis de ejecucion: envioSignal [012] <PID>\n\n");
+          exit(EXIT_FAILURE);
+           }
+         pid= strtol(argv[2],NULL,10);
+         if(pid == LONG_MIN || pid == LONG_MAX) 
+           {
+         if(pid == LONG_MIN)
+         printf("\nError por desbordamiento inferior LONG_MIN %ld",pid);
+         else
+            printf("\nError por desbordamiento superior LONG_MAX %ld",pid);
+            perror("\nError en strtol");
+            exit(EXIT_FAILURE);
+           }
+        signal=atoi(argv[1]);
+        switch(signal) {
+            case 0: //SIGTERM
+            kill(pid,SIGTERM); break;
+            case 1: //SIGUSR1
+            kill(pid,SIGUSR1); break;
+            case 2: //SIGUSR2
+            kill(pid,SIGUSR2); break;
+            default : // not in [012]
+            printf("\n No puedo enviar ese tipo de senal"); 
+              }
+}
+```
+
+```c
+/*
+ reciboSignal.c
+ Trabajo con llamadas al sistema del Subsistema de Procesos conforme a POSIX 2.10
+ Utilización de la llamada sigaction para cambiar el comportamiento del proceso       
+ frente a la recepción de una señal.
+*/
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <signal.h>
+#include <errno.h>
+#include <stdlib.h>
+
+static void sig_USR_hdlr(int sigNum)
+  {
+
+    if(sigNum == SIGUSR1)
+    printf("\nRecibida la senal SIGUSR1\n\n");
+    else if(sigNum == SIGUSR2)
+    printf("\nRecibida la senal SIGUSR2\n\n"); 
+   }
+
+int main(int argc, char *argv[])
+   {
+    struct sigaction sig_USR_nact;
+    if(setvbuf(stdout,NULL,_IONBF,0)) 
+       {    perror("\nError en setvbuf");
+       }
+
+//Inicializar la estructura sig_USR_na para especificar la nueva acción para la señal.
+
+sig_USR_nact.sa_handler= sig_USR_hdlr;
+
+
+//'sigemptyset' inicia el conjunto de señales dado al conjunto vacio. 
+
+sigemptyset (&sig_USR_nact.sa_mask);
+sig_USR_nact.sa_flags = 0;
+
+//Establecer mi manejador particular de seal para SIGUSR1
+if( sigaction(SIGUSR1,&sig_USR_nact,NULL) <0) 
+    {
+	perror("\nError al intentar establecer el manejador de senal para SIGUSR1");
+	exit(EXIT_FAILURE);
+    }
+//Establecer mi manejador particular de señal para SIGUSR2
+if( sigaction(SIGUSR2,&sig_USR_nact,NULL) <0) 
+    {
+	perror("\nError al intentar establecer el manejador de senal para SIGUSR2");
+	exit(EXIT_FAILURE);
+    }
+for(;;)
+   {
+   }
+}
+```
+
+Vamos con el primero de ellos:
+
+```c
+/*  El programa comienza comprobando que se reciben 3 argumentos. En caso
+    de no recibirlos, devuelve un mensaje de error con el uso apropiado del programa.
+    A continuación, almacena el segundo argumento en l variable pid, para pasar 
+    a comprobar si este valor se deborda inferior o superiormente. En dicho caso, 
+    devuelve un mensaje de error y finaliza el programa.
+
+    En caso de que strtol haya funcionado, se continua almacenando el segundo argumento 
+    en signal. A continuación, un bucle comprueba cual ha sido la señal recibida, y, en 
+    funció de la misma, llama a la orden kill, la cual, permite enviar una
+    señal a un proceso. En caso de que la señal pasada como parámetro no esté entre esos valores,
+    muestra un mensaje por pantalla diciendo que no se pudo enviar la señal
+
+    NAME
+       kill - send a signal to a process
+
+    SYNOPSIS
+       kill [options] <pid> [...]
+
+    DESCRIPTION
+       The  default  signal  for kill is TERM.  Use -l or -L to list available
+       signals.  Particularly useful signals include  HUP,  INT,  KILL,  STOP,
+       CONT,  and  0.   Alternate  signals may be specified in three ways: -9,
+       -SIGKILL or -KILL.  Negative PID values may be  used  to  choose  whole
+       process  groups; see the PGID column in ps command output.  A PID of -1
+       is special; it indicates all processes except the kill  process  itself
+       and init.
+
+    SIGTERM --> Señal de terminación
+    SIGUSR1 --> Señal definida por el usuario (1)
+    SIGUSR2 --> Señal definida por el usuario (2)
+*/
+```
+
+![](./Imagenes/2.gif)
+
+Vamos ahora con el segundo:
+
+```c
+/*  El programa comienza creando una struct signation, para pasar a desactivar el buffer
+    de la salida estándar. A continuación,pasa a inicializar la estructura sig_USR_na 
+    para especificar la nueva acción para la señal. Después, llama a 'sigemptyset', el cual,
+    inicia el conjunto de señales dado al conjunto vacio y, por último, inicializa los flags a 0.
+
+    Por último, llama a sigaction, el cual, permite cambiar la acción tomada
+    por un proceso cuando recibe una señal. En ambos casos, comprueba si el manejador 
+    falla, en cuyo caso, muestra un mensaje de error por pantalla y finaliza el
+    programa
+
+    struct sigaction{
+        void (*sa_handler)(int);
+        void (*sa_sigaction)(int, siginfo_t*, void *);
+        sigset_tsa_mask;
+        int sa_flags;
+        void (*sa_restorer)(void);
+    }
+
+    NAME
+       sigaction, rt_sigaction - examine and change a signal action
+
+    SYNOPSIS
+       #include <signal.h>
+
+       int sigaction(int signum, const struct sigaction *act,
+                     struct sigaction *oldact);
+
+
+       The  sigaction()  system  call  is used to change the action taken by a
+       process on receipt of a specific signal.  (See signal(7) for  an  over‐
+       view of signals.)
+
+       signum  specifies the signal and can be any valid signal except SIGKILL
+       and SIGSTOP.
+
+       If act is non-NULL, the new action for signal signum is installed  from
+       act.  If oldact is non-NULL, the previous action is saved in oldact.
+
+  */
+```
+
+![](./Imagenes/4.gif)
+
+**Código:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/6.1.envioSignal.c
+
+https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/6.1.reciboSignal.c
+
+**<u>Ejercicio 2</u>**: Escribe un programa en C llamado **contador**, tal que cada vez que reciba una señal que se pueda manejar, muestre por pantalla la señal y el número de veces que se ha recibido este tipo de señal, y un mensaje inicial indicando la señales que no puede manejar. En el cuadro siguiente se muestra un ejemplo de ejecución del programa.
+
+```bash
+kawtar@kawtar-VirtualBox:~$ ./contador &
+    [2] 1899
+kawtar@kawtar-VirtualBox:~$
+    No puedo manejar la señal 9
+    No puedo manejar la señal 19
+    Esperando el envío de señales...
+    kill -SIGINT 1899
+kawtar@kawtar-VirtualBox:~$ La señal 2 se ha recibido 1 veces
+    kill -SIGINT 1899
+    La señal 2 se ha recibido 2 veces
+    kill -15 1899
+kawtar@kawtar-VirtualBox:~$ La señal 15 se ha recibido 1 veces
+    kill -111 1899
+    bash: kill: 111: especificación de señal inválida
+kawtar@kawtar-VirtualBox:~$ kill -15 1899 // el programa no puede capturar la
+    señal 15
+    [2]+ Detenido	./contador
+kawtar@kawtar-VirtualBox:~$ kill -cont 1899
+    La señal 18 se ha recibido 1 veces
+kawtar@kawtar-VirtualBox:~$ kill -KILL 1899
+    [2]+	Terminado (killed)	./contador
+```
+
+Para este ejercicio aprovecharé el ejercicio anterior:
+
+```c
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <signal.h>
+#include <errno.h>
+#include <stdlib.h>
+
+static int seniales[31];
+
+void sig_USR_hdlr(int i) {
+    seniales[i]++;
+    printf("La señal %i ha sido recibida %i veces\n", i, seniales[i]);
+}
+
+int main(int argc, char *argv[])
+   {
+    struct sigaction sig_USR_nact;
+    if(setvbuf(stdout,NULL,_IONBF,0)) 
+       {    perror("\nError en setvbuf");
+       }
+
+//Inicializar la estructura sig_USR_na para especificar la nueva acción para la señal.
+
+sig_USR_nact.sa_handler= sig_USR_hdlr;
+
+//'sigemptyset' inicia el conjunto de señales dado al conjunto vacio. 
+
+sigemptyset (&sig_USR_nact.sa_mask);
+sig_USR_nact.sa_flags = 0;
+
+for ( int i = 0; i < 31; i++ )
+	seniales[i] = 0;
+
+
+for ( int i = 1; i < 31 && i != SIGSTOP && i != SIGKILL; i++ ) {
+    if (sigaction(i, &sig_USR_nact, NULL) == -1) {
+    	printf("No se pudo manejar %i\n", i);
+    }
+}
+
+while(1);
+}
+```
+
+![](./Imagenes/3.gif)
+
+**Código**: https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/6.2.c
+
+#### 2.3. La llamada *sigprocmask*
+
+Esta llamada se empleapara examinar y cambiar la máscara de señales.
+
+**Sinopsis**
+
+```c
+int sigprocmask(int how, const sigset_t *Set, sigset_t *oldest)
+```
+
+**Argumentos**
+
+- El argumento **how** indica el tipo de cambio. Los valores que se puede tomar son los siguientes:
+  - **SIG_BLOCK**: El conjunto de señales bloqueadas es la unión del conjunto actual y el argumento set.
+  - **SIG_UNBLOCK**: Las señales que hay en set se eliminan del conjunto actual de señales bloqueadas. Es posible intentar el desbloqueo de una señal que no esté bloqueada.
+  - **SIG_SETMASK**: El conjunto de señales bloqueadas se pone según el argumento set.
+- **set** representa el puntero al nuevo conjunto de señales enmascaradas. Si **set** es diferente de NULL, apunta a un conjunto de señales, en caso contrario sigprocmask se utiliza para consulta.
+- **oldset**: Representa el conjunto anterior de señales enmascaradas. Si **oldset** no es NULL, el valor anterior de la máscara de señal se guarda en **oldset**. En caso contrario, se retorna la máscara anterior.
+
+**Valor de retorno**
+
+- o en caso de éxito y -1 en caso de error
+
+#### 2.4. La llamada sigpending
+
+La llamada **sigpending** permite examinar el conjunto de señales bloqueadas y/o pendientes de entrega. La máscara de señal de las señales oendientes se guarda en **set**.
+
+**Sinopsis**
+
+```c
+int sigpending(sigset_t *set)
+```
+
+**Argumento**
+
+- **mask** representa el puntero al nuevo conjunto de señales enmascaradas
+
+**Valor de retorno**
+
+- -1 si sigsuspend es interrumpida por una señal capturada.
+
+**Ejemplo de uso**: En el siguiente ejemplo se suspende la ejecución del proceso actual hasta que recibe una señal distinta de **SIGUSR1**.
+
+```c
+#include <stdio.h>
+#include <signal.h>
+
+int main(){
+    sigset_t new_mask;
+
+    /* inicializar la nueva mascara de señales */
+    sigemptyset(&new_mask);
+
+    sigaddset(&new_mask, SIGUSR1);
+
+    /*esperar a cualquier señal excepto SIGUSR1 */
+    sigsuspend(&new_mask);
+}
+```
+
+#### Notas
+
+![](./Imagenes/25.png)
+
+![](./Imagenes/26.png)
+
+#### Actividad: Trabajo con la llamada al sistema sigsuspend  y sigprocmask
+
+**<u>Ejercicio 3</u>**: Escribe un programa que suspensa la ejecución del proceso actual hasta que se reciba la señal SIGUSR1. Consulta en el manual en línea sigmptyset para conocer las distintas operaciones que permitan configurar el conjunto de señales de un proceso.
+
+```c
+#include <stdio.h>
+#include <signal.h>
+
+int main() {
+    sigset_t new_mask;
+    
+    // vaciamos la máscara
+    sigemptyset(&new_mask);
+    
+    // rellenamos la máscara con todas las señales
+    sigfillset(&new_mask);
+    
+    // eliminamos SIGUSR1
+    sigaddset(&new_mask, SIGUSR1);
+    
+    // cuando suspendamos el programa no reaccionará a ninguna señal excepto SIGUSR1
+    sigsuspend(&new_mask);
+}
+```
+
+**Código:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/6.3.c
+
+**<u>Ejercicio 4</u>**: Compila y ejecuta el siguiente programa y trata de entender su funcionamiento.
+
+```c
+#include <signal.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+static int signal_recibida = 0;
+
+static void manejador (int sig)
+{
+          signal_recibida = 1;
+}
+
+int main (int argc, char *argv[])
+{
+    sigset_t conjunto_mascaras;
+    sigset_t conj_mascaras_original;
+    struct sigaction act;
+//Iniciamos a 0 todos los elementos de la estructura act 
+    memset (&act, 0, sizeof(act));
+
+    act.sa_handler = manejador;
+
+    if (sigaction(SIGTERM, &act, 0)) {
+        perror ("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    
+    //Iniciamos un nuevo conjunto de mascaras
+    sigemptyset (&conjunto_mascaras);
+    //Aadimos SIGTERM al conjunto de mascaras
+    sigaddset (&conjunto_mascaras, SIGTERM);
+    
+    //Bloqueamos SIGTERM
+    if (sigprocmask(SIG_BLOCK, &conjunto_mascaras, &conj_mascaras_original) < 0) {
+       perror ("primer sigprocmask");
+       exit(EXIT_FAILURE);
+    }
+
+    sleep (10);
+
+    //Restauramos la señal  desbloqueamos SIGTERM
+    if (sigprocmask(SIG_SETMASK, &conj_mascaras_original, NULL) < 0) {
+       perror ("segundo sigprocmask");
+       exit(EXIT_FAILURE);
+       }
+
+    sleep (1);
+
+   if (signal_recibida)
+       printf ("\nSenal recibida\n");
+   exit(EXIT_SUCCESS);
+}
+```
+
