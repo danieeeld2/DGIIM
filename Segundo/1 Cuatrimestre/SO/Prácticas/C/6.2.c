@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <stdlib.h>
 
-static int seniales[31];
+static int seniales[_NSIG];	// cte con el numero de señales del sistema
 
 void sig_USR_hdlr(int i) {
     seniales[i]++;
@@ -28,11 +28,11 @@ sig_USR_nact.sa_handler= sig_USR_hdlr;
 sigemptyset (&sig_USR_nact.sa_mask);
 sig_USR_nact.sa_flags = 0;
 
-for ( int i = 0; i < 31; i++ )
+for ( int i = 0; i < _NSIG; i++ )
 	seniales[i] = 0;
 
 
-for ( int i = 1; i < 31 && i != SIGSTOP && i != SIGKILL; i++ ) {
+for ( int i = 1; i < _NSIG && i != SIGSTOP && i != SIGKILL; i++ ) {
     if (sigaction(i, &sig_USR_nact, NULL) == -1) {
     	printf("No se pudo manejar %i\n", i);
     }
