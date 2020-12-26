@@ -4358,3 +4358,670 @@ int main (int argc, char *argv[])
 }
 ```
 
+
+
+## <u>Sesion 10</u>
+
+### 2. La función *fctnl*
+
+La llamada al sistema **fcntl** (file control) es una función multipropósito que permite consultar o ajustar las banderas de control de acceso de un descriptor, es decir, un archivo abierto.
+
+```c
+#include <unistd.h>
+#include <fcntl.h>
+int fcntl(int fd, int orden, /* Argumento de la orden */)
+```
+
+argumento **orden** admite un rango muy diferente de operaciones a realizar sobre el descriptor de archivo que se especifica en **fd**. El tercer argumento es opcional y va a depender de la órden indicada. Las órdenes admitidas son:
+
+![](./Imagenes/27.png)
+
+![](./Imagenes/28.png)
+
+#### 2.1. Banderas de estado de un archivo abierto
+
+Uno de los usos de la función permite recuperar o modificar el modo de acceso y las banderas de estado de un archivo abierto. àra recuperar los valores, utilizamos **F_GETFL**:
+
+```c
+int banderas, ModoAcceso;
+banderas=fcntl(fd, F_GETFL);
+if(banderas==-1)
+	perror("fcntl error")
+```
+
+Si  queremos comprobar que el archivo fue abierto para escrituras sincronizadas:
+
+```c
+if(bandera & O_SYNC)
+	printf("Las escrituras son sincronizadas\n");
+```
+
+Para comprobar el modo de acceso:
+
+```c
+ModoAcceso=banderas & O_ACCMODE;
+if(ModoAcceso==O_WRONLY || ModoAcceso==O_RDWR)
+    printf("El archivo permite la escritura \n");
+```
+
+Podemos utilizar la orden **F_SETFL** de **fcntl()** para modificar algunas de las banderas de estado del archivo abierto. Estas banderas son **O_APPEND**, **O_NONBLOCK**, **O_NOATIME**, **O_ASYNC** y **_O_DIRECT**,
+
+Para modificar las banderas, primeros invocamos a **fcntl** para obtener una copia de la bandera existente. A continuación, modificamos el bit correspondiente, y finalmente hacemos una nueva invocación de **fcntl** para modificarla.
+
+```c
+int bandera;
+bandera=fcntl(fd, F_GETFL);
+if(bandera==-1)
+	perror("fcntl");
+bandera = O_APPEND;
+if(fcntl(fd, F_SETFL, bandera) == -1)
+	perror("fcntl");
+```
+
+#### 2.2. La función fcntl utilizada para duplicar descriptores de archivos
+
+La orden **F_DUPFD** y de **fcntl** permite duplicar un descriptor, es decir, que cuando tiene éxito, tendremos en nuestro proceso dos descriptores apuntando al mismo archivo abierto con el mismo modo de acceso y compartiendo el mismo puntero de lectura-escritura, es decir, compartiendo la misma sesión de trabajo. 
+
+El siguiente fragmento de código permite redireccionar la salida estándar de un proceso hacia un archivo (tal como hacíamos con **dup**):
+
+```c
+int fd = open("temporal", O_WRONLY);
+close(1);
+if(fcntl(fd, F_DUPFD, 1) == -1) perror ("Fallo en fcntl");
+char bufer[256];
+int cont = write(1, bufer, 256);
+```
+
+#### Actividad: Trabajo con la llamada al sistema fcntl
+
+**Ejercicio 1:** Implementa un programa que admita t argumentos. El primer argumento será una orden de Linux; el segundo, uno de los siguientes caracteres "<" o ">", y el tercero el nombre de un archivo (que puede existir o no). El programa ejecutará la orden que se especifica como argumento primero e implementará la redirección especificada por el segundo argumento hacia el archivo indicado en el tercer argummento. Por ejemplo, si deseamos redireccionar la entrada estándar de **sort** desde un archivo **temporal**, ejecutaríamos:
+
+```bash
+$> ./mi_programa sort "<" temporal
+```
+
+**Nota.** El carácter redirección (<) aparece entre comillas dobles para que no los interprete la shell, sino que sea aceptado como argumento del programa.
+
+**SOLUCIÓN:**
+
+```c
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[]){
+    int fd, i;
+    char * argumentos[argc];
+    char * sym = argv[argc-2];
+    char * filename = argv[argc-1];
+    for(i=0; i<argc-3; i++){
+        argumentos[i] = (char*) malloc(strlen(argv[i+1])+1);
+        strcpy(argumentos[i],argv[i+1]);
+    }
+    argumentos[i] = NULL;
+
+    if(argc < 2){
+        printf("Error en el número de argumentos\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if(strcmp(sym, ">") == 0){
+        // Abrimos el archivo para escritura
+        if((fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC , S_IRWXU)) < 0){ // Comprobamos si falla la apertura
+            printf("Error en el open\n");
+            exit(EXIT_FAILURE);
+        }
+        close(STDOUT_FILENO); // Cerramos la salida estándar
+
+        //  Ajustamos las banderas del archivo abierto fd
+        /*  F_DUPFD duplica el descriptor de archivo especificado en fd.
+            El tercer argumento (STDOUT_FILENO) especifica que el descriptor
+            duplicado debe ser mayor o igual a dicho valor entero*/
+        if(fcntl(fd, F_DUPFD, STDOUT_FILENO) == -1){    // Comprobación de errores
+            printf("Error en fcntl\n");
+            exit(EXIT_FAILURE);
+        }
+
+        // Ejecutamos la orden
+        if(execvp(argv[1], argumentos) < 0){
+            printf("Error en execvp\n");
+            exit(EXIT_FAILURE);
+        }
+
+    }else if(strcmp(sym, "<") == 0){ // Mismo poceso pero con redireccion de netrada
+        if((fd = open(filename, O_RDONLY )) < 0){
+            printf("Error en el open\n");
+            exit(EXIT_FAILURE);
+        }
+        close(STDIN_FILENO);    // Cerramos la entrada estándar
+
+        //  Ajustamos las banderas del archivo abierto fd
+        /*  F_DUPFD duplica el descriptor de archivo especificado en fd.
+            El tercer argumento (STDOUT_FILENO) especifica que el descriptor
+            duplicado debe ser mayor o igual a dicho valor entero*/
+        if(fcntl(fd, F_DUPFD, STDOUT_FILENO) == -1){    // Comprobación de errores
+            printf("Error en fcntl\n");
+            exit(EXIT_FAILURE);
+        }
+
+        // Ejecutamos la orden
+        if(execvp(argv[1], argumentos) < 0){
+            printf("Error en execvp\n");
+            exit(EXIT_FAILURE);
+        }
+
+    }else{
+        printf("Error, el probrama debe usarse como: ./programa <orden> \">\"|\"<\" <archivo\n");
+        exit(EXIT_FAILURE);
+    }
+
+    exit(EXIT_SUCCESS);
+}
+```
+
+**Código:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/7.1.c
+
+**Ejercicio 2:** Reescribir el programa que implemente un encauzamiento de dos órdenes pero utilizando **fcntl**. Este programa admitirá tres argumentos. El primer argumento y el tercero serán dos órdenes de Linux. El segundo argumento será el carácter “|”. El programa deberá ahora hacer la redirección de la salida de la orden indicada por el primer argumento hacia el cauce, y redireccionar la entrada estándar de la segunda orden desde el cauce. Por ejemplo, para simular el encauzamiento ls|sort, ejecutaríamos nuestro programa como:
+
+```bash
+$> ./mi_programa2 ls "|" sort
+```
+
+**SOLUCIÓN:**
+
+```c
+#include<sys/types.h>
+#include<fcntl.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<errno.h>
+#include<string.h>
+
+int main(int argc, char *argv[])
+{
+    int fd[2];
+    pid_t PID;
+    if( (strcmp(argv[2], "|")!=0) || (argc != 4) )
+    {
+        perror("Error en los argumentos\n");
+        exit(-1);
+    }
+    pipe(fd); // Llamada al sistema para crear un pipe
+    if ( (PID= fork())<0) {
+        perror("fork");
+        exit(-1);
+    }
+    if(PID == 0) { // ls
+        //Establecer la dirección del flujo de datos en el cauce cerrando
+        // el descriptor de lectura de cauce en el proceso hijo
+        close(fd[0]);
+        //Redirigir la salida estándar para enviar datos al cauce
+        //--------------------------------------------------------
+        //Cerrar la salida estándar del proceso hijo
+        close(STDOUT_FILENO);
+        //Duplicar el descriptor de escritura en cauce en el descriptor
+        //correspondiente a la salida estándar (stdout)
+        fcntl(fd[1], F_DUPFD, STDOUT_FILENO);
+        execlp(argv[1], argv[1], NULL);
+    }
+    else { // sort. Estoy en el proceso padre porque PID != 0
+        //Establecer la dirección del flujo de datos en el cauce cerrando
+        // el descriptor de escritura en el cauce del proceso padre.
+        close(fd[1]);
+        //Redirigir la entrada estándar para tomar los datos del cauce.
+        //Cerrar la entrada estándar del proceso padre
+        close(STDIN_FILENO);
+        //Duplicar el descriptor de lectura de cauce en el descriptor
+        //correspondiente a la entrada estándar (stdin)
+        fcntl(fd[0], F_DUPFD, STDIN_FILENO);
+        execlp(argv[3], argv[3], NULL);
+    }
+    return(0);
+}
+```
+
+**Código:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/7.2.c
+
+#### 2.3. La función fcntl() y el bloque de archivos
+
+Es evidente que el acceso de varios procesos  un archivo para leer/escribir puede producir condiciones de carrera. Para evitarlas debemos sincronizar las acciones de éstos. Para ello, lo máscomún es usar cerrojos de archivos. Tenemos dos APIs para manejar cerrojos de archivos:
+
+- **flock()** que utiliza un cerrojo para bloquear el archivo completo.
+- **fcntl()** que utiliza cerrojos para bloquear regiones de un archivo
+
+El método general àra utilizarlas tiene los siguientes pasos:
+
+1. Posicionar un cerrojo sobre el archivo
+2. Realizar las entradas/salidas sobre el archivo
+3. Desbloquear el archivo de forma que otro proceso pueda  bloquearlo
+
+Podemos usarlo no sólo para E/S, sino para otras técnicas de sincronización.
+
+**Mezclando bloqueo y funciones de stdio**
+
+Debido al búfering que usa **stdio** en espacio de usuario, hemos de tener cuidado al usar funciones de **stdio** con las técnicas de sincronización mencionadas. E problema es que un búfer de entrada puede ser llenado antes de situar un cerrojo, o que una salida puede limpiarse antes de que se elimine un cerrojo. Podemos evitar estos dos problemas:
+
+- Usando **read()** y **write()** en lugar de las funciones de **stdio**.
+- Limpiar el flujo de **stdio** inmediantamente después de situar el ceerojo sobre el archivo, y de nuevo tras liberar el cerrojo.
+- Aunque sea algo menos eficiente, podemos deshabilitar el búfering de **stdio** con **setbuf()** o similar.
+
+##### 2.3.1.Bloque de registros con fcntl
+
+En general:
+
+```c
+struct flock flockstr;
+
+// ajustar campos de flockstr para describir el lock
+
+fcntl(fd, cmd, &flockstr);  // insertar lock definido por flockstr
+```
+
+donde:
+
+```c
+struct flock {
+    short l_type;	 // tipo de bloqueo:F_RDLCK, F_WRLCK, F_UNLCK
+    short l_whence;  // cómo interpretar l_start: SEEK_SET, SEEK_CUR, SEEK_END
+    off_t l_start;	 // offset desde el que empieza el bloqueo
+    off_t l_len;	 // no. bytes a bloquear; 0 significa hasta EOF
+    off_t l_pid;	 // proceso que previene bloqueo (sólo F_GETLK)
+}
+```
+
+- **l_type**: Indica el tipo de bloqueo que queremos utilizar. Estos son:
+
+  - **F_RDLCK**: Colocar cerrojo de lectura.
+  - **F_WRLCK:** Colocar cerrojo de escritura.
+  - **F_UNLCK:** Eliminar cerrojo existente.
+
+- **l_whence, l_start, l_len:** Especifican el rango de bytes que serán bloqueados. Los dos primeros funcionan como los arumentos **whence** y **offset** de **lseek()**.
+
+  - **l_start:** Especifica un desplazamiento que es interpretado respecto a:
+    - El principio del archivo, si **l_whence** es **SEEK_SET**.
+    - El desplazamiento actual del archivo, si **l_whence** es **SEEK_CUR**.
+    - El final del archivo, si **l_whence** es **SEEK_END**.
+
+  En los dos últimos casos, **l_start** puede ser un número negativo, siempre que la posición resultante no sea anterior al principio del archivo.
+
+  - **l_len:** Entero que especifica el número de bytes a bloquear a partir de la posición definida por los otros campos:
+    - El valor 0 de **l_len** tiene un significado especial: Bloquear todos los bytes del archivo desde la posición especificada por **l_whence** y **l_start** hasta fin de archivo, sin importar cuánto crezca éste.
+    - Ejemplo: Para bloquear un archivo completamente especificamos **l_whence** a **SEEK_SET** y **l_start** y **l_len** a 0.
+
+- **cdm**: specifica como se hará el bloqueo:
+
+![](./Imagenes/30.png)
+
+Hay que tener cuidado con **F_GETLK**, ya que puede que al usar la información que retorna, ésta esté obsoleta.
+
+**Cosas importantes a tener en cuenta en bloqueos: **
+
+- Dos procesos no pueden bloquear una misma zona: si se producen dos o más llamadas para bloquear zonas ya bloqueadas, retornan error. Si se  producen dos o más llamadas para bloquear una zona no bloqueada, una de  ellas es satisfactoria y el resto devolverán error.
+- La consulta de bloqueos siempre es satisfactoria.
+- No existe límite de bloqueos.
+- Los cerrojos de registros no son heredados por **fork()** por el hijo.
+- Los bloqueos se mantienen a través de **exec()**.
+- Todos los hijos de una tarea comparten los mismos bloqueos.
+- Los cerrojos de registros están asociados tanto a procesos como  inodos. En consecuencia, cuando un proceso termina todos los cerrojos  que poseía son liberados. Además, cuando un proceso cierra un descriptor se liberan todos los cerrojos que ese proceso tuviese sobre el archivo, sin importar el descriptor sobre el que se obtuvo el cerrojo o cómo se  obtuvo.
+
+##### Bloqueo Consultivo vs Bloqueo Obligatorio
+
+Los bloqueos son **consultivos**, es decir, son usados  por los programadores para asegurarse de que las operaciones de E/S u  otras que hagan concurrencia sean satisfactorias. El kernel ignorará los locks al hacer sus operaciones.
+
+Podemos habilitar el **bloqueo obligatorio** en Linux,  habilitándolo en el sistema de archivos que contiene a los archivos que  deseamos bloquear y en cada archivo que vaya a ser bloqueado, mediante  la opción **-o mand**:
+
+```
+$> mount -o mand /dev/sda1 /archivo
+```
+
+Podemos obtener el mismo resultado especificando la bandera **MS_MANDLOCK** cuando invocamos a **mount(2)**.
+
+Sobre un archivo, se habilita combinando la activación del bit *set-group-ID* y desactivando el bit *group-execute* (esta combinación en concreto porque no tiene otro uso):
+
+```
+$> chmod g+s,g-x archivo
+```
+
+Desde un programa podemos habilitarlo ajustando los permisos adecuadamente con **chmod()** o **fchmod()**.
+
+Sin embargo, los cerrojos obligatorios deben ser evitados porque tienen diversas desventajas.
+
+##### 2.3.2. El archivo /proc/locks
+
+El archivo **/proc/locks** en Linux contiene información de los cerrojos creados por **flock()** y por **fcntl()**. Cada línea muestra información de un cerrojo y tiene ocho campos que indican:
+
+1. Número ordinal del cerrojo en el set de todos los cerrojos del archivo.
+2. El tipo de cerrojo:
+   - **FLOCK** indica que fue creado por **flock()**
+   - **POSIX** indica que fue creado por **fcntl()**.
+3. El modo de bloqueo, **ADVISORY** o **MANDATORY**.
+4. El tipo de bloqueo, **READ** o **WRITE**.
+5. El ID del proceso que mantiene el bloqueo.
+6. Los números separados por **:** que identifican el archivo  sobre el que se establece el bloqueo. Estos números son números de  dispositivo mayores y menores del sistema de archivos donde se encuentra el archivo, seguido de su número de inodo.
+7. El byte donde comienza el cerrojo.
+8. El byte donde termina el cerrojo. **EOF** indica fin de archivo.
+
+#### Actividad: Bloqueo de archivos con la llamada al sistema fcntl
+
+**Ejercicio 3:** Construir un programa que verifique que, efectivamente, el kernel comprueba que puede darse una situación de interbloqueo en el bloqueo de archivos.
+
+**SOLUCIÓN:**
+
+```c
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <errno.h>
+
+void UsoIncorrecto(){
+    printf("La funciíon debe llamarse así: \"./ejercicio3.c <archivo>\"");
+    exit(EXIT_FAILURE);
+}
+
+int main(int argc, char *argv[]){
+    if(argc!=2)
+        UsoIncorrecto();
+    
+    struct flock cerrojo1, cerrojo2;
+    int fd;
+    pid_t pid;
+
+    if((fd=open(argv[1], O_RDWR)) == -1){
+        printf("Error en open");
+        exit(EXIT_FAILURE);
+    }
+
+    cerrojo1.l_type = F_WRLCK;  // Cerrojo de escritura
+    cerrojo1.l_whence = SEEK_SET;
+    cerrojo1.l_start = 0;
+    cerrojo1.l_len = 100;
+
+    cerrojo2 = cerrojo1;
+    cerrojo2.l_start = 300;
+
+    // Padre
+    if(fcntl(fd, F_SETLKW, &cerrojo1) == -1){
+        // F_SETLKW establece un cerrojo sobre un archivo
+        printf("\nPadre: Error cerrojo1\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("Padre: Cerrojo1 en el archivo\n");
+
+    if((pid=fork()) < 0){
+        printf("Error en el fork\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if(pid == 0){   // Hijo
+        if(fcntl(fd, F_SETLKW, &cerrojo2) == -1){
+            printf("Hijo: Error en cerrjo2");
+        }else{
+            printf("HIjo: cerroj2 en el archivo\n");
+        }
+
+        sleep(1);   // El hijo bloqueará antes y el sistema operativo hará que el padre falle
+        //sleep(3); // El hijo bloqueará después y el sistema operativo hará que el hijo falle
+
+        if(fcntl(fd, F_SETLKW, &cerrojo1) == -1)
+            printf("\nHijo: Error en cerrojo1");
+        
+        exit(EXIT_SUCCESS);
+
+    }else{ // Padre
+        sleep(2);
+
+        if(fcntl(fd, F_SETLKW, &cerrojo2) == -1){
+            printf("\nPadre: Error en cerrojo2");
+        }else{
+            printf("Padre: Cerrojo2 en el archivo\n");
+        }
+    }
+
+    waitpid(-1, NULL, WNOHANG);
+    return 0;
+}
+```
+
+**Código:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/7.3.c
+
+**Ejercico 4:** Construir un programa que se asegure que solo hay una instancia de él en ejecución en un momento dado. El programa, una vez que ha establecido el mecanismo para asegurar que solo una instancia se ejecuta, entrará en un bucle infinito que nos permitirá comprobar que no podemos lanzar más ejecuciones del mismo. En la construcción del mismo, deberemos asegurarnos de que el archivo a bloquear no contiene inicialmente nada escrito en una ejecución anterior que pudo quedar por una caída del sistema.
+
+**SOLUCIÓN:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/7.4.c
+
+```c
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <errno.h>
+
+int main(){
+    char blockfile[] = "/tmp/BlockFile";
+    struct flock cerrojo;
+    int fd;
+
+    umask(0);
+
+    if((fd = open(blockfile, O_CREAT | O_WRONLY, S_IWUSR)) < 0){
+        printf("Error en open\n");
+        exit(EXIT_FAILURE);
+    }
+
+    cerrojo.l_type = F_WRLCK;   // Cerrojo de escritura
+    cerrojo.l_whence = SEEK_SET;
+    cerrojo.l_start = 0;
+    cerrojo.l_len = 0;
+
+    if(fcntl(fd, F_SETLK, &cerrojo) == -1){
+        if(errno & (EACCES | EAGAIN)){
+            printf("Ya se  está ejecutando otra instrucción de este programa\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    printf("Soy la instancia del programa\n");
+    sleep(10);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Código:**
+
+### 3. Archivos proyectados en memoria *mmap*
+
+La llamada **mmap()** crea unanueva proyección de memoria en el espacio virtual del proceso que la llama. Puede ser de dos tipos:
+
+- **File mapping:** Proyecta una región de un archivo directamente a la memoria virtual del proceso que la llama. Una vez que ha sido proyectado un archivo, podemos acceder a su  contenido mediante operaciones en los bytes de la región de memoria  correspondiente. Las páginas de esta proyección son (automáticamente)  cargadas desde el archivo como es requerido.
+- **Anonymous mapping**: una proyección anónima no tiene un archivo correspondiente. En su lugar, las páginas de la proyección son inicializadas a 0.
+
+La memoria en la proyección de un proceso puede ser compartida con  las proyecciones de otro proceso. Esto puede ocurrir de dos formas:
+
+- Cuando dos procesos proyectan la misma región de un archivo, comparten las mismas páginas de la memoria física.
+- Un proceso hijo creado con **fork()** hereda una copia de  las proyecciones de su padre, y estas proyecciones se refieren a las  mismas páginas de la memoria física que las del padre.
+
+Cuando dos o más proceson comparten las mismas páginas, cada uno de  ellos puede ver los cambios que hace el otro a los contenidos de la  página, dependiendo de si la proyección es *privada* o *compartida*.
+
+- **Private mapping** (**MAP_PRIVATE)**: modificaciones a los contenidos de la proyección no son visibles a los  otros procesos, y para la proyección de archivos, no son efectivas en el archivo subyacente. Aunque las páginas de proyecciones privadas son  inicialmente compartidas, los cambios a los contenidos son privados a  cada proceso (**copy-on-write**).
+- **Shared mapping** (**MAP_SHARED**):  las modificaciones a los contenidos de la proyección son visibles al  resto de procesos que la comparten, y para una proyección de archivos,  los cambios son efectivos en el archivo subyacente.
+
+Resumimos el uso en la siguiente tabla:
+
+| Visibilidad de modificaciones | Proyección de archivo                                        | Proyección anónima                     |
+| ----------------------------- | ------------------------------------------------------------ | -------------------------------------- |
+| **Privada**                   | Inicializar la memoria desde los contenidos del archivo      | Asignación de memoria                  |
+| **Compartida**                | E/S proyectada a memoria; compartir memoria entre procesos (IPC) | Compartir memoria entre procesos (IPC) |
+
+Las proyecciones son perdidas cuando un proceso realiza un **exec()**, pero son heredadas por el hijo de un **fork()**. 
+
+La información de todas las proyecciones de un proceso se puede ver en **/proc/PID/maps**
+
+#### 3.1. Creación de una proyección con mmap()
+
+```c
+#include <sys/mman.h>
+
+void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);
+
+/*Crea una nueva proyección a memoria en el espacio de direcciones de la memoria virtual del proceso que la invoca.*/
+```
+
+- **addr:** Indica la dirección de inicio dentro del proceso donde debe proyectarse el descriptor. Si se le pasa **NULL**, el kernel escoge la dirección más adecuada para la proyección (preferible).
+
+- **length:** Especifica el tamaño de la proyección, en bytes. Será aproximado por el kernel al múltiplo inmediatamente superior del tamaño de página.
+
+- **prot:** Máscara de bits especificando la protección que será establecida en la proyección. Puede ser **PROT_NONE** o una combinación mediante ORs (`|`) de las siguientes flags:
+
+  | Valor          | Descripción                                        |
+  | -------------- | -------------------------------------------------- |
+  | **PROT_NONE**  | La región no puede accederse                       |
+  | **PROT_READ**  | Los contenidos de la región pueden ser leídos      |
+  | **PROT_WRITE** | Los contenidos de la región pueden ser modificados |
+  | **PROT_EXEC**  | Los contenidos de la región pueden ser ejecutados  |
+
+- **flags:** Máscara de bits especificando opciones que controlan varios aspectos de  la operación de proyección. Sólo uno de estos valores puede ser incluido en la máscara (opcionalmente puede hacerse un OR (`|`) con **MAP_FIXED**):
+
+  | Flag                | Descripción                                              |
+  | ------------------- | -------------------------------------------------------- |
+  | **MAP_PRIVATE**     | Los cambios son privados                                 |
+  | **MAP_SHARED**      | Los cambios son compartidos                              |
+  | **MAP_FIXED**       | Interpreta exactamente el argumento `address`            |
+  | **MAP_ANONYMOUS**   | Crea un mapeo anónimo                                    |
+  | **MAP_LOCKED**      | Bloquea las páginas en memoria (al estilo `mlock`)       |
+  | **MAP_NORESERVE**   | Controla la reserva de espacio de intercambio            |
+  | **MAP_POPULATE**    | Realiza una lectura adelantada del contenido del archivo |
+  | **MAP_UNITIALIZED** | No limpia (poner a cero) las proyecciones anónimas       |
+
+- **fd:** Descriptor del archivo a proyectar, y que una vez creada la proyección, podemos cerrar.
+- **offset:** Indica el inicio de archivo. El argumento **len** es, por tanto, el número de bytes a proyectar, empezando con un desplazamiento desde el inicio del archivo dado por **offset**.
+
+#### Esquema básico para realizar una proyección a  memoria
+
+En general seguimos los siguientes pasos:
+
+1. Obtenemos el descriptor del archivo con los permisos apropiados dependientes del tipo de proyección a realizar, normalmente con **open()**.
+2. Pasar este descriptor de archivo a **mmap()**.
+
+#### 3.2. Eliminar una proyección con munmap()
+
+```c
+#include <sys/mman.h>
+
+int munmap(void *addr, size_t length);
+
+/*Realiza la operación contraria a mmap(), eliminando una proyección de memoria del espacio de direcciones virutales del proceso.*/
+```
+
+- **addr:**  Dirección de comienzo del rango de direcciones a ser desproyectadas.
+- **length:** Entero no negativo especificando el tamaño (en bytes) de la región para  ser desproyectada. Será desproyectada hasta el siguiente múltimo del  tamaño de página.
+
+Normalmente, desproyectamos una proyección completa. Por eso, normalmente utilizaremos en **addr** la dirección que retornó **mmap()** para la proyección, y en **length** el valor que fue usado para la llamada a **mmap()**.
+
+Una vez desmapeada una proyección, cualquier referencia a ella generará la señal **SIGSEGV**. Si una región se declaró **MAP_PRIVATE**, los cambios que se realizaron en ella son descartados.
+
+#### Actividad: Trabajo con archivos proyectados
+
+**<u>Ejercicio 5:</u>** Escribir un programa, similar a la orden **cp**, que utilice para su implementación la llamada al sistema **mmap()** y una función de C que nos permite copiar memoria, como por ejemplo **memcpy()**. Para conocer el tamaño del archivo origen podemos utilizar **stat()** y para establecer el tamaño del archivo destino se puede usar **ftruncate()**.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+#include <errno.h>
+
+#define SIZE 32768
+
+void UsoIncorrento(){
+    printf("La función debe llamarse así:\".ejercicio5.out <archivo> <directorio a copia>\"");
+    exit(EXIT_FAILURE);
+}
+
+int main(int argc, char **argv){
+    if(argc != 3)
+        UsoIncorrento();;
+    
+    struct stat atributos1, atributos2;
+    int fd1, fd2;
+    char *ptr1, *ptr2, buf[256];
+
+    umask(0);
+
+    strcpy(buf, argv[2]);
+    strcat(buf, "/");
+    strcat(buf, argv[1]);
+
+    if((fd1 = open(argv[1], O_RDWR, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)) < 0 ||
+    (fd2 = open(buf, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)) < 0){
+        printf("Error en el open\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if(fstat(fd1, &atributos1) == -1){
+        printf("Error en el lstat 1");
+        exit(EXIT_FAILURE);
+    }
+
+    if(!S_ISREG(atributos1.st_mode)){
+        printf("El archivo no es regular\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if(ftruncate(fd2, atributos1.st_size) == -1){
+        printf("Error en el ftruncate\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if(fstat(fd2, &atributos2) == -1){
+        printf("Error en el lstat 2\n");
+        exit(EXIT_FAILURE);
+    }
+
+    ptr1 = (char*) mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd1, 0);
+
+    if(ptr1 == MAP_FAILED){
+        printf("Error en el map 1");
+        exit(EXIT_FAILURE);
+    }
+
+    ptr2 = (char*) mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd2, 0);
+
+    if(ptr2 == MAP_FAILED){
+        printf("Error en el map 2");
+        exit(EXIT_FAILURE);
+    }
+
+    memcpy(ptr2, ptr1, atributos1.st_size);
+
+    if(munmap(ptr1, atributos1.st_size) == -1){
+        printf("Error al cerrar la proyección 1\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if(munmap(ptr2, atributos2.st_size) == -1){
+        printf("Error al cerrar la proyección 2\n");
+        exit(EXIT_FAILURE);
+    }
+
+    close(fd1);
+    close(fd2);
+    exit(EXIT_SUCCESS);
+}
+```
+
+**Código:** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/7.5.c
