@@ -8,8 +8,8 @@
 #define SIZE 100
 #define TLIM 5
 
-char password[]="abracadabra\n";	// contraseña
-int  passcode  = 7777;			// pin
+char password[]="miralafuncion\n";	// contraseña
+int  passcode  = 6969;			// pin
 
 void boom(void){
 	printf(	"\n"
@@ -89,7 +89,7 @@ int main(){
 	    boom();
 
 	transform2();
-	printf("%s\n%d\n", password, passcode);
+	//printf("%s\n%d\n", password, passcode);
 
 	gettimeofday(&tv2,NULL);
 	if    ( tv2.tv_sec - tv1.tv_sec > TLIM )
