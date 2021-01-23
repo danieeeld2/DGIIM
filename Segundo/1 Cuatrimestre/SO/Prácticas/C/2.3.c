@@ -1,61 +1,77 @@
-#include<sys/types.h>
-#include<unistd.h>
-#include<stdlib.h>
-#include<sys/stat.h>
-#include<fcntl.h>
-#include<stdio.h>
-#include<errno.h>
-#include<sys/types.h>
-#include<dirent.h>
-#include<string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
+#include <dirent.h>
 
-// Creamos las dos variables globales para facilitar su modificación
-int regulares = 0;
-int tam = 0;
+#define mymask(mode) ((mode) & ~S_IFMT)
 
-// Función que nos piden
-void buscar(DIR *dir, char *path);
+// Permisos de ejecución para grupo y otros.
+#define S_IFXGRPOTH 011
 
-int main(int argc, char *argv[]){
-	DIR *dir;
+// Se define la macro con la regla para comprobar si tiene permiso x en grupo y otros
+#define regla1(mode) ((((mode) & ~S_IFMT) & 011) == S_IFXGRPOTH)
+    
+    void buscar_dir(DIR *direct, char pathname[], int *reg, int *tamanio) {
+        struct stat atributos;
+        struct dirent *ed;
+        DIR *direct_act;
+        char cadena[500];
 
+        while ((ed = readdir(direct)) != NULL){     // Leemos el directorio
+            // Ignorar el directorio actual y el supoerior
+            if (strcmp(ed->d_name, ".") != 0 && strcmp(ed->d_name, "..") != 0){
+                sprintf(cadena, "%s/%s", pathname, ed->d_name); // Concatenamos el nombre del archivo con la ruta del directorio
 
-	if(argc == 2){
-		dir = opendir(argv[1]);
-		buscar(dir, argv[1]);
-	}
-	else{
-		dir = opendir(".");
-		buscar(dir, ".");
-	}
+                if (stat(cadena, &atributos) < 0){  // Almacenamos los metadatos del archivo
+                    printf("\nError al intentar acceder a los atributos de archivo");
+                    perror("\nError en lstat");
+                    exit(-1);
+                }
 
-	printf("Existen %d archivos regulares con permiso x para grupos y otros\n", regulares);
-	printf("El tamaño total ocupado por dichos archivos es %d bytes\n", tam);
+                if (S_ISDIR(atributos.st_mode)){    // Comprobamos si el archivo es un directorio
+                    if ((direct_act = opendir(cadena)) == NULL) // Lo abrimos
+                        printf("\nError al abrir el directorio: [%s]\n", cadena);
+                    else
+                        buscar_dir(direct_act, cadena, reg, tamanio);   // Llamada recursiva
+                }else{
+                    printf("%s %ld \n", cadena, atributos.st_ino);
 
-	closedir(dir);
-
-	return EXIT_SUCCESS;
+                    if (S_ISREG(atributos.st_mode)){    // Miramos si es un archivo regular
+                        if (regla1(atributos.st_mode)){ // Condicioner del ejercicio
+                            (*reg)++;
+                            (*tamanio) += (int)atributos.st_size;
+                        }
+                    }
+                }
+            }
+        }
+        closedir(direct);   // Cerramos el directorio
 }
+int main(int argc, char *argv[]){
+    DIR *direct;
+    char pathname[500];
+    int reg = 0, tamanio = 0;
 
-void buscar(DIR *dir, char *path){
-	struct dirent *entrada;
-	char pathname[500];
-	struct stat atributos;
-	DIR *subdir;
+    if (argc == 2){
+        strcpy(pathname, argv[1]);
+    }else{
+        strcpy(pathname, ".");
+    }
 
-	// Leemos el contenido del directorio 
-	while((entrada = readdir(dir)) != 0){
-		sprintf(pathname, "%s/%s", path, entrada->d_name);
-		lstat(pathname, &atributos);
+    if ((direct = opendir(pathname)) == NULL){
+        printf("\nError al abrir directorio\n");
+        exit(-1);
+    }
 
-		if(S_ISREG(atributos.st_mode) && (atributos.st_mode & S_IXGRP) && (atributos.st_mode & S_IXOTH)){
-			printf("%s %lo\n", pathname, atributos.st_ino);
-			regulares++;
-			tam += atributos.st_size;
-		}
-		else if(S_ISDIR(atributos.st_mode)){	// Hay que comprobar si es un directorio, porque sino trataría de abrir archivos de caracteres o bloques
-			subdir = opendir(pathname);
-			buscar(subdir, pathname);
-		}
-	}
+    printf("Los inodos son: \n\n");
+    buscar_dir(direct, pathname, &reg, &tamanio);
+    printf("Hay %d archivos regulares con permiso x para grupo y otros\n", reg);
+    printf("El tamaño total ocupado por dichos archivos es %d bytes\n", tamanio);
+    
+    return 0;
 }
