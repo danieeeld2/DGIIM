@@ -206,9 +206,9 @@ Los usuarios especiales son aquellos que no estan asociados a personas fíicas.
 | postgres, mysql, xfs, ...           | Para administrar y ejecutar servicios     |
 | nobody ó nfsnobody                  | Usado por NFS                             |
 
-![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/1.png)
+![](./Imagenes/1.png)
 
-![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/2.png)
+![](./Imagenes/2.png)
 
 
 
@@ -1946,7 +1946,7 @@ Destacar para la orden man la siguiente tabla, que nos permitirá localizar info
 $ man <numero_seccion> <orden>
 ```
 
-![3](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/3.png)
+![3](./Imagenes/3.png)
 
 **NOTA 1:** Como se trata de C, compilaremos con **gcc** (no g++). Habreis visto su uso en la asignatura **Estructura de Computadoras**
 
@@ -2082,70 +2082,69 @@ Bloque 2
 ```
 
 ```c
-#include<unistd.h>
-#include<stdio.h>
-#include<stdlib.h>
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<fcntl.h>
-#include<errno.h>
-#include<string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
+int main(int argc, char *argv[])
+{
+	int cont = 1, leidos;
+	int filein, fileout;
+	char cadena[30];
+	char cad_bloque[40];
+	char salto_linea[2] = "\n";
+	char caracter[1];
+	int num_char = 1;
 
-int main(int argc, char *argv[]){
-	int fdin;
-	int fdout;
-	char string[] = "El número de bloque es %d\n";
-	char buffer[80];
-	char block[20];
-	int i = 1;
-	int leidos = 0;
-	char output[strlen(string)+2];
+	if (argc == 2){
+		if((filein = open(argv[1], O_RDONLY)) < 0){		// Abrimos el archivo en modo lectura
+			printf("Error al abrir el archivo", errno);
+			perror("Error al abrir el archivo");
+			exit(-1);
+		}	
+	}else{
+		filein = STDIN_FILENO;	// Si no se pasan parámetros usamos la salida estándar
+	}
 
+	if((fileout = open("archivo_salida", O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR | S_IWUSR)) < 0){	// Abrimos el archivo de salida con todos los permisos necesarios
+		printf("Error al abrir el archivo", errno);
+        perror("Error al abrir el archivo");
+        exit(-1);
+	}
+	
+	while ((leidos = read(filein, caracter, 1)) != 0){	// Leemos de caracter en caracter 
+		if (num_char == 1 || num_char % 80 == 0){	// Cada 80 caracteres imprimira el número de bloque
+			if (num_char != 1)
+				write(fileout, salto_linea, strlen(salto_linea));
+			else{
+				sprintf(cad_bloque, "El numero de bloques es <%d>\n", cont);
+				write(fileout, cad_bloque, strlen(cad_bloque));	// Escribimso en el archivo de salida
+			}
 
-	// Primero tenemos que hacer un control del número de argumentos que se toman
-	if(argc == 2){
-		if((fdin = open(argv[1], O_WRONLY, S_IRUSR|S_IWUSR)) < 0){	// Si es menos que 0 da fallo. Ver los flags em el guión
-			printf("Error %d en open\n", errno);	// Mensaje de error
-			perror("Error en open\n");
-			exit(-1);	// Salimos del programa, devolviendo -1 (significa que ha fallado)
+			sprintf(cad_bloque, "%s%d\n", "Bloque", cont);
+			write(fileout, cad_bloque, strlen(cad_bloque));
+			cont++;
 		}
-	} else{
-		fdin = STDIN_FILENO;	// Al escritor de entrada (fdin) le asignamos la entrada estándar de teclado
+		write(fileout, caracter, 1);
+		num_char++;
 	}
 
-	if((fdout = open("salida.txt", O_CREAT|O_TRUNC|O_WRONLY, S_IRUSR|S_IWUSR)) < 0){	// Ver flags en guión
-		printf("Error %d en open\n", errno);
-		perror("Error en open\n");
-		exit(-1);
-	}
+	sprintf(cad_bloque, "El numero de bloques es <%d>\n", cont);
+	lseek(fileout, 0, SEEK_SET);	// Movemos puntero de escritura al inicio del archivo
+	write(fileout, cad_bloque, strlen(cad_bloque));
 
-	// Reservamos el espacio para escribir posteriormente la cadena , hasta que sepamos %d
-	lseek(fdout, strlen(string)+2, SEEK_SET);	// Reservamos desde el inicio hasta lo que ocupa la cadena +2(para el número y \n)
-
-	// Realizamos la lectura
-	while(((leidos = read(fdin, buffer, 80)) != 0)){	// Leemos en bloques de 80, tal y como pide el ejercicio
-		sprintf(block, "\nBloque %d\n", i);	// Mete dicha linea en la cadena bloque
-		write(fdout, block, strlen(block));	// Escribimos block en el archivo de salida
-		write(fdout, buffer, leidos);		// Escribimos los 80 bytes que habíamos leido previamente en el archivo de salida
-		i++;					// Aumentamos el contador para leer el siguiente bloque
-	}
-
-	lseek(fdout, 0, SEEK_SET);	// Devolvemos el puntero al principio para escribir la línea que nos habíamos saltado
-	sprintf(output, string, i-1);	// Concatena string y cambia %d por i-1 (El menos uno es para corregir el índice)
-	write(fdout, output, strlen(output));	// Lo escribimos en el archivo de salida
-
-	if(close(fdin) == -1){
-		printf("Error %d en close\n", errno);
-		perror("Error en close\n");
-		exit(-1);
-	}
-
-	return EXIT_SUCCESS;
+	close(filein);
+	close(fileout);
+	
+	return 0;
 }
-
 ```
 
-**Puedes descargar el archivo aquí**:
+**Puedes descargar el archivo aquí**: https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/1.2.C
 
 ### 4. Metadatos de un archivo
 
@@ -2168,7 +2167,7 @@ Linux soporta los siguientes tipos de archivos:
 
 Los metadatos de un archivo, se pueden obtener con la llamada al sistema **stat**, que utiliza la estructura de datos llamadas **stat**, para almacenar dicha información. Utiliza la siguiente representación:
 
-![4](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/4.png)
+![4](./Imagenes/4.png)
 
 El valor **st_blocks** da tamaño del fichero en bloques de 512 bytes. El valor **st_blksize** da el tamaño de bloque "preferido" para operaciones de E/S eficientes sobre el sistema de ficheros. 
 
@@ -2178,9 +2177,9 @@ Normalmente, **st_mtime** es modificado por **mknod(2)**, **utime(2)**, **read(2
 
 Por lo general, **st_ctime** es modificado al escribir o poner información del inodo
 
-![5](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/5.png)
+![5](./Imagenes/5.png)
 
-![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/6.png)
+![](./Imagenes/6.png)
 
 #### 4.3. Permisos de acceso a archivos
 
@@ -2307,6 +2306,8 @@ $ ls -l
 #-rw-r--r-- dice el tipo de archivo y los permisos
 ```
 
+**<u>Código:</u>** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/1.3.c
+
 
 
 ## <u>SESIÓN 6</u>
@@ -2336,9 +2337,9 @@ VALOR DEVUELTO
 
 Estas dos funciones nos permiten cambiar los permisos de acceso para un archivo que existe en el sistema de archivos. La llamada **chmod** sobre un archivo especificado por su pathname mientras que la función **fchmod** opera sobre un archivo que ha sido previamente abierto con **open**.
 
-![7](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/7.png)
+![7](./Imagenes/7.png)
 
-![8](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/8.png)
+![8](./Imagenes/8.png)
 
 #### Actividad 2.1. Trabajo con llamadas de cambio de permisos
 
@@ -2416,6 +2417,26 @@ return 0;
 }
 ```
 
+```
+Lo que hace el programa es crear un archivo llamado archivo1 con permisos de lectura,
+escritura y ejecución para el grupo, seguidamente pone la máscara a 0 con la orden
+umask(0) y después crea otro archivo llamado archivo2, con los mismos permisos que el
+archivo anterior.
+
+Luego comprueba que se puede acceder a los atributos del primer archivo con la orden
+stat.
+
+Después con chmod cambiamos los permisos del primer archivo haciendo un AND lógico
+del estado del archivo(accediendo al struct atributos) con el negado del permiso de
+ejecución para el grupo, con lo que le quitamos el permiso de ejecución para el grupo.
+También activamos la asignación del GID del propietario al GID efectivo del proceso que
+ejecute el archivo.
+
+Por último con chmod cambiamos los permisos del segundo archivo para que tenga
+todos los permisos para el propio usuario, permiso de lectura y escritura para el grupo, y
+lectura para el resto de usuarios.
+```
+
 ### 3. Fuciones de manejo de directorios
 
 Aunque los directorios se pueden leer utilizando las mismas llamadas al sistema que para lo archivos normale, como la estructura de los directorios puede cambiar de un sistema a otro, los programas en este caso no serían transportables. Para solucionar este problema, se va a utilizar una biblioteca estándar de funciones de manejo de directorios que se presentan de forma resumida a continuación:
@@ -2432,7 +2453,7 @@ Aunque los directorios se pueden leer utilizando las mismas llamadas al sistema 
 
 - **rewinddir**: Posición el puntero de lectura al principio del directorio
 
-  ![9](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/9.png)
+  ![9](./Imagenes/9.png)
 
 #### Actividad 2.2 Trabajo con funciones estándar de manejo de directorios
 
@@ -2476,103 +2497,81 @@ Si no se pueden cambiar los permisos de un determinado archivo se debe especific
 < nombre_de_archivo > : < errno > < permisos_antiguos > 
 
 ```c
-#include<sys/types.h>
-#include<unistd.h>
-#include<stdlib.h>
-#include<sys/stat.h>
-#include<fcntl.h>
-#include<stdio.h>
-#include<errno.h>
-#include<sys/types.h>
-#include<dirent.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 int main(int argc, char *argv[]){
-	char *pathname;
-	DIR *dir;
-	unsigned int permisos;
-	struct dirent *ed;
-	struct stat atributos;
-	char cadena[1000];
-	char cadena2[2000];
-	extern int errno;
+    DIR *direct;
+    unsigned int permisos;
+    char *pathname;
+    struct stat atributos;
+    struct dirent *ed;
+    char cadena[100];
+    char cadena2[100];
+    extern int errno;
 
+    if (argc == 3){
+        pathname = argv[1];
+        direct = opendir(pathname);     // Abrimos el directorio
+        permisos = strtol(argv[2], NULL, 8);    // Almacenamos los permisos
 
-	// Comprobamos que el número de argumentos es correcto
-	if(argc != 3){
-		printf("Error en los argumentos\n");
-		printf("Uso: ejercicio.c <pathname> <permisos>\n");
-		exit(-1);
-	}
-
-	pathname = argv[1];
-	dir = opendir(pathname);
-	permisos = strtol(argv[2], NULL, 8);	// Pasar el argumento a octal
-
-	/*  long int strtol(const char *nptr, char **endptr, int base);
+        /*  long int strtol(const char *nptr, char **endptr, int base);
 		
 		The  strtol()  function converts the initial part of the string in nptr
         to a long integer value according to the given base, which must be  be‐
         tween 2 and 36 inclusive, or be the special value 0.
-	*/
+	    */
 
-	if (dir == NULL){
-		printf("ERROR, no se ha podido abrir el directorio\n");
-		exit(-1);
-	}
+    }else{
+        printf("Uso: ejercicio2.c <pathname> <permisos>\n");
+        exit(-1);
+    }
 
-	readdir(dir);	// Lee el directorio
-	ed=readdir(dir);	// Lee el archivo /. del directorio
+    if(direct == NULL){
+        printf("Error, no se ha podido abrir el directorio");
+        exit(-1);
+    }
 
-	/* The  readdir()  function returns a pointer to a dirent structure repre‐
+    readdir(direct);    // Lee el direcotiro
+    ed=readdir(direct);     // Lee el archivo /. del directorio
+
+    /* The  readdir()  function returns a pointer to a dirent structure repre‐
        senting the next directory entry in the directory stream pointed to  by
        dirp.   It  returns NULL on reaching the end of the directory stream or
        if an error occurred
     */
 
-    while((ed=readdir(dir))!= 0){
-    	sprintf(cadena, "%s/%s", pathname, ed->d_name);
+    while ((ed = readdir(direct)) != 0){
+        sprintf(cadena, "%s/%s", pathname, ed->d_name); // Concatenamos la ruta del directorio con el nombre del archivo
 
-    	/* La función spritnf formatea la cadena
-    	   sprintf ( string $format [, mixed $args [, mixed $... ]] ) : string
-
-    	   %* representa el formato. En nuestro caso, s significa que hace
-    	   un formateo a string
-    	*/
-
-    	if(lstat(cadena, &atributos) < 0){
-    		printf("\nError al intentar acceder a los atributos de la cadena ");
-    		printf("%s\n",cadena);
-    		perror("Error en lstat\n");
-    		exit(-1);
-    	}
-
-    	if(S_ISREG(atributos.st_mode)){
-    		sprintf(cadena2, "%s", ed->d_name);
-    		printf("%s: %o ", cadena2, atributos.st_mode);	// %o formateo a octal
-
-    		chmod(cadena, permisos);
-
-    		if(chmod(cadena,permisos) < 0){
-    			printf("Error: %s %o\n",cadena, permisos);
-
-    			/* The strerror() function returns a pointer to a  string  that  describes
-       			   the  error  code  passed  in  the  argument  errnum
-				   
-				   errno return number of last error
-				   The  value  in  errno  is significant only when the return value of the
-       			   call indicated an error
-
-       			*/
-    		}else{
-    			stat(cadena,&atributos);
-    			printf("%o \n",atributos.st_mode);
-    		}
-    	}
+        if (stat(cadena, &atributos) < 0){  // Almacenamos los metadatos del archivo
+            printf("\nError al intentar acceder a los atributos de archivo");
+            perror("\nError en lstat");
+            exit(-1);
+        }
+        if (S_ISREG(atributos.st_mode)){
+            sprintf(cadena2, "%s", ed->d_name);
+            printf("%s: %o ", cadena2, atributos.st_mode);
+            chmod(cadena, permisos);
+            if (chmod(cadena, permisos) < 0){   // Cambiamos los permisos
+                printf("Error: %s\n", strerror(errno));
+            }
+            else{   // Si no se puede, imprimimos los anteriores
+                stat(cadena, &atributos);
+                printf("%o \n", atributos.st_mode);
+            }
+        }
     }
 
-    closedir(dir);
-
-    return EXIT_SUCCESS;
+    closedir(direct);   // Cerramos el directorio
+    return 0;
 }
 ```
 
@@ -2621,6 +2620,8 @@ int main(int argc, char *argv[]){
 }
 ```
 
+**<u>Código:</u>** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/2.2.c
+
 **Si quisieramos que se salte algun directorio, usamos la siguiente orden: **
 
 ```c
@@ -2644,13 +2645,95 @@ Los i-nodos son:
 	El tamaño total ocupado por dichos archivos es 2345674 bytes
 ```
 
+```c
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
+#include <dirent.h>
+
+#define mymask(mode) ((mode) & ~S_IFMT)
+
+// Permisos de ejecución para grupo y otros.
+#define S_IFXGRPOTH 011
+
+// Se define la macro con la regla para comprobar si tiene permiso x en grupo y otros
+#define regla1(mode) ((((mode) & ~S_IFMT) & 011) == S_IFXGRPOTH)
+    
+    void buscar_dir(DIR *direct, char pathname[], int *reg, int *tamanio) {
+        struct stat atributos;
+        struct dirent *ed;
+        DIR *direct_act;
+        char cadena[500];
+
+        while ((ed = readdir(direct)) != NULL){     // Leemos el directorio
+            // Ignorar el directorio actual y el supoerior
+            if (strcmp(ed->d_name, ".") != 0 && strcmp(ed->d_name, "..") != 0){
+                sprintf(cadena, "%s/%s", pathname, ed->d_name); // Concatenamos el nombre del archivo con la ruta del directorio
+
+                if (stat(cadena, &atributos) < 0){  // Almacenamos los metadatos del archivo
+                    printf("\nError al intentar acceder a los atributos de archivo");
+                    perror("\nError en lstat");
+                    exit(-1);
+                }
+
+                if (S_ISDIR(atributos.st_mode)){    // Comprobamos si el archivo es un directorio
+                    if ((direct_act = opendir(cadena)) == NULL) // Lo abrimos
+                        printf("\nError al abrir el directorio: [%s]\n", cadena);
+                    else
+                        buscar_dir(direct_act, cadena, reg, tamanio);   // Llamada recursiva
+                }else{
+                    printf("%s %ld \n", cadena, atributos.st_ino);
+
+                    if (S_ISREG(atributos.st_mode)){    // Miramos si es un archivo regular
+                        if (regla1(atributos.st_mode)){ // Condicioner del ejercicio
+                            (*reg)++;
+                            (*tamanio) += (int)atributos.st_size;
+                        }
+                    }
+                }
+            }
+        }
+        closedir(direct);   // Cerramos el directorio
+}
+int main(int argc, char *argv[]){
+    DIR *direct;
+    char pathname[500];
+    int reg = 0, tamanio = 0;
+
+    if (argc == 2){
+        strcpy(pathname, argv[1]);
+    }else{
+        strcpy(pathname, ".");
+    }
+
+    if ((direct = opendir(pathname)) == NULL){
+        printf("\nError al abrir directorio\n");
+        exit(-1);
+    }
+
+    printf("Los inodos son: \n\n");
+    buscar_dir(direct, pathname, &reg, &tamanio);
+    printf("Hay %d archivos regulares con permiso x para grupo y otros\n", reg);
+    printf("El tamaño total ocupado por dichos archivos es %d bytes\n", tamanio);
+    
+    return 0;
+}
+```
+
+**<u>Código:</u>** https://github.com/danieeeld2/DGIIM/blob/master/Segundo/1%20Cuatrimestre/SO/Pr%C3%A1cticas/C/2.3.c
+
 #### Actividad 2.3 Trabajo con la llamada nftw() para recorrer un sistema archivos
 
 Resumen del manual de Linux para esta llamada:
 
-![10](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/10.png)
+![10](./Imagenes/10.png)
 
-![](/home/daniel/Git/DGIIM/Segundo/1 Cuatrimestre/SO/Prácticas/Imagenes/11.png)
+![](./Imagenes/11.png)
 
 El siguiente programa muestra un ejemplo de uso de la función. En este caso, utilizamos **nftw** para recorrer el directorio pasado como argumento, salvo que no se especifique, en cuyo caso, actuamos sobre el directorio actual. Para cada elemento  atravesado se invoca a la función **visitar()** que impreme el pathname y el modo en octal. Observa que para que el recorrido sea completo la función **visitar** debe devolver 0, sino se detendría la búsqueda.
 
