@@ -1,0 +1,464 @@
+#include "Punto.h"
+class Pais{
+  private:
+    Punto p;
+    string pais;
+    string bandera;
+    
+  public:
+    Pais(){}
+    Punto GetPunto()const { .....}
+    string GetPais()const{ .......}
+    string GetBandera()const{......}
+    
+    bool operator<(const Pais &P)const{
+	..............
+    }	
+    bool operator==(const Pais &P)const{
+	..................
+    }
+     bool operator==(const Punto &P)const{
+	..................
+    }
+    friend istream & operator>>(istream & is, Pais & P){
+        double lat,lng;
+	
+	is>>lat>>lng>>P.pais>>P.bandera;
+	
+	P.p=Punto(lat,lng,"");
+	return is;
+    }
+    friend ostream & operator<<(ostream & os, const Pais &P){
+	os<<P.p<<" "<<P.pais<<" "<<P.bandera<<endl;
+	return os;
+    }
+};
+
+====================================================================
+
+#include "Pais.h"
+#include <set>
+using namespace std;
+class Paises{
+  private:
+    set<Pais> datos;
+  public:
+      Paises(){}
+      void Insertar(const Pais &P){
+	  ................
+      }
+      void Borrar(const Pais &P){
+	  ................
+      }
+      
+      class const_iterator;
+	class iterator{
+	private:
+	    set<Pais>::iterator p;
+	public:
+	    ............
+           ..............
+	  .............
+.	    .........    
+	    friend class Paises;
+	    friend class const_iterator;
+	};    
+	class const_iterator{
+	private:
+	    set<Pais>::const_iterator p;
+	public:
+	    ..........
+            ...........
+	    friend class Paises;
+	   
+	};
+	iterator begin(){
+	  iterator it;
+	  it.p = datos.begin();
+	  return it;
+	}  
+	
+	const_iterator begin()const{
+	  ...........
+	}
+	iterator end(){
+	  iterator it;
+	  it.p = datos.end();
+	  return it;
+	}
+	const_iterator end()const{
+	  ...........
+	}
+	iterator find(const Pais &p){
+	    iterator it;
+	    set<Pais>::iterator i;
+	    for (i=datos.begin(); i!=datos.end() && !((*i)==p);++i);
+	    it.p=i;
+	    return it;
+	}
+	iterator find(const Punto &p){
+	    .............
+	}
+	friend istream & operator>>(istream & is, Paises & R){
+	      Paises rlocal;
+	      //leemos el comentario
+	      if (is.peek()=='#'){
+		string a;
+		getline(is,a);
+	      }	
+	      
+	      Pais P;
+	      while (is>>P){
+		  rlocal.Insertar(P);
+		  
+	      }
+	      R=rlocal;
+	      return is;
+	}
+	friend ostream & operator<<(ostream & os, const Paises &R){
+	  
+	    Paises::const_iterator it;
+	    for (it=R.begin(); it!=R.end(); ++it){
+		os<<*it<<"\t";
+	    }
+	    return os;
+	}
+};
+
+========================================================================
+
+
+enum Tipo_Pegado {OPACO, BLENDING};
+using namespace std;
+struct Pixel{
+  unsigned char r,g,b;
+  unsigned char transp; //0 no 255 si
+};  
+class Imagen{
+  private:
+    Pixel ** data;
+    int nf,nc;
+    void Borrar();
+    void Copiar(const Imagen &I);
+
+  public:
+    Imagen();
+   
+   Imagen(int f,int c);
+   
+   Imagen(const Imagen & I);
+   
+   Imagen & operator=(const Imagen & I);
+   
+   ~Imagen();
+   
+   //set y get
+   Pixel & operator ()(int i,int j);
+   
+   const Pixel & operator ()(int i,int j)const;
+   
+   void EscribirImagen(const char * nombre);
+   
+   void LeerImagen (const char *nombre,const string &nombremascara="");
+   void LimpiarTransp();
+   int num_filas()const{return nf;}
+   int num_cols()const{return nc;}
+   void PutImagen(int posi,int posj, const Imagen &I,Tipo_Pegado tippegado=OPACO);
+   Imagen ExtraeImagen(int posi,int posj,int dimi,int dimj);
+};   
+
+=========================================================================
+
+
+Imagen::Imagen(int f,int c){
+  nf = f;
+  nc = c;
+  data = new Pixel*[nf];
+  for (int i=0;i<nf;i++){
+    data[i]=new Pixel[nc];
+    for (int j=0;j<nc;j++){
+	data[i][j].r=255;
+	data[i][j].g=255;
+	data[i][j].b=255;
+	data[i][j].transp=255;
+    }
+  }  
+
+
+}
+
+/**********************************************/
+const Pixel & Imagen::operator()(int i,int j)const{
+  assert(i>=0 && i<nf && j>=0 && j<nc);
+  return data[i][j];
+}
+
+/***********************************************/
+
+void Imagen::EscribirImagen(const char * nombre){
+      unsigned char * aux = new unsigned char [nf*nc*3];
+      unsigned char * m = new unsigned char [nf*nc];
+      
+      int total = nf*nc*3;
+      for (int i=0;i<total;i+=3){
+	    int posi = i /(nc*3);
+	   int posj = (i%(nc*3))/3;
+	    
+	    aux[i]=data[posi][posj].r;
+	    aux[i+1]=data[posi][posj].g;
+	    aux[i+2]=data[posi][posj].b;
+	    m[i/3]=data[posi][posj].transp;
+	     
+	 }    
+	
+      if (!EscribirImagenPPM (nombre, aux,nf,nc)){
+	  cerr<<"Ha habido un problema en la escritura de "<<nombre<<endl;
+      }	  
+      delete[]aux;
+      string n_aux = "mascara_";
+      n_aux =n_aux+nombre;
+      std::size_t found =n_aux.find(".ppm");
+      if (found!=std::string::npos){
+	n_aux =n_aux.substr(0,found);
+      }
+      n_aux =n_aux+".pgm";
+
+      
+      if (!EscribirImagenPGM (n_aux.c_str(), m,nf,nc)){
+	  cerr<<"Ha habido un problema en la escritura de "<<n_aux<<endl;
+      }	    
+      delete []m;
+  
+}  
+/*********************************/
+void Imagen::LeerImagen(const char * nombre,const string &nombremascara){
+      int f,c;
+      unsigned char * aux,*aux_mask ;
+      
+      LeerTipoImagen(nombre, f, c);
+      aux = new unsigned char [f*c*3];
+      LeerImagenPPM (nombre, f,c,aux);
+      if (nombremascara!=""){
+	int fm,cm;
+	LeerTipoImagen(nombremascara.c_str(), fm, cm);
+	aux_mask = new unsigned char [fm*cm];
+	LeerImagenPGM(nombremascara.c_str(), fm,cm,aux_mask);
+      }
+      else{
+	aux_mask=0;
+      }	
+      
+      
+      Imagen I(f,c);
+      int total = f*c*3;
+      for (int i=0;i<total;i+=3){
+	   int posi = i /(c*3);
+	   int posj = (i%(c*3))/3;
+	//   cout<<posi<<" " <<posj<<endl;
+	     I.data[posi][posj].r=aux[i];
+	     I.data[posi][posj].g=aux[i+1];
+	     I.data[posi][posj].b=aux[i+2];
+	     if (aux_mask!=0)
+	      I.data[posi][posj].transp=aux_mask[i/3];
+	     else  
+	       I.data[posi][posj].transp=255;
+	 }    
+	  
+      *this = I;   
+      if (aux_mask!=0) delete[]aux_mask;
+      delete []aux;
+      
+}	
+
+/*********************************/
+
+void Imagen::PutImagen(int posi,int posj, const Imagen &I,Tipo_Pegado tippegado){
+    //assert(nf>=posi+I.nf && nc>=posj+I.nc);
+    
+    for (int i=0;i<I.nf;i++)
+      for (int j=0;j<I.nc;j++)
+	if (i+posi>=0 && i+posi<nf && j+posj>=0 && j+posj<nc){
+	if (I.data[i][j].transp!=0){
+	  if (tippegado==OPACO)
+	    data[i+posi][j+posj]=I.data[i][j];
+	  else{
+	    data[i+posi][j+posj].r=(data[i+posi][j+posj].r+I.data[i][j].r)/2;
+	    data[i+posi][j+posj].g=(data[i+posi][j+posj].r+I.data[i][j].g)/2;
+	    data[i+posi][j+posj].b=(data[i+posi][j+posj].r+I.data[i][j].b)/2;
+	  }  
+	  
+	}  
+	}	
+	    
+}
+
+/*********************************/
+
+#include "imagen.h"
+#include <iostream>
+#include <fstream>
+using namespace std;
+int main(int argc, char * argv[]){
+
+  Imagen I;
+
+  I.LeerImagen(argv[1]);
+  
+  I.EscribirImagen("prueba.ppm");
+}
+  
+/*********************************/
+
+
+void Pintar( int f1,int f2,int c1,int c2,Imagen &I, const Imagen &avion,int mindisf,int mindisc){
+      
+      int fila,col;
+      if (abs(f2-f1)>=mindisf || abs(c2-c1)>=mindisc){ 
+	
+	 if (c1!=c2){
+	   double a,b;
+	   a= double(f2-f1)/double(c2-c1);
+	   b= f1-a*c1;
+	   col = (int)(c1+c2)/2;
+	   fila = (int)rint(a*col+b);
+	 }  
+	 else{
+	   col = c1;
+	   fila = (f1+f2)/2;
+	 }  
+	  
+	  
+	  double angulo = atan2((f2-f1),(c2-c1));
+	  Imagen Irota=Rota(avion,angulo);
+	
+	  I.PutImagen(fila,col,Irota);
+	  
+	   angulo = atan2((f2-fila),(c2-col));
+	  Irota=Rota(avion,angulo);
+	
+	  I.PutImagen(f2,c2,Irota);
+	  angulo = atan2((fila-f1),(col-c1));
+	  Irota=Rota(avion,angulo);
+	
+	  I.PutImagen(f1,c1,Irota);
+	 
+      
+      }
+     
+}  
+  
+/** 
+ * @brief Obtiene una nueva imagen que es la versión rotada de una imagen de entrada
+ * @param Io: imagen de entrada
+ * @param angulo: angulo a rotar la imagen de entrada. Debe estar en radianes.
+ * @return Una nueva imagen que es la versión rotada de Io.
+ * */
+
+Imagen Rota(const Imagen & Io,double angulo){
+    double rads=angulo;
+    double coseno = cos(angulo);
+    double seno = sin(angulo);
+    //Para obtener las dimensiones de la imagen
+    int rcorners[4],ccorners[4];
+    int newimgrows,newimgcols;
+    double new_row_min,new_col_min,new_row_max,new_col_max;
+    double inter,inter1;
+    rcorners[0]=0;
+    rcorners[1]=0;
+    ccorners[0]=0;
+    ccorners[2]=0;
+    rcorners[2]=Io.num_filas()-1;
+    rcorners[3]=Io.num_filas()-1;
+    ccorners[1]=Io.num_cols()-1;
+    ccorners[3]=Io.num_cols()-1;
+    new_row_min=0;
+    new_col_min=0;
+    new_row_max=0;
+    new_col_max=0;
+    newimgrows=0;
+    newimgcols=0;
+    for(int count=0;count<4;count++)
+    {
+	    inter=rcorners[count]*coseno+ccorners[count]*seno;
+	   
+	    if(inter<new_row_min)
+		    new_row_min=inter;
+	    if(inter>new_row_max)
+		    new_row_max=inter;
+	    inter1=-rcorners[count]*seno+ccorners[count]*coseno;
+	   
+	    if(inter1<new_col_min)
+		    new_col_min=inter1;	
+	    if(inter1>new_col_max)
+		    new_col_max=inter1;
+   }
+    
+    newimgrows=(unsigned)ceil((double)new_row_max-new_row_min);
+    newimgcols=(unsigned)ceil((double)new_col_max-new_col_min);
+   
+    Imagen Iout(newimgrows,newimgcols);
+    for(int rows=0;rows<newimgrows;rows++)
+      {
+	for(int cols=0;cols<newimgcols;cols++)
+	{
+	   float oldrowcos=((float)rows+new_row_min)*cos(-rads);
+	   float oldrowsin=((float)rows+new_row_min)*sin(-rads);
+	   float oldcolcos=((float)cols+new_col_min)*cos(-rads);
+	   float oldcolsin=((float)cols+new_col_min)*sin(-rads);
+	   float old_row=oldrowcos+oldcolsin;
+	   float old_col=-oldrowsin+oldcolcos;
+	   old_row=ceil((double)old_row);
+	   old_col=ceil((double)old_col);
+	   if((old_row>=0)&&(old_row<Io.num_filas())&&
+	      (old_col>=0)&&(old_col<Io.num_cols()))
+	   {
+	      Iout(rows,cols)=Io(old_row,old_col);
+              
+	   }
+	   else
+	     Iout(rows,cols).r=Iout(rows,cols).g=Iout(rows,cols).b=255;
+	}
+    }
+    return Iout;
+	  
+}
+
+int main(int argc, char * argv[]){
+  if (argc!=7){
+      cout<<"Los parametros son:"<<endl;
+      cout<<"1.-Fichero con la informacion de los paises"<<endl;
+      cout<<"2.-Nombre de la imagen con el mapa del mundo"<<endl;
+      cout<<"3.-Directorio con las banderas"<<endl;
+      cout<<"4.-Fichero con el almacen de rutas"<<endl;
+      cout<<"5.- Nombre de la imagen con el avion"<<endl;
+      cout<<"6.- Nombre de la imagen de la mascara del avion"<<endl;
+      
+      return 0;
+  }    
+
+
+Paises Pses;
+  ifstream f (argv[1]);
+  f>>Pses;
+  //cout<<Pses;
+  Imagen I;
+  I.LeerImagen(argv[2]);
+  
+  //Leemos los aviones 
+  Imagen avion;
+  avion.LeerImagen(argv[5],argv[6]);
+  
+  Almacen_Rutas Ar;
+  f.close();
+   f.open (argv[4]);
+  f>>Ar;
+  cout<<"Las rutas: "<<endl<<Ar;
+  cout<<"Dime el codigo de una ruta"<<endl;
+  string a;
+  cin>>a;
+  Ruta R=Ar.GetRuta(a);
+
+
+
+
+

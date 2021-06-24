@@ -42,8 +42,8 @@ int main(int argc, char *argv[]){
     sprintf(nombrefifoe,"%se",argv[1]);
 
     // Crear archivos fifo
-    umask(0);
-    mkfifo(nombrefifoe,0666);
+    umask(0);  
+    mkfifo(nombrefifoe,0666);   
     mkfifo(nombrefifos,0666);
 
     //Intentar abrir los archivos fifo.
