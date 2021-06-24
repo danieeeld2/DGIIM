@@ -1,0 +1,200 @@
+% Preámbulo
+
+% Tipo de documento
+\documentclass[a4paper, 12pt]{article}
+% Codificación
+\usepackage[utf8]{inputenc} 
+% Idioma
+\usepackage[spanish]{babel}
+%Tipografía
+\usepackage{gfsartemisia}
+\usepackage[T1]{fontenc}
+\usepackage[usenames]{color}
+\definecolor{Lila}{rgb}{0.39,0.17,0.63}
+\definecolor{Azul}{rgb}{0.17,0.39,0.63}
+%%% Matemáticas Paquetes AMS
+\usepackage{amsfonts}
+\usepackage{amsmath} % Matemáticas
+\usepackage{amssymb,amsthm} % Símbolos y teoremas
+\usepackage{mathtools} % % Algunos añadidos y correcciones a amsmath
+\usepackage{esvect}
+%referencia
+\usepackage{hyperref}
+% Título y autor de un documento. Fecha. Tabla de contenido
+\title{Modelos Matemáticos: Ecuaciones en Diferencias de Orden Superior}
+\author{Daniel Alconchel Vázquez}
+\date{18 de abril de 2021}
+
+%Maths
+\theoremstyle{plain}
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{coro}[teorema]{Corolario}
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{lema}[teorema]{Lema}
+\theoremstyle{definition}
+\newtheorem{definicion}[teorema]{Definición}
+\theoremstyle{remark}
+\newtheorem*{observacion}{Observación}
+
+\begin{document}
+	\maketitle
+	\newpage
+	\tableofcontents
+	\newpage
+	
+	\section{La ecuación lineal en diferencias de orden superior}
+	\begin{definicion}\label{ecuacion}
+		Una \textbf{ecuación en diferencias de orden superior} es una ecuación en diferencias de la forma
+		\[x_{n+k}+a_{k-1}x_{n+k-1}+...+a_0x_n=b(n), \quad n\geq 0\]
+		con $a_0 \neq 0$ y $k>1$.
+	\end{definicion}
+
+	\begin{observacion}
+		Si en \ref{ecuacion} $b(n) = 0$, se dice que es homogénea. En caso contrario, es completa.
+	\end{observacion}
+	
+	\begin{definicion}\label{espacio}
+		Se define \textbf{el espacio de soluciones de las ecuaciones en diferencias, $S$,} como el espacio vectorial
+		\[S=\left\{\left\{x_n\right\}_{n\in \mathbb{N}}:x_n \in \mathbb{K}\right\}\]
+		que es de dimensión infinita, ya que podemos dar infinitas sucesiones lineales independientes.
+	\end{definicion}
+
+	\begin{teorema}\label{sum}
+		Sea $\sum$ el conjunto de soluciones de la ecuación lineal en diferencias homogénea
+		\[x_{n+k}+a_{k-1}x_{n+k-1}+...+a_0x_n=0, \quad n\geq 0\]
+		entonces, $\sum$ es un subespacio vectorial de $S$ de dimensión $k$
+	\end{teorema}
+
+	\begin{definicion}\label{sol}
+		Dada la ecuación en diferencias lineal homogénea de orden $k$ 
+		\[x_{n+k}+a_{k-1}x_{n+k-1}+...+a_0x_n=0, \quad n\geq 0\]
+		\begin{itemize}
+			\item Se llama \textbf{sistema fundamental de soluciones} a toda base de $\sum$
+			\item Llamaremos \textbf{polinomio característico} a 
+			\[p(\lambda)=\lambda^k+a_{k-1}\lambda^{k-1}+...+a_1\lambda+a_0\]
+			y a sus raíces las llamaremos \textbf{raíces características}
+		\end{itemize}
+	\end{definicion}
+
+	\begin{observacion}
+		$\lambda=0$ no puede ser solución del polinomio.
+	\end{observacion}
+
+	\begin{teorema}\label{sol2}
+		La sucesión $X_{\lambda}=\left\{\lambda^n\right\}_{n\geq 0}$ es solución de la ecuación en diferencias lineal homogénea de orden $k$ si, y sólo si, $p(\lambda) = 0$, esto es, $\lambda$ es raíz característica.
+	\end{teorema}
+
+	\subsection{Caso 1: k raíces distintas}
+	\begin{teorema}\label{k raices}
+		Sea $\lambda_1,...,\lambda_k$ las raíces características, verificando que $\lambda_i \neq \lambda_j, i\neq j$. Entonces $\left\{X_{\lambda_1},...,X_{\lambda_k}\right\}$ es un sistema fundamental de soluciones.
+	\end{teorema}
+
+	\begin{coro}\label{Kcoro}
+		En la hipótesis anterior, toda solución X=$\left\{X_n\right\}_{n\geq 0}$ se escribe de la forma
+		\[x_n=c_1\lambda_1^n+...+c_k\lambda_k^n, \quad c_1,...,c_k \in \mathbb{K}\]
+	\end{coro}
+
+	\textcolor{Azul}{Veamos un ejemplo. Tomemos la sucesión de Fibonacci dada por}
+	
+	\textcolor{Azul}{$f_{n+2}=f_{n+1}+f_n, \quad f_0=f_1=1$.}
+	
+	\textcolor{Azul}{El polinomio característico es $p(\lambda) = \lambda^2-\lambda-1 \implies \lambda_1 = \frac{1+\sqrt{5}}{2} ,\lambda_2=\frac{1-\sqrt{5}}{2}$}
+	
+	\textcolor{Azul}{Luego, la solución general es $f_n=c_1\left(\frac{1+\sqrt{5}}{2}\right)^n+c_2\left(\frac{1-\sqrt{5}}{2}\right)^n$ y sustituyendo los valores para $f_0$ y $f_1$ obtenemos que la solución específica es $f_n=~\frac{1}{\sqrt{5}}\left[\left(\frac{1+\sqrt{5}}{2}\right)^n+\left(\frac{1-\sqrt{5}}{2}\right)^n\right]$}
+	
+	\subsection{Caso 2: raíces múltiples}
+	En el caso de que exista una raíz múltiple, es decir, con multiplicidad mayor que uno, seguimos los pasos del caso 1~\ref{Kcoro}, pero multiplicamos la raíz en cuestión por un polinomio de grado la multiplicidad de la raíz menos uno, es decir, si, por ejemplo, tenemos una raíz de multiplicidad 3, $\lambda$, pues sería $\left(c_1n^2+c_2n+c_3\right)\lambda^n$.
+	
+	\subsection{Caso 3: raíces complejas}
+	Supongamos que obtenemos raíces complejas $\lambda_1=a+bi, \lambda_2=a-bi$ como solución del polinomio. Llamemos $r$ al módulo de $\lambda_i$ y $\theta$ al argumento de $\lambda_i$, por tanto
+	\[R=\left\{r^ncos(n\theta)\right\}, \quad I=\left\{r^nsen(n\theta)\right\}\]
+	son soluciones reales y linealmente independientes. Por tanto, un sistema fundamental de soluciones (SF) será
+	\[\left\{r^ncos(n\theta),r^nsen(n\theta)\right\}\]
+	
+	\section{Comportamiento Asintótico de las Soluciones}
+	\begin{teorema}\label{comportamiento}
+		Sean $\lambda_1,\lambda_2,...,\lambda_s$ de las raíces de $p(\lambda)$. Son equivalentes:
+		\begin{enumerate}
+			\item Todas las soluciones de la ecuación lineal en diferencias homogénea verifican
+			\[\lim_{n\rightarrow \infty}x_n = 0\]
+			\item Las raíces verifican
+			\[max_{i=1,...,s} |\lambda_i|<1\]
+		\end{enumerate}
+	\end{teorema}
+	\begin{observacion}
+		En el caso de $k=2$, las raíces $\lambda_1,\lambda_2$ del polinomio $p(\lambda)=\lambda^2+a_1\lambda+a_0$ verifican $|\lambda_i|<1$ para $i=1,2$, si, y sólo sí
+		\[\left\{ \begin{array}{lcc}
+		p(1)=1+a_1+a_0>0 \\
+		\\ p(-1)=1-a_1+a_0>0 \\
+		\\ p(0)=a_0<1  
+		\end{array}
+		\right.\]
+	\end{observacion}
+
+	\section{Soluciones de la Ecuación Lineal en Diferencias Completa}
+	Recordemos que una ecuación lineal en diferencias completas es aquella que 
+	\[x_{n+k}+a_{k-1}x_{n+k-1}+...+a_0x_n=b(n), \quad b(n)\neq 0\]
+	La idea reside en buscar las soluciones de la ecuación lineal en diferencias homogénea asociada y añadirle la solución particular de la completa. Para ello:
+	\begin{itemize}
+		\item Si $b(n)=cte$ busco soluciones constantes.
+		\item Si $b(n)$ es un polinomio de grado $k$ busco soluciones de grado k.
+		\item Si $b(n)=a^n$ busco soluciones de la forma $ka$.
+	\end{itemize}
+
+	\textcolor{Azul}{Veamos un ejemplo. Sea la ecuación en diferencias \[x_{n+2}-7x_{n+1}+10x_n=8\]}
+	\textcolor{Azul}{Comenzamos buscando las soluciones de la ecuación homogénea, como habíamos visto anteriormente:
+	\[\lambda^2-7\lambda+10=0\implies\lambda_1=2,\lambda_2=5\implies x_n=c_12^n+c_25^n\]}
+	\textcolor{Azul}{Buscamos ahora la solución particular de la completa, siguiendo el esquema que acabamos de detallar:
+	\[Como\;es\;b(n)=cte \implies k-7k+10k=8\implies k=2\]}
+	\textcolor{Azul}{Luego, la solución general de la completa será: \[x_n=c_12^n+c_25^n+2\]}
+	
+	Ahora, puede ocurrir que nos encontremos con un fenómeno llamado resonancia. Para ver como tratarlo, pongamos el siguiente ejemplo:
+	
+	\textcolor{Azul}{Sea la ecuación en diferencias \[x_{n+2}-7x_{n+1}+10x_n=7\cdot2^n\]}
+	\textcolor{Azul}{Ya sabemos la solución de la homogénea por el ejemplo anterior, veamos la solución particular de la completa}
+	
+	\textcolor{Azul}{Como tenemos $b(n)=7\cdot2^n \implies x_n= k\cdot2^n$, luego:
+	\[k2^{n+2}-7k2^{n+1}+10k2^n=72^n\implies2^n(4k-14k+10k)=72^n\implies 0=7 !!\]}
+	Para evitar esto, se multiplica el tipo de solución buscada por n. Si vuelve a fallar, se multiplica por $n^2$, después $n^3$, y así sucesivamente, hasta dar con una solución válida.
+	
+	\bigskip
+	\textcolor{Azul}{Tomemos ahora $x_n= kn\cdot2^n$, entonces tenemos: \[k(n+2)2^{n+2}-7k(n+1)2^{n+1}+10kn2^n=72^n\implies resolviendo\; obtenemos\; k=\frac{-7}{6}\]}
+	\textcolor{Azul}{Luego, la solución particular de la completa será $x_n=\frac{-7}{6}n2^n$, luego: \[x_n=c_12^n+c_25^n-\frac{7}{6}n2^n\]}
+	
+	\section{La Renta Nacional}
+	\begin{definicion}\label{renta}
+		En un país con economía de mercado, la renta nacional $Y_n$ en un período determinado $n$ (que suele medirse en años) puede describirse como
+		\[Y_n=C_n+I_n+G_n\]
+		donde 
+		\begin{itemize}
+			\item $C_n$ es el gasto de los consumidores para la compra de bienes de consumo
+			\item $I_n$ es la inversión privada inducida por la compra de bienes
+			\item $G_n$ es el gasto público
+		\end{itemize}
+	\end{definicion}
+	
+	\subsection{Modelo de Samuelson}
+	Ahora haremos algunas suposiciones que son ampliamente aceptadas por la mayoría de economistas.
+	\begin{itemize}
+		\item El consumo $C_n$ es proporcional a la renta nacional en el año anterior $Y_n$, es decir
+		\[C_n=bY_{n-1}\]
+		donde $b>0$ se le conoce como tendencia marginal del consumo.
+		\item La inversión privada inducida $I_n$ es proporcional al incremento del consumo $C_n-C_{n-1}$, esto es
+		\[I_n=k\left[C_n-C_{n-1}\right] \]
+		donde $k>0$ se le denomina coeficiente acelerador.
+		\item Finalmente, el gato público $G_n$ se supone constantemente a lo largo de los años \[G_n=G\]
+	\end{itemize}
+	
+	Sustituyendo obtenemos la ecuación en diferencias de segundo orden completa \[Y_{n+2}-b(1+k)Y_{n+1}+bkY_n=G, \quad n\geq 0\]
+	
+	El estado de equilibrio se obtiene haciendo $Y_n=Y_*\implies Y_*=\frac{G}{1-b}$, luego la solución de la ecuación será $Y_n=Y_*+y_n$, donde $\left\{y_n\right\}$ es la solución de la homogénea.
+	
+	\begin{itemize}
+		\item La renta nacional $Y_n$ converge al estado de equilibrio $Y_*$ si, y sólo si, se verifican las siguientes condiciones:
+		\[p(-1)=1+b(1+k)+bk>0 \]
+		\[p(1)=1-b(1+k)+bk=1-b >0 \]
+		\[p(0) = bk <1\]
+		
+		\item La renta nacional $Y_n$ fluctúa alrededor del estado de equilibrio $Y_*$ si, y sólo si, las raíces del polinomio característico son ambas complejas.
+	\end{itemize}
+\end{document}

@@ -1,0 +1,186 @@
+% Preámbulo
+
+% Tipo de documento
+\documentclass[a4paper, 12pt]{article}
+% Codificación
+\usepackage[utf8]{inputenc} 
+% Idioma
+\usepackage[spanish]{babel}
+%Tipografía
+\usepackage{gfsartemisia}
+\usepackage[T1]{fontenc}
+\usepackage[usenames]{color}
+\definecolor{Lila}{rgb}{0.39,0.17,0.63}
+\definecolor{Azul}{rgb}{0.17,0.39,0.63}
+%%% Matemáticas Paquetes AMS
+\usepackage{amsfonts}
+\usepackage{amsmath} % Matemáticas
+\usepackage{amssymb,amsthm} % Símbolos y teoremas
+\usepackage{mathtools} % % Algunos añadidos y correcciones a amsmath
+\usepackage{esvect}
+%referencia
+\usepackage{hyperref}
+% Título y autor de un documento. Fecha. Tabla de contenido
+\title{Modelos Matemáticos: Sistemas Dinámicos Discretos}
+\author{Daniel Alconchel Vázquez}
+\date{22 de marzo de 2021}
+
+%Maths
+\theoremstyle{plain}
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{coro}[teorema]{Corolario}
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{lema}[teorema]{Lema}
+\theoremstyle{definition}
+\newtheorem{definicion}[teorema]{Definición}
+\theoremstyle{remark}
+\newtheorem*{observacion}{Observación}
+
+\begin{document}
+	\maketitle
+	\newpage
+	\tableofcontents
+	\newpage
+	
+	\section{Sistemas Dinámicos Discretos}
+	\begin{definicion}\label{SDD1}
+		Supongamos que \(I \subset \Re\) es un intervalo y \(f:I\rightarrow I\) es una función continua. Entonces el par \(\left\{I,f \right\}\) es un \textbf{sistema dinámico discreto de primer orden}. 
+	\end{definicion}
+	
+	Observemos que dado $ x_o \in I $, podemos generar una única sucesión $\left\{x_k\right\} $ definida por evoluciones sucesivas de f:
+	\textcolor{Lila}{\[ x_1=f(x_0), x_2=f(x_1)=f(f(x_0))... \]}
+	
+	Podemos generalizar la definición \ref{SDD1} usando espacios métricos:
+	\begin{definicion}\label{SDD2}
+		Supongamos que \(E \subset \Re\) es un intervalo y \(f:E\rightarrow I\) es una función continua. Entonces el par \(\left\{E,f \right\}\) es un \textbf{sistema dinámico discreto de primer orden}. 
+	\end{definicion}
+
+	Para notar las sucesivas iteradas de f usaremos la notación:
+	\textcolor{Azul}{\[ f^{0}=identidad, f^{1}=f,f^{2}=f\circ f... \]}
+	
+	\begin{definicion}\label{Orbita}
+		Dado un SSD \(\left\{E,f \right\}\) y un $ x_0 \in E $, la sucesión definida por
+		\textcolor{Azul}{\[\left\{x_0,x_1,x_2,...\right\} =\left\{f^{0}=identidad, f^{1}=f,f^{2}=f\circ f...\right\} \]}
+		se denomina \textbf{órbita o trayectoria} del SSD y se denota $\gamma(E,f,x_0)$.
+		El conjunto de todas las órbitas asociadas al SSD y a todos los puntos $ x_0 \in E $ se denomina \textbf{retrato de fase}
+	\end{definicion}
+	\begin{observacion}\label{Fijo}
+		Si tomamos como $x_0 = \alpha$, donde $\alpha$ es un punto fijo, entonces la órbita resultante es constante y se denomina \textbf{órbita estacionaria}:
+		\[ \gamma(E,f,\alpha) = \left\{\alpha,\alpha...\right\} \]
+	\end{observacion}
+
+	\subsection{Representación Gráfica}
+	Para representar gráficamente un SSD mediante un gráfico \textbf{Cobweb} se siguen los siguientes pasos:
+	En el cuadrado $IxI$ se representa la función f(x) y la bisectriz del primer cuadrante $x$. Una vez fijado $x_0$ se representa $x_1$ de la siguiente manera:
+	\begin{enumerate}
+		\item Desde la abcisa $x_0$ trazamos una vertical hasta la curva y=f(x)
+		\item Desde la curva trazamos la horizontal hasta la recta y=x
+		\item Finalmente, trazamos la vertical hasta el eje de abscisas obteniendo $x_1$ 
+	\end{enumerate}
+	Repetimos el proceso tantas veces como sea necesario para calcular el n-ésimo termino.
+	
+	\begin{observacion}\label{Constante}
+		Como hemos dicho en la observación \ref{Fijo}, los puntos fijos dan lugar a soluciones constantes. Puede ocurrir que, dado $x_0 \in E, \exists k : f^{k}(x_0) = \alpha = f(\alpha) $, es decir, la órbita se hace eventualmente estacionaria.
+		
+		\smallskip
+		Buscar puntos de equilibrio de un SSD $(I,f)$ es equivalente a buscar las intersecciones de la recta $y=x$ y la gráfica de $f$ que están contenidas en $IxI$
+	\end{observacion}
+
+	\section{Estabilidad}
+	\begin{definicion}\label{Estabilidad}
+		Un punto de estabilidad $\alpha$ del SSD \(\left\{E,f \right\}\) se dice que es \textbf{estable} si \[\forall \epsilon > 0, \exists \delta > 0 : si\; d(x_0,\alpha) < \delta\; y\; x_k=f^k(x_0), k\in \mathbb{N} \implies d(x_k,\alpha) < \epsilon, \forall k\in \mathbb{N}\]
+		En caso contrario, se dice que es \textbf{inestable}
+	\end{definicion}
+
+	\begin{observacion}
+		Recordemos que si estamos en un intervalo real, la distancia usual viene definida por el valor absoluto, luego, podemos recurrir a la misma.
+	\end{observacion}
+
+	\textcolor{Azul}{
+	Veamos ahora un pequeño ejemplo. Sea el SSD lineal $\left\{\Re, \frac{1}{2}\cdot x+1\right\}$ y tiene un solo punto de equilibrio en $\alpha=2$, estable.
+	}
+
+	\smallskip
+	\textcolor{Azul}{
+	La solución general de la ecuación $x_{k+1} = \frac{1}{2}x_k+1$ es $x_k=(x_0-2)(\frac{1}{2})^k+2$.
+	}
+	
+	\smallskip
+	\textcolor{Azul}{
+	Entonces, $|x_k-2| = |x_0-2|(\frac{1}{2})^n \leq |x_0-2|, \forall k $. Luego, tenemos que \[\forall \epsilon>0, \exists \delta(=\epsilon): si\; |x_0-2|<\delta \implies |x_k-2|\leq |x_0-2|<\epsilon\]
+	}
+	
+	\medskip
+	\begin{definicion}\label{Atractor}
+		Un punto de equilibrio se dice que es un \textbf{atractor global} si para cualquier $x_o \in I$ y $x_k=f^k(x_0)$, se verifica \[\lim_{k\rightarrow\infty}x_k=\alpha\]
+		
+		Un punto de equilibrio se dice que es un \textbf{atractor (local)} si $\exists \eta>0$ tal que para cualquier $x_0 \in E$ con $d(x_0,\alpha)<\eta$ y $x_k=f^k(x_0)$, se verifica que \[\lim_{k\rightarrow\infty}x_k=\alpha\]
+	\end{definicion}
+
+	\begin{definicion}
+		Un punto de equilibrio, $\alpha$ del SSD se dice que es \textbf{(localmente) asintóticamente estable} si es estable y atractor local.
+	\end{definicion}
+
+	\begin{teorema}\label{Teo1}
+		Dado el SSD \(\left\{I,f \right\}\), donde $I\subset \Re$ es un intervalo y $\alpha$ es un punto de equilibrio, entonces se cumple:\[\alpha\;es\;un\;atractor\;(local)\implies\alpha\,es\;estable\]
+	\end{teorema}
+
+	\begin{observacion}
+		El teorema \ref{Teo1} tiene como consecuencia que si $I\subset\Re$ y $\alpha$ es un atractor (local), entonces, $\alpha$ es (localmente) asintóticamente estable.
+	\end{observacion}
+
+	\begin{teorema}\label{Teo2}
+		Si $\alpha$ es un punto de equilibrio del SSD \(\left\{I,f \right\}\) y $f\in C^1$, entonces:
+		\begin{enumerate}
+			\item Si $|f'(\alpha)|<1$, entonces $\alpha$ es (localmente) asintóticamente estable.
+			\item Si $|f'(\alpha)|>1$, entonces $\alpha$ es inestable.
+		\end{enumerate}
+	\end{teorema}
+
+	\begin{observacion}
+		Como podemos apreciar en \ref{Teo2}, no tenemos definido el caso $\alpha=$. En este caso se puede probar que:
+		\begin{itemize}
+			\item Si $f$ es de clase 2 y $f''(\alpha)\not= 0$, entonces $\alpha$ es inestable.
+			\item Si $f$ es de clase 3 y $f''(\alpha)=0$, entonces:
+			\begin{itemize}
+				\item $f'''(\alpha)<0 \implies \alpha$ es asintóticamente estable.
+				\item $f'''(\alpha)>0 \implies \alpha$ es inestable.
+			\end{itemize}
+		\end{itemize}
+	\end{observacion}
+
+	\textcolor{Azul}{Veamos ahora un ejemplo. Dado $x_{k+1} = 2x_k$, $f(x)=2x$ y un punto de equilibrio en $\alpha=0$. Tenemos pues que $f'(0)=2>1 \implies \alpha=0$ es inestable}
+
+	\section{Ciclos}
+	\begin{definicion}\label{Ciclo}
+		Un \textbf{ciclo de orden s} u órbita periódica de periodo s o s-ciclo es un conjunto de s puntos distintos de intervalo $I$, $\left\{\alpha_0.\alpha_1,...,\alpha_{s-1}\right\}$, que verifican
+		\[\alpha_1=f(\alpha_0), \alpha_2=f(\alpha_1),...,\alpha_{s-1}=f(\alpha_{s-2}),\alpha_0=f(\alpha_{s-1})\]
+		En este caso a s se le llama \textbf{orden del ciclo}
+	\end{definicion}
+	
+	\smallskip
+	\textcolor{Azul}{Dada la ecuación en diferencias $x_{n+1}=-x_n+4$, si partimos de $x_0=3$, observamos que la solución de dicha ecuación es $x_n=(-1)^n+2$, es decir, se corresponderá con la órbita \(\left\{3,1,3,1,...\right\}\). Estamos en caso de periodo 2.}
+	
+	\subsection{Estabilidad de los ciclos}
+	Puesto que los puntos de una órbita periódica se periodo s son los puntos de equilibrio de la función $f^s(x)$, para estudiar la estabilidad de una órbita periódica basta estudiar la estabilidad de los puntos de equilibrio de la función $f^s(x)$.
+	
+	\begin{proposicion}
+		Supongamos que $f:I\leftarrow I, f\in C^1(I)$ y que $\left\{\alpha_0,\alpha_1,...,\alpha_{s-1}\right\}$ es un s-ciclo para el SSD \(\left\{I,f \right\}\). Entonces: 
+		\begin{itemize}
+			\item Si $|f'(\alpha_0)f'(\alpha_1)...f'(\alpha_{s-1})|<1$ el ciclo es asintóticamente estable.
+			\item Si $|f'(\alpha_0)f'(\alpha_1)...f'(\alpha_{s-1})|>1$ el ciclo es inestable.
+		\end{itemize}
+	\end{proposicion}
+
+	\textcolor{Azul}{Veamos ahora un ejemplo. Dado el SSD \(\left\{\Re,-\frac{x^2}{2}-x+\frac{1}{2}\right\}\) comprueba que tiene un 2-ciclo y estudia su estabilidad.}
+	
+	\textcolor{Azul}{Como $s=2 \implies F^2(x)=x$. Luego, tenemos: \[F(-\frac{x^2}{2}-x+\frac{1}{2})=...=\frac{-1}{8}(x^4+4x^3+2x^2-4x+1)+\frac{x^}{2}+x\]}
+
+
+	
+	
+
+	
+	
+	
+\end{document}
