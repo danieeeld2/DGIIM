@@ -403,7 +403,7 @@ Se puede forzar que el tipo suministrado a una clase parametizable sea:
   class Clase <T extends Interfaz>
   ```
 
-![Captura de pantalla de 2021-06-24 13-17-18](./.img/Captura de pantalla de 2021-06-24 13-17-18.png)
+![Captura de pantalla de 2021-06-24 13-17-18](.img/Captura de pantalla de 2021-06-24 13-17-18.png)
 
 La implementación de una clase parametrizable puede requerir que **T** disponga de un determinado método:
 
