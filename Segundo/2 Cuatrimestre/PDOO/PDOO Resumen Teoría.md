@@ -479,7 +479,7 @@ for(FiguraGeometrica unaFigura : coleccionDeFiguras)
     suma+=unaFigura.area();
 ```
 
-![Captura de pantalla de 2021-06-24 17-14-54](./.img/Captura de pantalla de 2021-06-24 17-14-54.png)
+![Captura de pantalla de 2021-06-24 17-14-54](https://github.com/danieeeld2/DGIIM/blob/master/Segundo/2%20Cuatrimestre/PDOO/.img/Captura%20de%20pantalla%20de%202021-06-24%2017-14-54.png)
 
 El tipo **estático** está limitado por:
 
@@ -536,9 +536,9 @@ profe = ((Profesor) new Persona()); // Error
 ((Profesor) ((Object) new Profesor())).impartirClase(); // OK
 ```
 
-![Captura de pantalla de 2021-06-24 17-07-33](./.img/Captura de pantalla de 2021-06-24 17-07-33.png)
+![Captura de pantalla de 2021-06-24 17-07-33](https://github.com/danieeeld2/DGIIM/blob/master/Segundo/2%20Cuatrimestre/PDOO/.img/Captura%20de%20pantalla%20de%202021-06-24%2017-07-33.png)
 
-![Captura de pantalla de 2021-06-24 17-07-38](./.img/Captura de pantalla de 2021-06-24 17-07-38.png)
+![Captura de pantalla de 2021-06-24 17-07-38](https://github.com/danieeeld2/DGIIM/blob/master/Segundo/2%20Cuatrimestre/PDOO/.img/Captura%20de%20pantalla%20de%202021-06-24%2017-07-38.png)
 
 Con la ligadura dinámica, **siempre se comienza buscando el código asociado al método invocado en la clase que coincide con el tipo dinámico de la referencia**. Si no se encuentra, se busca en la clase padre y así sucesivamente:
 
@@ -645,15 +645,15 @@ Suele tener problemas como:
 
 - Problema del diamante.
 
-  ![Captura de pantalla de 2021-06-24 18-47-00](./.img/Captura de pantalla de 2021-06-24 18-47-00.png)
+  ![Captura de pantalla de 2021-06-24 18-47-00](https://github.com/danieeeld2/DGIIM/blob/master/Segundo/2%20Cuatrimestre/PDOO/.img/Captura%20de%20pantalla%20de%202021-06-24%2018-47-00.png)
 
-![Captura de pantalla de 2021-06-24 18-48-40](./.img/Captura de pantalla de 2021-06-24 18-48-40.png)
+![Captura de pantalla de 2021-06-24 18-48-40](https://github.com/danieeeld2/DGIIM/blob/master/Segundo/2%20Cuatrimestre/PDOO/.img/Captura%20de%20pantalla%20de%202021-06-24%2018-48-40.png)
 
-![Captura de pantalla de 2021-06-24 18-48-47](./.img/Captura de pantalla de 2021-06-24 18-48-47.png)
+![Captura de pantalla de 2021-06-24 18-48-47](https://github.com/danieeeld2/DGIIM/blob/master/Segundo/2%20Cuatrimestre/PDOO/.img/Captura%20de%20pantalla%20de%202021-06-24%2018-48-47.png)
 
-![Captura de pantalla de 2021-06-24 18-50-01](./.img/Captura de pantalla de 2021-06-24 18-50-01.png)
+![Captura de pantalla de 2021-06-24 18-50-01](https://github.com/danieeeld2/DGIIM/blob/master/Segundo/2%20Cuatrimestre/PDOO/.img/Captura%20de%20pantalla%20de%202021-06-24%2018-50-01.png)
 
-![Captura de pantalla de 2021-06-24 18-50-15](./.img/Captura de pantalla de 2021-06-24 18-50-15.png)
+![Captura de pantalla de 2021-06-24 18-50-15](https://github.com/danieeeld2/DGIIM/blob/master/Segundo/2%20Cuatrimestre/PDOO/.img/Captura%20de%20pantalla%20de%202021-06-24%2018-50-15.png)
 
 Soluciones:
 
