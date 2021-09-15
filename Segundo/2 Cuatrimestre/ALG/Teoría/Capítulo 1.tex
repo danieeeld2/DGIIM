@@ -1,0 +1,101 @@
+% Preámbulo
+
+% Tipo de documento
+\documentclass[a4paper, 12pt]{article}
+% Codificación
+\usepackage[utf8]{inputenc} 
+% Idioma
+\usepackage[spanish]{babel}
+%Tipografía
+\usepackage{gfsartemisia}
+\usepackage[T1]{fontenc}
+\usepackage[usenames]{color}
+\definecolor{Lila}{rgb}{0.39,0.17,0.63}
+\definecolor{Azul}{rgb}{0.17,0.39,0.63}
+%%% Matemáticas Paquetes AMS
+\usepackage{amsfonts}
+\usepackage{amsmath} % Matemáticas
+\usepackage{amssymb,amsthm} % Símbolos y teoremas
+\usepackage{mathtools} % % Algunos añadidos y correcciones a amsmath
+\usepackage{esvect}
+%referencia
+\usepackage{hyperref}
+% Título y autor de un documento. Fecha. Tabla de contenido
+\title{La Eficiencia de los Algoritmos}
+\author{Daniel Alconchel Vázquez}
+\date{25 de marzo de 2021}
+
+%Maths
+\theoremstyle{plain}
+\newtheorem{teorema}{}[section]
+\newtheorem{coro}[teorema]{Corolario}
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{lema}[teorema]{Lema}
+\theoremstyle{definition}
+\newtheorem{definicion}[teorema]{Definición}
+\theoremstyle{remark}
+\newtheorem*{observacion}{Observación}
+
+\begin{document}
+	\maketitle
+	\newpage
+	\tableofcontents
+	\newpage
+	
+	\section{Planteamiento general}
+	Una definición formal y general de \textbf{algoritmo} es una secuencia finita y ordenada de pasos, extensos de ambigüedad, que dará como resultado que se realice la tarea para la que se ha diseñado con recursos limitados y en tiempo finito.
+	
+	\begin{definicion}\label{Bazaraa}
+		\textbf{Definición de Bazaraa, Sheraly y Shetty:}
+		
+		Un algoritmo para resolver un problema es un proceso iterativo que genera una sucesión de puntos, conforme a un conjunto dado de instrucciones y con un criterio de parada.
+	\end{definicion}
+
+	\medskip
+	Un algoritmo tiene cinco características primordiales:
+	\begin{itemize}
+		\item \textbf{Finitud}: ha de terminar después de un tiempo acotado.
+		\item \textbf{Especificidad}: cada etapa debe estar precisamente definida.
+		\item \textbf{Input}: un algoritmo tiene cero o más inputs.
+		\item \textbf{Output}: uno o más outputs.
+		\item \textbf{Efectividad}: todas las operaciones deben ser tan básicas como para que se puedan realizar en un periodo finito de tiempo.
+	\end{itemize}
+
+	\section{Tiempo de ejecución. Notaciones para la eficiencia de los algoritmos}
+	\begin{definicion}
+		\textbf{Principio de Invariancia:}
+		
+		Dos implementaciones diferentes de un mismo algoritmo no difieren en eficiencia más que, a lo sumo, en una constante multiplicativa.
+	\end{definicion}
+
+	Parece oportuno referirnos a la eficiencia teórica de un algoritmo en términos de tiempo. Algo que conocemos de antemano es el denominado \textbf{Tiempo de Ejecución} de un programa, que depende de:
+	\begin{itemize}
+		\item Input del programa (Depende de su tamaño).
+		\item La calidad del código que genera el compilador.
+		\item Naturaleza y velocidad de las instrucciones máquina.
+		\item Complejidad en tiempo en tiempo del algoritmo.
+	\end{itemize}
+
+	\textcolor{Azul}{Usamos la notación \textbf{T(n)} para referirnos al tiempo de ejecución de un programa para un input de tamaño n.}
+	
+	\bigskip
+	Diremos que un algoritmo consume un tiempo de orden t(n), si existe una constante positiva, c, y una implementación del algoritmo capaz de resolver cualquier caso del problema en un tiempo acotado superiormente por ct(n) segundos, donde n es el tamaño del caso considerado. 
+	
+	\bigskip
+	\textcolor{Azul}{Además, no habrá unidad para expresar el tiempo de ejecución de un algoritmo. Usaremos una constante (oculta) para acumular dichos factores relativos.}
+	
+	\bigskip
+	\subsection{Notación Asintótica}
+	Para comparar los algoritmos empleando los tiempos de ejecución y las constantes ocultas se emplea la denominada \textbf{notación asintótica}. Esta notación sirve para capturar las conductas de funciones para valores altos de x.
+	
+	\begin{teorema}
+		\textbf{Definición formal para $O$}
+		
+		Sean $f$ y $g$ funciones definidas de $\mathbb{N} \rightarrow \Re^+$. Si dice que $f$ es de orden $g$, $O(g(n))$, si existen dos constantes positivas $C$ y $k$ tales que \[\forall n\geq k,f(n) \leq C\cdot g(n)\]
+	\end{teorema}
+
+	\textcolor{Lila}{Para probar que no pueden existir constantes C, k tales que pasado k, siempre se verifique la in-ecuación, podemos usar límites.}
+	Por ejemplo:
+	
+	
+\end{document}
