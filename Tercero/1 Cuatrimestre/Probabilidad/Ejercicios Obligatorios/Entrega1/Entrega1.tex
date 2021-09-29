@@ -1,0 +1,143 @@
+% Preámbulo
+
+% Tipo de documento
+\documentclass[a4paper, 12pt]{article}
+% Codificación
+\usepackage[utf8]{inputenc} 
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+% Idioma
+\usepackage[spanish]{babel}
+%Tipografía
+\usepackage{gfsartemisia}
+\usepackage[T1]{fontenc}
+\usepackage[usenames]{color}
+\definecolor{Lila}{rgb}{0.39,0.17,0.63}
+\definecolor{Azul}{rgb}{0.17,0.39,0.63}
+%%% Matemáticas Paquetes AMS
+\usepackage{amsfonts}
+\usepackage{amsmath} % Matemáticas
+\usepackage{amssymb,amsthm} % Símbolos y teoremas
+\usepackage{mathtools} % % Algunos añadidos y correcciones a amsmath
+\usepackage{esvect}
+%referencia
+\usepackage{hyperref}
+% Título y autor de un documento. Fecha. Tabla de contenido
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Ejercicio de Entrega 1}
+\lhead{Daniel Alconchel Vázquez}
+\rfoot{Page \thepage}
+
+%Maths
+\theoremstyle{plain}
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{coro}[teorema]{Corolario}
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{lema}[teorema]{Lema}
+\theoremstyle{definition}
+\newtheorem{definicion}[teorema]{Definición}
+\theoremstyle{remark}
+\newtheorem*{observacion}{Observación}
+
+\begin{document}
+	\begin{flushleft}
+		\textbf{1.} Se denota por $(\Omega,\mathcal{A},P)$ el espacio probabilístico base. Se considera la siguiente definición de medida de probabilidad:
+		\begin{definicion}
+			$P:\mathcal{A}\rightarrow[0,1]$, es una función de probabilidad si satisface los siguientes tres axiomas:
+			\begin{enumerate}
+				\item\label{1} $P(A)\geq 0, \quad \forall A \in \mathcal{A}$
+				\item\label{2} $P(\Omega)=1$
+				\item\label{3} Para cualquier secuencia $\{A_n\}_{n\in \mathbb{N}}\subseteq \mathcal{A}$ de sucesos disjuntos
+				\[P\left(\bigcup_{n\in \mathbb{N}}A_n\right)=\sum_{n\in \mathbb{N}}P(A_n)\]
+			\end{enumerate}
+		\end{definicion}
+		Demostrar a partir de la definición, las siguientes propiedades:
+		\renewcommand{\theenumi}{\alph{enumi}}
+		\begin{enumerate}
+			\item\label{a} $P(\emptyset) = 0$
+			\item\label{b} Probabilidad del suceso complementario: $P(A^c)=1-P(A)$
+			\item\label{c} Aditividad finita para procesos disjuntos: $P(\bigcup_{n=1}^{N}A_n)=\sum_{n=1}^{N}P(A_n)$
+			\item\label{d} Probabilidad de la diferencia y la monotonía: $B\subseteq A\in \mathcal{A}, P(A-B)=P(A)-P(B), P(B)\leq P(A)$
+			\item\label{e} $A,B \in \mathcal{A}, P(A\cup B)=P(A)+P(B)-P(A\cap B)$
+			\item\label{f} Principio de inclusión-exclusión para la unión finita de sucesos no disjuntos.
+			\item\label{g} Subaditividad:$P(\bigcup_{n\in \mathbb{N}}A_n)\leq\sum_{n\in \mathbb{N}}P(A_n)$
+			\item\label{h} Desigualdad de Boole: $P(\bigcap_{n\in \mathbb{N}}A_n)\geq 1-\sum_{n\in \mathbb{N}}P(A^c)$
+		\end{enumerate}
+	\end{flushleft}
+	\newpage
+	\begin{itemize}
+		\item Comenzaremos demostrando \ref{b}. Para ello usaremos los axiomas \ref{2} y \ref{3}.Usando que $A\cup A^c=\Omega, \forall A\in \mathcal{A}$, se extrae que:
+		\[P(A^c)+P(A) \overset{\ref{3}}{\implies} P(A^c)=P(\Omega)-P(A)\overset{\ref{2}}{\implies} P(A^c)=1-P(A)\]
+		$\hfill\square$
+		\item Ahora estamos en disposición de demostrar \ref{a}. Para ello usaremos \ref{b}, el cual, acabamos de demostrar y el axioma \ref{2}.
+		\[P(\Omega^c)=P(\emptyset) \overset{\ref{b}}{=} 1-P(\Omega) \overset{\ref{2}}{=} 0 \]
+		$\hfill\square$
+		\item Vamos a demostrar ahora \ref{c}. Para ello consideramos una sucesión $\{A_n\}_{n\in \mathbb{N}}$ de sucesos disjuntos, de  forma que de un valor $n_i \in \mathbb{N}$ en adelante, los elementos de la sucesión sean el conjunto vacío, es decir:
+		\[
+		\left\{ \begin{array}{lcc}
+		X_n=A_i \quad \forall n \in \mathbb{N}, \quad 1\leq n \leq n_i \\
+		\\ X_n=\emptyset \quad \forall n \in \mathbb{N}, \quad n \geq n_i   \\
+		\end{array}\]
+		Usando esto, \ref{3} y lo ya demostrado (\ref{a}), obtenemos:
+		\[P\left(\bigcup_{n=1}^{\infty} X_n\right)\overset{\ref{3}}{=}\sum_{n=1}^{\infty}P(X_n)=\sum_{n=1}^{n_i}P(X_n)+\sum_{n_i}^{\infty}P(\emptyset)\overset{\ref{a}}{=}\sum_{n=1}^{n_i}P(X_n)=P\left(\bigcup_{n=1}^{n_i}X_n\right)
+		\]
+		Como $n_i\in \mathbb{N}$ no está fijo, esto es válido para cualquier $n_i\in \mathbb{N}$.
+		
+		$\hfill\square$
+		\item Continuamos demostrando \ref{d}. Para ello tomamos $B\subseteq A\in \mathcal{A}\implies A\cap B = B$, con lo que podemos realizar el siguiente desarrollo:
+		\[A-B=A-(A\cap B) \implies A=(A-B)\cup (A\cap B)
+		\]
+		De donde se extrae que:
+		\[P(A)=P(A-B)+P(A\cap B)=P(A-B)+P(B) \implies \]
+		\[\implies P(A-B)=P(A)-P(B) \implies P(B)=P(A)-P(A-B) \overset{\ref{1}}{\implies} P(B) \leq P(A)
+		\]
+		
+		$\hfill\square$
+		\item Para demostrar \ref{e} vamos a tomar $A,B\in \mathcal{A}$ y consideramos la unión de dichos conjuntos, la cual, podemos expresar como una partición de la siguiente forma: $A\cup B=(A-B)\cup(A\cap B)\cup (B-A)$. De esta forma obtenemos:
+		\[P(A\cup B)\overset{\ref{c}}{=}P(A-B)+P(A\cap B)+P(B-A)=
+		\]
+		\[=P(A)-P(A\cap B)+P(A\cap B)+P(B)-P(A\cap B)=P(A)+P(B)-P(A\cap B)
+		\]
+		
+		$\hfill\square$
+		\item Demostrar \ref{f} equivale a demostrar que: 
+		
+		$P(\bigcup_{n=1}^N A_n)\leq \sum_{n=1}^{N}P(A_n), \qquad A_n\in\mathcal{A},\forall n\in {1,...,N}$
+		
+		lo cual probaremos por inducción:
+		\begin{itemize}
+			\item Para N=2 tenemos que:
+			\[P(A_1\cup A_2)\overset{\ref{e}}{=}P(A_1)+P(A_2)-P(A_1\cap A_2)\overset{\ref{1}}{\leq} P(A_1)+P(A_2)\]
+			\item Supongamos cierto para N=k y demostremos que es cierto para N=k+1:
+			\[P\left(\bigcup_{n=1}^{k+1}A_n\right)=P\left(\left(\bigcup_{n=1}^{k}A_n\right)\cup A_{k+1}\right)\overset{\ref{e}}{=}\]
+			\[=P\left(\bigcup_{n=1}^{k}A_n\right)+P(A_{k+1})-P\left(\left(\bigcup_{n=1}^{k}A_n\right)\cap A_{k+1}\right)\leq P\left(\bigcup_{n=1}^{k}A_n\right)+P(A_{k+1})
+			\]
+		\end{itemize}
+	
+		$\hfill\square$
+		\item Para demostrar \ref{g} tomamos una colección de eventos $\{A_n\}_{n\in\mathbb{N}}$ y definimos:
+		\[
+		\left\{ \begin{array}{lcc}
+		X_1=A_1 \\
+		\\ X_n=A_n-\bigcup_{k=1}^{n-1}A_k \quad n=2,3...  \\
+		\end{array}\]
+		De esta forma, tenemos una colección de eventos disjuntos dos a dos, que verifica:
+			\begin{itemize}
+				\item $\bigcup_{n=1}^{\infty}A_n=\bigcup_{n=1}^{\infty}X_n$
+				\item $X_n\subseteq A_n$
+			\end{itemize}
+		Por lo tanto:
+		\[
+		P\left(\bigcup_{n=1}^\infty A_n\right)=P\left(\bigcup_{n=1}^\infty X_n\right)\overset{\ref{3}}{=}\sum_{n=1}^{\infty}P(X_n)\overset{X_n\subseteq A_n}{\leq}\sum_{n=1}^{\infty}P(A_n)
+		\]
+		
+		$\hfill\square$
+		\item Por último, para probar \ref{h}, tomamos una colección de eventos $\{A_n\}_{n\in\mathbb{N}}$ y usando álgebra de Boole llegamos a:
+		\[
+		P\left(\bigcap_{n=1}^{\infty}A_n\right)=1-P\left(\bigcup_{n=1}^\infty A_n^c\right)\overset{\ref{g}}{\geq}1-\sum_{n=1}^\infty P(A_n^c)
+		\]
+		
+		$\hfill\square$
+	\end{itemize}
+\end{document}
