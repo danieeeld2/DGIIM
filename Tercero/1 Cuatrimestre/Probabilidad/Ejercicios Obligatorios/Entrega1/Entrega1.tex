@@ -103,15 +103,36 @@
 		$\hfill\square$
 		\item Demostrar \ref{f} equivale a demostrar que: 
 		
-		$P(\bigcup_{n=1}^N A_n)\leq \sum_{n=1}^{N}P(A_n), \qquad A_n\in\mathcal{A},\forall n\in {1,...,N}$
+		\[P(\bigcup_{n=1}^N A_n)= \sum_{n=1}^{N}P(A_n)-\sum_{i_1,i_2=1.i_!<i_2}^{N}P(A_{i_1}\cap A_{i_2})+\sum_{i_1,i_2,i_3=1,i_1<i_2<i_3}^{N}P(A_{i_1}\cap A_{i_2}\cap A_{i_3})+...\]
+		\[...+(-1)^{N+1}P(\bigcap_{i=1}^N A_i), \qquad A_n\in\mathcal{A},\forall n\in {1,...,N}\]
 		
 		lo cual probaremos por inducción:
 		\begin{itemize}
-			\item Para N=2 tenemos que:
-			\[P(A_1\cup A_2)\overset{\ref{e}}{=}P(A_1)+P(A_2)-P(A_1\cap A_2)\overset{\ref{1}}{\leq} P(A_1)+P(A_2)\]
-			\item Supongamos cierto para N=k y demostremos que es cierto para N=k+1:
-			\[P\left(\bigcup_{n=1}^{k+1}A_n\right)=P\left(\left(\bigcup_{n=1}^{k}A_n\right)\cup A_{k+1}\right)\overset{\ref{e}}{=}\]
-			\[=P\left(\bigcup_{n=1}^{k}A_n\right)+P(A_{k+1})-P\left(\left(\bigcup_{n=1}^{k}A_n\right)\cap A_{k+1}\right)\leq P\left(\bigcup_{n=1}^{k}A_n\right)+P(A_{k+1})
+			\item Para N=2 tenemos que se trata de lo demostrado en \ref{e}.
+			\item Supongamos cierto para N y demostremos que es cierto para N+1:
+			\[
+			P\left(\bigcup_{i=1}^{N+1} A_i\right)=P\left(\left(\bigcup_{i=1}^N A_i\right)\cup A_{N+1}\right)=P\left(\bigcup_{i=1}^N A_i\right)+P(A_{N+1})-P\left(\left(\bigcup_{i=1}^N A_i\right)\cap A_{N+1}\right)
+			\]
+			Ahora, aplicando la propiedad distributiva de la unión respecto de la intersección en el último sumando se tiene:
+			\[
+			P\left(\bigcup_{i=1}^{N+1} A_i\right)=P\left(\bigcup_{i=1}^N A_i\right)+P(A_{N+1})-P\left(\bigcup_{i=1}^N (A_i\cap A_{N+1})\right)
+			\]
+			A continuación, ya que la propiedad se está suponiendo cierta para la unión de N sucesos, se aplica al primer y tercer sumando de la expresión y se tiene que:
+			\[
+			\begin{split}
+			P\left(\bigcup_{i=1}^{N+1} A_ i\right)= \\
+			= \left[\sum_{n=1}^{N}P(A_n)-\sum_{i_1,i_2=1.i_!<i_2}^{N}P(A_{i_1}\cap A_{i_2})+\sum_{i_1,i_2,i_3=1,i_1<i_2<i_3}^{N}P(A_{i_1}\cap A_{i_2}\cap A_{i_3})+... \\
+			...+(-1)^{N+1}P(\bigcap_{i=1}^N A_i)\right]+P(A_{N+1})-\\
+			-\left[\sum_{i_1=1}^{N}P(A_{i_1}\cap A_{N*1})-\sum_{i_1,i_2=1,i_1<i_2}^N P(A_{i_1}\cap A_{i_2}\cap A_{N+1})+...+(-1)^{N+1}P\left(\bigcap_{i=1}^{N+1}A_i\right)\right]
+			\end{split}
+			\]
+			Observe que en el segundo corchete aparecen las sumas de las probabilidades de intersecciones dos a dos, tres a tres, etc...,que no aparecen en el primer corchete, esto es, las probabilidades de las intersecciones $A_{N+1}$ con el resto de sucesos, por tanto, redondeando las sumas, se tiene que la propiedad para la unión de N+1 sucesos es:
+			\[
+			\begin{split}
+			P\left(\bigcup_{i=1}^{N+1}A_i\right)=\\
+			\sum_{n=1}^{N+1}P(A_n)-\sum_{i_1,i_2=1.i_!<i_2}^{N+1}P(A_{i_1}\cap A_{i_2})+\sum_{i_1,i_2,i_3=1,i_1<i_2<i_3}^{N+1}P(A_{i_1}\cap A_{i_2}\cap A_{i_3})+...\\
+			...+(-1)^{N+2}P(\bigcap_{i=1}^{N+1} A_i)
+			\end{split}
 			\]
 		\end{itemize}
 	

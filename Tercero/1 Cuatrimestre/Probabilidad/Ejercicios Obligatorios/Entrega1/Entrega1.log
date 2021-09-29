@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.9.26)  28 SEP 2021 16:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.9.26)  29 SEP 2021 17:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1294,18 +1294,157 @@ txsy/m/n/12 ^^T \OML/txmi/m/it/12 P\OT1/txr/m/n/12 (\OML/txmi/m/it/12 A\OT1/txr
 
 [2]
 LaTeX Font Info:    Trying to load font information for TS1+artemisia on input 
-line 110.
-LaTeX Font Info:    No file TS1artemisia.fd. on input line 110.
+line 111.
+LaTeX Font Info:    No file TS1artemisia.fd. on input line 111.
 
 
 LaTeX Font Warning: Font shape `TS1/artemisia/m/n' undefined
 (Font)              using `TS1/cmr/m/n' instead
-(Font)              for symbol `textbullet' on input line 110.
+(Font)              for symbol `textbullet' on input line 111.
+
+
+Overfull \hbox (23.47699pt too wide) detected at line 115
+\OML/txmi/m/it/12 P [] \OT1/txr/m/n/12 = \OML/txmi/m/it/12 P [] \OT1/txr/m/n/12
+ = \OML/txmi/m/it/12 P [] \OT1/txr/m/n/12 + \OML/txmi/m/it/12 P\OT1/txr/m/n/12 
+(\OML/txmi/m/it/12 A[]\OT1/txr/m/n/12 ) \OMS/txsy/m/n/12 ^^@ \OML/txmi/m/it/12 
+P []
+ []
+
+! Extra }, or forgotten \right.
+<template> }
+            $\endtemplate 
+l.127 			\end{split}
+                    
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
 
 ! Missing \right. inserted.
 <inserted text> 
                 \right .
-l.124 		\end{array}\]
+l.127 			\end{split}
+                    
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.127 			\end{split}
+                    
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.127 			\end{split}
+                    
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Extra \right.
+<argument> ...{N+1}P(\bigcap _{i=1}^N A_i)\right ]
+                                                  +P(A_{N+1})-\\ -\left [\su...
+l.127 			\end{split}
+                    
+I'm ignoring a \right that had no matching \left.
+
+! Missing { inserted.
+<inserted text> 
+                {
+l.127 			\end{split}
+                    
+I've put in what seems to be necessary to fix
+the current column of the current alignment.
+Try to go on, since this might almost work.
+
+! Extra }, or forgotten \right.
+<template> }
+            $\endtemplate 
+l.127 			\end{split}
+                    
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Missing \right. inserted.
+<inserted text> 
+                \right .
+l.127 			\end{split}
+                    
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.127 			\end{split}
+                    
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.127 			\end{split}
+                    
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Extra \right.
+<argument> ...{N+1}P(\bigcap _{i=1}^N A_i)\right ]
+                                                  +P(A_{N+1})-\\ -\left [\su...
+l.127 			\end{split}
+                    
+I'm ignoring a \right that had no matching \left.
+
+! Missing { inserted.
+<inserted text> 
+                {
+l.127 			\end{split}
+                    
+I've put in what seems to be necessary to fix
+the current column of the current alignment.
+Try to go on, since this might almost work.
+
+
+Overfull \hbox (24.83711pt too wide) detected at line 128
+[]
+ []
+
+
+Overfull \hbox (55.22438pt too wide) detected at line 128
+[]
+ []
+
+[3]
+! Missing \right. inserted.
+<inserted text> 
+                \right .
+l.145 		\end{array}\]
                      
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -1313,32 +1452,32 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-[3]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 143.
- [4]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 143.
+[4]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 164.
+ [5]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 164.
  (./Entrega1.aux
 LaTeX Info: Redefining \. on input line 24.
 LaTeX Info: Redefining \% on input line 24.
 )
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 143.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 143.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 164.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 164.
 Package rerunfilecheck Info: File `Entrega1.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 143.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 164.
  ) 
 Here is how much of TeX's memory you used:
- 10232 strings out of 481239
- 149906 string characters out of 5920377
- 409611 words of memory out of 5000000
- 25258 multiletter control sequences out of 15000+600000
- 553987 words of font info for 78 fonts, out of 8000000 for 9000
+ 10239 strings out of 481239
+ 149982 string characters out of 5920377
+ 410611 words of memory out of 5000000
+ 25261 multiletter control sequences out of 15000+600000
+ 555750 words of font info for 81 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 34i,12n,45p,463b,437s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 34i,17n,45p,463b,491s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}{/usr/share/texli
 ve/texmf-dist/fonts/enc/dvips/gfsartemisia/artemisia.enc}{/usr/share/texlive/te
 xmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texlive/texmf-dist/fonts/enc/d
@@ -1353,10 +1492,10 @@ pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/txex.pfb></usr/sh
 are/texlive/texmf-dist/fonts/type1/public/txfonts/txsy.pfb></usr/share/texlive/
 texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/font
 s/type1/urw/times/utmri8a.pfb>
-Output written on Entrega1.pdf (4 pages, 110414 bytes).
+Output written on Entrega1.pdf (5 pages, 113763 bytes).
 PDF statistics:
- 117 PDF objects out of 1000 (max. 8388607)
- 99 compressed objects within 1 object stream
- 17 named destinations out of 1000 (max. 500000)
+ 119 PDF objects out of 1000 (max. 8388607)
+ 100 compressed objects within 1 object stream
+ 18 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
