@@ -1,0 +1,84 @@
+% Preámbulo
+
+% Tipo de documento
+\documentclass[a4paper, 12pt]{article}
+% Codificación
+\usepackage[utf8]{inputenc} 
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+% Idioma
+\usepackage[spanish]{babel}
+%Tipografía
+\usepackage{gfsartemisia}
+\usepackage[T1]{fontenc}
+\usepackage[usenames]{color}
+\definecolor{Lila}{rgb}{0.39,0.17,0.63}
+\definecolor{Azul}{rgb}{0.17,0.39,0.63}
+%%% Matemáticas Paquetes AMS
+\usepackage{amsfonts}
+\usepackage{amsmath} % Matemáticas
+\usepackage{amssymb,amsthm} % Símbolos y teoremas
+\usepackage{mathtools} % % Algunos añadidos y correcciones a amsmath
+\usepackage{esvect}
+%referencia
+\usepackage{hyperref}
+% Título y autor de un documento. Fecha. Tabla de contenido
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Ejercicio de Entrega 2}
+\lhead{Daniel Alconchel Vázquez}
+\rfoot{Page \thepage}
+
+%Maths
+\theoremstyle{plain}
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{coro}[teorema]{Corolario}
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{lema}[teorema]{Lema}
+\theoremstyle{definition}
+\newtheorem{definicion}[teorema]{Definición}
+\theoremstyle{remark}
+\newtheorem*{observacion}{Observación}
+
+\begin{document}
+	\begin{flushleft}
+		\textbf{1.} Se denota por $(\Omega,\mathcal{A},P)$ el espacio probabilístico base. Se considera la siguiente definición de medida de probabilidad:
+		\begin{definicion}\label{def}
+			Sea $A\in \mathcal{A}$ con $P(A)>0$, la aplicación $P(\cdot /A):\mathcal{A} \longrightarrow \left[0,1\right]$, tal que $P(B/A)=\frac{P(A\cap B)}{P(A)}$ es una función de probabilidad sobre $(\Omega,\mathcal{A})$. El espacio $(\Omega,\mathcal{A},P(\cdot /A))$ se llama espacio de probabilidad condicionada.
+		\end{definicion}
+		Demostrar a partir de la definición:
+		\renewcommand{\theenumi}{\alph{enumi}}
+		\begin{itemize}
+			\item\label{TPT} Teorema de la probabilidad total: Sea $\{A_n\}_{n\in \mathbb{N}}\subseteq\mathcal{A}$ una secuencia de sucesos que definen una partición de $\Omega$, siendo $P(A_i)>0$, para $i\in \mathbb{N}$, entonces:
+				\[P(B)=\sum_{i=1}^{\infty}P(B/A_i)P(A_i)\]
+			\item Teorema de Bayes: Sea $\{A_n\}_{n\in \mathbb{N}}\subseteq\mathcal{A}$ una secuencia de sucesos que definen una partición de $\Omega$, siendo $P(A_i)>0$, para $i\in \mathbb{N}$, entonces:
+				\[P(A_i/B)=\frac{P(B/A_i)P(A_i)}{\sum_{i=1}^{\infty}P(B/A_i)P(A_i)}\quad \forall i\in \mathbb{N}\]
+		\end{itemize}
+	\end{flushleft}
+	\newpage
+	\begin{itemize}
+		\item Vamos a comenzar demostrando el Teorema de la probabilidad total. La idea de la demostración reside en que la sucesión de sucesos $\{A_n\}\subseteq \mathcal{A}$ definen una partición de $\Omega$. Consideremos
+			\[B=(B\cap A_1)\cup (B\cap A_2)\cup ... \cup (B\cap A_n)\]
+		Esta unión es disjunta, puesto que, como bien hemos mencionado antes, $\{A_n\}$ definen una partición de $\Omega$. Por tanto, se verifica que:
+			\[(B\cap A_i)\cap (B\cap A_j)=\emptyset \quad i,j\in \{1,...,n\},i\not=j\]
+		En consecuencia, tenemos que:
+			\[P(B)=P(B\cap A_1)+P(B\cap A_2)+...+P(B\cap A_n)\overset{\ref{def}}{\implies}\]
+			\[P(B)=P(A_1)\cdot P(B/A_1)+P(A_2)\cdot P(B/A_2)+...+P(A_n)\cdot P(B/A_n)\implies\]
+			\[\sum_{i=0}^{n}P(A_i)\cdot P(B/A_i)\]
+		Como esto es válido para $n\in \mathbb{N}$, concluimos con que:
+			\[P(B)=\sum_{i=0}^{\infty}P(A_i)\cdot P(B/A_i)\]
+			
+		$\hfill\square$
+		\item Continuamos ahora con la demostración del Teorema de Bayes. Para ello, tenemos que:
+			\[P(A_i/B)\overset{\ref{def}}{=}\frac{P(A_i\cap B)}{P(B)}\]
+		Para la demostración, aplicaremos la definición en el numerador y el Teorema de la probabilidad total en el denominador, es decir, sabemos que:
+		\begin{itemize}
+			\item \[P(A_i\cap B)\overset{\ref{def}}{=}P(B/A_i)P(A_i)\]
+			\item \[P(B)\overset{\ref{TPT}}{=}\sum_{i=0}^{\infty}P(A_i)\cdot P(B/A_i)\]
+		\end{itemize}
+		Por lo que sustituyendo nos queda:
+			\[P(A_i/B)=\frac{P(A_i\cap B)}{P(B)}=\frac{P(B/A_i)P(A_i)}{\sum_{i=0}^{\infty}P(A_i)\cdot P(B/A_i)}, \quad \forall i\in \mathbb{N}\]
+			
+		$\hfill\square$
+	\end{itemize}
+\end{document}
