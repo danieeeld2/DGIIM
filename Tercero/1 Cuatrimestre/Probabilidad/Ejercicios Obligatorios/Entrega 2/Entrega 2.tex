@@ -64,9 +64,9 @@
 		En consecuencia, tenemos que:
 			\[P(B)=P(B\cap A_1)+P(B\cap A_2)+...+P(B\cap A_n)\overset{\ref{def}}{\implies}\]
 			\[P(B)=P(A_1)\cdot P(B/A_1)+P(A_2)\cdot P(B/A_2)+...+P(A_n)\cdot P(B/A_n)\implies\]
-			\[\sum_{i=0}^{n}P(A_i)\cdot P(B/A_i)\]
+			\[\sum_{i=1}^{n}P(A_i)\cdot P(B/A_i)\]
 		Como esto es válido para $n\in \mathbb{N}$, concluimos con que:
-			\[P(B)=\sum_{i=0}^{\infty}P(A_i)\cdot P(B/A_i)\]
+			\[P(B)=\sum_{i=1}^{\infty}P(A_i)\cdot P(B/A_i)\]
 			
 		$\hfill\square$
 		\item Continuamos ahora con la demostración del Teorema de Bayes. Para ello, tenemos que:
@@ -74,10 +74,10 @@
 		Para la demostración, aplicaremos la definición en el numerador y el Teorema de la probabilidad total en el denominador, es decir, sabemos que:
 		\begin{itemize}
 			\item \[P(A_i\cap B)\overset{\ref{def}}{=}P(B/A_i)P(A_i)\]
-			\item \[P(B)\overset{\ref{TPT}}{=}\sum_{i=0}^{\infty}P(A_i)\cdot P(B/A_i)\]
+			\item \[P(B)\overset{\ref{TPT}}{=}\sum_{i=1}^{\infty}P(A_i)\cdot P(B/A_i)\]
 		\end{itemize}
 		Por lo que sustituyendo nos queda:
-			\[P(A_i/B)=\frac{P(A_i\cap B)}{P(B)}=\frac{P(B/A_i)P(A_i)}{\sum_{i=0}^{\infty}P(A_i)\cdot P(B/A_i)}, \quad \forall i\in \mathbb{N}\]
+			\[P(A_i/B)=\frac{P(A_i\cap B)}{P(B)}=\frac{P(B/A_i)P(A_i)}{\sum_{i=1}^{\infty}P(A_i)\cdot P(B/A_i)}, \quad \forall i\in \mathbb{N}\]
 			
 		$\hfill\square$
 	\end{itemize}
