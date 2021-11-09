@@ -16,7 +16,7 @@
 #include <cassert>
 #include <thread>
 #include <mutex>
-#include <condition_variable>
+#include <condition_variable>    // tipo sted::condicion_variable
 #include <random>
 #include "scd.h"
 
@@ -51,14 +51,14 @@ void MBarreraSC::cita( int num_hebra )
 {
    unique_lock<mutex> guarda( cerrojo_monitor ); // ganar E.M.
    cont ++ ;
-   const int orden = cont ;
+   const int orden = cont ;      // copia local del contador para la traza
    cout << "Llega hebra " << num_hebra << " (" << orden << ")." << endl ;
    if ( cont < num_hebras )
-      cola.wait( guarda );
+      cola.wait( guarda );       // bloquea la hebra y libera la exlusión mutua del monitor
    else
    {
       for( int i = 0 ; i < num_hebras-1 ; i++ )
-         cola.notify_one() ;
+         cola.notify_one() ;     // libera todas las hebras
       cont = 0 ;
    }
    cout << "              Sale hebra " << num_hebra << " (" << orden << ")." << endl ;
