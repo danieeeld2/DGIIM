@@ -1,7 +1,7 @@
 /**
  * @file prodconsFIFO.cpp
  * @author Daniel Alconchel Vázquez
- * @brief PRÁCTICA 1 - PRODUCTOR/CONSUMIDOR VERSION FIFO
+ * @brief PRÁCTICA 1 - Impresora
  */
 
 #include <iostream>
@@ -26,7 +26,9 @@ unsigned
    siguiente_dato       = 0 ;  // siguiente dato a producir en 'producir_dato' (solo se usa ahí)
 Semaphore
    libres(tam_vec),     // Semáforo que cuenta las posiciones libres del buffer (k+#L-#E)
-   ocupadas(0);         // Semáforo que cuenta las posiciones ocupadas del buffer (#E-#L)
+   ocupadas(0),         // Semáforo que cuenta las posiciones ocupadas del buffer (#E-#L)
+   impresora(0),        // Semáforo para controlar la impresora
+   productor(0);        // Semáforo auxiliar para controlar el productor
 unsigned int
    buffer[tam_vec] = {0},  // Buffer para insertar datos
    primera_libre = 0,      // Puntero a la primera celda libre (FIFO)
@@ -94,10 +96,26 @@ void  funcion_hebra_productora(  )
       if(primera_libre >= tam_vec)
          primera_libre = 0;
       cout << "Insertado de buffer: " << buffer[index] << endl;
+      // Comprobamos si el dato es múltiplo de 5 para desbloquear la impresora
+      if(dato%5==0){
+         sem_signal(impresora);  // Desbloqueamos la impresora
+         sem_wait(productor);    // Productor espera
+      }
       // Finalizado inserción
       sem_signal(ocupadas);
       // Fin sección crítica
 
+   }
+}
+
+//----------------------------------------------------------------------
+
+void funcion_hebra_impresora( )
+{
+   for(int i=0; i<num_items/5; i++){
+      sem_wait(impresora);       // Bloquea una posible nueva impresora
+      cout << "Impresora: " << buffer[tam_vec] << endl;
+      sem_signal(productor);     // Desbloquea productor
    }
 }
 
@@ -134,10 +152,12 @@ int main()
         << flush ;
 
    thread hebra_productora ( funcion_hebra_productora ),
-          hebra_consumidora( funcion_hebra_consumidora );
+          hebra_consumidora( funcion_hebra_consumidora ),
+          hebra_impresora (funcion_hebra_impresora);
 
    hebra_productora.join() ;
    hebra_consumidora.join() ;
+   hebra_impresora.join() ;
 
    test_contadores();
 }
