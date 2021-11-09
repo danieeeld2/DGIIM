@@ -138,7 +138,7 @@ int ProdCons1SC::leer(  )
    unique_lock<mutex> guarda( cerrojo_monitor );
 
    // esperar bloqueado hasta que 0 < num_celdas_ocupadas
-   while ( primera_libre == 0 ) // Como tiene varios consumidores tiene que comprobar constantemente la condición
+   if ( primera_libre == 0 )
       ocupadas.wait( guarda );
 
    // hacer la operación de lectura, actualizando estado del monitor
@@ -161,7 +161,7 @@ void ProdCons1SC::escribir( int valor )
    unique_lock<mutex> guarda( cerrojo_monitor );
 
    // esperar bloqueado hasta que num_celdas_ocupadas < num_celdas_total
-   while ( primera_libre == num_celdas_total )  // Como tiene varios productores tiene que comprobar constantemente la condición
+   if ( primera_libre == num_celdas_total )
       libres.wait( guarda );
 
    //cout << "escribir: ocup == " << num_celdas_ocupadas << ", total == " << num_celdas_total << endl ;
@@ -201,7 +201,7 @@ void funcion_hebra_consumidora( ProdCons1SC * monitor )
 int main()
 {
    cout << "-------------------------------------------------------------------------------" << endl
-        << "Problema de los productores-consumidores (1 prod/cons, Monitor SC, buffer LIFO). " << endl
+        << "Problema de los productores-consumidores (1 prod/cons, Monitor SC, buffer FIFO). " << endl
         << "-------------------------------------------------------------------------------" << endl
         << flush ;
 
