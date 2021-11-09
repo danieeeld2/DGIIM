@@ -3,7 +3,7 @@
 #include <thread>    // Librería threads
 #include <mutex>     // Librería cerrojos
 #include <random>
-#include "scd.h"     // Generador números
+#include "scd.h"     // Generadornúmeros aleatorios
 
 using namespace std ;
 using namespace scd ;
@@ -18,6 +18,12 @@ unsigned
    cont_prod[num_items] = {0}, // contadores de verificación: para cada dato, número de veces que se ha producido.
    cont_cons[num_items] = {0}, // contadores de verificación: para cada dato, número de veces que se ha consumido.
    siguiente_dato       = 0 ;  // siguiente dato a producir en 'producir_dato' (solo se usa ahí)
+Semaphore
+   libres(tam_vec),  // Semáforo que contabiliza las posiciones libres del buffer (k-#E+#L)
+   ocupados(0);      // Semáforo que contabiliza las posiciones ocupadas del buffer (#E-#L)
+unsigned int
+   buffer[tam_vec] = {0},  // Buffer para insertar datos
+   primera_libre = 0;      // Puntero a la primera celda libre del vector
 
 //**********************************************************************
 // funciones comunes a las dos soluciones (fifo y lifo)
@@ -72,7 +78,16 @@ void  funcion_hebra_productora(  )
    for( unsigned i = 0 ; i < num_items ; i++ )
    {
       int dato = producir_dato() ;
-      // completar ........
+      // Inicio sección crítica
+      sem_wait(libres);
+      // Inicio inserción
+      assert(0 <= primera_libre && primera_libre < tam_vec);
+      int index = primera_libre;
+      buffer[primera_libre++] = dato;
+      cout << "Insertado de buffer: " << dato << endl;
+      // Fin inserción
+      sem_signal(ocupados);
+      // Fin sección crítica
    }
 }
 
@@ -83,7 +98,15 @@ void funcion_hebra_consumidora(  )
    for( unsigned i = 0 ; i < num_items ; i++ )
    {
       int dato ;
-      // completar ......
+      // Inicio sección crítica
+      sem_wait(ocupados);
+      // Inicio extracción
+      assert(0 <= primera_libre && primera_libre < tam_vec);
+      dato = buffer[--primera_libre];
+      cout << "Extracción de buffer: " << dato << endl;
+      // Fin extracción
+      sem_signal(libres);
+      // Fin sección crítica
       consumir_dato( dato ) ;
     }
 }
