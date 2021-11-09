@@ -29,6 +29,10 @@ using namespace scd ;
 //       - En el contructor ahora se le pasa el número de hebras que tiene que esperar pa la cita
 //       en vez el total.
 //       - Ahora cont < num_hebras_cita
+//       - Ahora los grupos de m hebras se pelean por ejecutar el método cita. Si quisiéramos 
+//       que no se intercalarán las salidas de cada grupo (que otro subconjunto de hebras no pueda entrar)
+//       a cita hasta que salga el que lo está ejecutando, tendríamos que usar una semántica señalar y espera
+//       urgente, en vez de señalar y continuar
 
 class MBarreraParSC
 {
