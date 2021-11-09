@@ -1,3 +1,8 @@
+/**
+ * @file prodconsLIFO.cpp
+ * @author Daniel Alconchel Vázquez
+ * @brief Práctica Consumidor/Productor LIFO
+ */
 #include <iostream>
 #include <cassert>
 #include <thread>    // Librería threads

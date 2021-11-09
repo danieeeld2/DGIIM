@@ -1,3 +1,9 @@
+/**
+ * @file fumadores.cpp
+ * @author Daniel Alconchel Vázquez
+ * @brief Práctica Fumadores * 
+ */
+
 #include <iostream>
 #include <cassert>
 #include <thread>
