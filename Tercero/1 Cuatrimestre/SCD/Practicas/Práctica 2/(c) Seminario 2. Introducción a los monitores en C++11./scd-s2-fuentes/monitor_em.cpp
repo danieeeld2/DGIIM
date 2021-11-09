@@ -27,6 +27,7 @@ using namespace scd ;
 
 // *****************************************************************************
 // clase contador, sin exclusión mutua
+// las variables  pueden entrar a la vez al recurso compartido provocando que el valor final no sea el esperado
 
 class MContador1
 {
@@ -59,6 +60,11 @@ int MContador1::leer_valor()
 
 // *****************************************************************************
 // clase contador, con exclusión mutua mediante manipulación directa del cerrojo
+// esta versión, aunque es correcta, tiene varios inconvenientes y es que 
+// puede ocurrir que se produzca un assert dentro del cerrojo, por lo que nunca se ejecuta
+// unlock y las hebras se quedan esperando indefinidamente y que los return se hacen
+// fuera del unlock (si se hace dentro sales de la funcion antes de la sentencia unlock), por lo
+// que te tienes que crear una variable local.
 
 class MContador2
 {
@@ -97,6 +103,8 @@ int MContador2::leer_valor()
 
 // *****************************************************************************
 // clase contador, con exclusión mutua mediante guardas
+// Las guardias apuntan al cerrojo que referencian y llaman a unlock al salir del método,
+// independientemente de como este finalice
 
 class MContador3
 {
