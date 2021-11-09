@@ -11,6 +11,7 @@
 #include <random> // dispositivos, generadores y distribuciones aleatorias
 #include <chrono> // duraciones (duration), unidades de tiempo
 #include "scd.h"
+#include <vector>
 
 using namespace std ;
 using namespace scd ;
@@ -21,8 +22,8 @@ const int num_fumadores = 3 ;
 
 // Declaración variables compartidas
 Semaphore
-   mostr_vacio(1),          // Semáforo que contabiliza si el mostrador esta vacío o no --> 1=vacío y 0=ocupado
-   ingr_disp[3] = {0,0,0}; // Array de semáforo que mira si el ingrediente i está en el mostrador --> 1=está y 0=noestá
+   mostr_vacio(1);          // Semáforo que contabiliza si el mostrador esta vacío o no --> 1=vacío y 0=ocupado
+   vector<Semaphore> ingr_disp; // Array de semáforo que mira si el ingrediente i está en el mostrador --> 1=está y 0=noestá
 
 //-------------------------------------------------------------------------
 // Función que simula la acción de producir un ingrediente, como un retardo
@@ -117,6 +118,10 @@ int main()
         << "Problema de los fumadores" << endl
         << "------------------------------------------------------------------" << endl
         << flush;
+
+   // Inicialización de semáforos
+   for(int i=0; i<num_fumadores; i++)
+      ingr_disp.push_back(Semaphore(0));
 
    // Inicialización de hebras
    estanquero = thread(funcion_hebra_estanquero);
