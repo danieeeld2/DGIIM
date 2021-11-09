@@ -24,6 +24,11 @@ using namespace scd ;
 
 // *****************************************************************************
 // clase para monitor Barrera, version 2,  semántica SC
+// la diferencia con el monitor anterior es que ahora no espera a todas las hebras
+// sino a un subconjunto de ellas, luego hay que reallizar los siguientes cambios:
+//       - En el contructor ahora se le pasa el número de hebras que tiene que esperar pa la cita
+//       en vez el total.
+//       - Ahora cont < num_hebras_cita
 
 class MBarreraParSC
 {
