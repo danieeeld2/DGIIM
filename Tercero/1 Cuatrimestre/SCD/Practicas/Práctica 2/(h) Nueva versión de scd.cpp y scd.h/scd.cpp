@@ -17,6 +17,9 @@
 //                  'shared_ptr' is no longer needed
 // Oct, 25, 2019  : solved a bug in the // LOGM macro (didn't compile in g++)
 // May, 2021      : removed use of LOGM macro.
+// Oct 2021       : SemaphoreRepr imlementation changed so it also uses 'FIFOQueue's objects, 
+//                  one for EM and other for blocked threads (see github repository for a very 
+//                  detailed explanation). (added LOGM macro and logm function).
 //
 //
 // -----------------------------------------------------------------------------
@@ -33,7 +36,9 @@
 // Oct 2020      : fixed a bug: 'mutex_count' was not initialized to 0, 
 //                 (the bug showed just on mac with the XCode clang compiler, but not in linux
 //                  as compiler use to insert initialization to 0 code).
-// May 2021      : no longer use semaphores for the queues, use 'FIFOQueue' instead. This guarantees FIFO order
+// May 2021      : no longer use semaphores for the queues in monitors, use 'FIFOQueue' instead. 
+//                 This guarantees FIFO order
+
 //
 //
 // References:
@@ -97,7 +102,7 @@ namespace scd
 using namespace std ;
 
 int num_instances = 0 ;
-bool log_semaphores = false ;
+//bool log_semaphores = true ;
 
 using namespace std ;
 
@@ -156,232 +161,24 @@ std::string get_thread_name()
   if ( iter != names_map.end() )
     return iter->second ;
   else
-    return "(unknown)" ;
+    return "(unknown thread name)" ;
 
 }
 
+// ------------- logging (oct 21)
 
-// *****************************************************************************
-// representation of semaphores (not public)
+mutex mutex_log ;
 
-class SemaphoreRepr
+#define LOGM( msg ) logm( __FUNCTION__,__LINE__, msg )
+
+void logm( const std::string fname, int line, const std::string & msg ) 
 {
-   friend class Semaphore ;
-
-   public:
-   // create with an initial unsigned value
-   SemaphoreRepr( unsigned init_value ) ;
-   SemaphoreRepr( unsigned init_value, const std::string & p_name );
-   ~SemaphoreRepr() ;
-
-   private:
-
-   unsigned
-      value ,     // current semaphore value
-      num_wt ;    // current number of waiting threads
-   std::mutex *
-      mtx ;       // for mutual exclusion in semaphore updating
-   std::deque<condition_variable *>
-      cvs_queue ; // FIFO queue with condition_variables
-   std::string
-      name ;      // name of the semaphore (can used for debugging)
-
-   void     sem_wait();             // wait operation
-   bool     sem_signal();           // signal operation (returns true if there was any waiting thread)
-
-} ;
-
-
-// *****************************************************************************
-// implementation of 'Semaphore' interface
-
-Semaphore::Semaphore( unsigned init_value )
-{
-   // LOGM( "begins Semaphore::Semaphore( int == " << init_value << ")" );
-
-   assert( repr == nullptr );
-   repr = new SemaphoreRepr( init_value );
-   assert( repr != nullptr );
-
-   // LOGM( "ends" );
-}
-// -----------------------------------------------------------------------------
-
-Semaphore::Semaphore( unsigned init_value, const std::string & p_name )
-{
-   // LOGM( "begins Semaphore::Semaphore( int == " << init_value << ")" );
-
-   assert( repr == nullptr );
-   repr = new SemaphoreRepr( init_value, p_name );
-   assert( repr != nullptr );
-
-   // LOGM( "ends" );
-}
-// -----------------------------------------------------------------------------
-
-Semaphore::Semaphore( Semaphore && sem )
-{
-  // LOGM( "begins Semaphore::Semaphore( Semaphore && sem )" );
-
-  assert( sem.repr != nullptr );
-  // LOGM( "     sem.value == " << sem.repr->value << ", sem.num_wt == " << sem.repr->num_wt );
-
-  // move the pointer to this object
-  repr = sem.repr ;
-  // void the other object
-  sem.repr = nullptr ;
-
-  // LOGM( "ends" );
+   mutex_log.lock(); 
+   cout << get_thread_name() + " (" + fname + ","+to_string(line)+"): " + msg << endl; 
+   mutex_log.unlock(); 
 }
 
-// -----------------------------------------------------------------------------
 
-Semaphore::~Semaphore()
-{
-   // LOGM( "begins Semaphore::~Semaphore(), repr == " << repr );
-
-   if ( repr != nullptr )
-      delete repr ;
-
-   repr = nullptr ; // useful at all ????
-   // LOGM( "ends"  );
-}
-// -----------------------------------------------------------------------------
-
-void Semaphore::sem_wait(  )
-{
-   assert( repr != nullptr );
-   repr->sem_wait();
-}
-// -----------------------------------------------------------------------------
-
-void Semaphore::sem_signal(  )
-{
-   assert( repr != nullptr );
-   repr->sem_signal() ;
-}
-
-// -----------------------------------------------------------------------------
-// Private access method, just used for debugging
-
-int Semaphore::get_value()
-{
-   return repr != nullptr ? repr->value : -1 ;
-}
-
-// *****************************************************************************
-// Implementation of (private) semaphore representation methods
-
-SemaphoreRepr::SemaphoreRepr( unsigned init_value )
-{
-  // LOGM( "begins SemaphoreRepr::SemaphoreRepr( int == " << init_value << ")" );
-
-  mtx    = new std::mutex ;
-  value  = init_value ;
-  name   = "(semaphore's name not given)" ;
-  num_wt = 0 ;
-
-  num_instances ++  ;
-  // LOGM( "ends" );
-}
-// -----------------------------------------------------------------------------
-
-SemaphoreRepr::SemaphoreRepr( unsigned init_value, const std::string & p_name )
-{
-  // LOGM( "begins  SemaphoreRepr::SemaphoreRepr( int == " << init_value << ", name = " << p_name << ")" );
-
-  mtx    = new std::mutex ;
-  value  = init_value ;
-  name   = p_name ;
-  num_wt = 0 ;
-
-  num_instances++ ;
-  // LOGM( "ends" );
-}
-
-// -----------------------------------------------------------------------------
-
-void SemaphoreRepr::sem_wait()
-{
-   assert( mtx != nullptr );
-
-   // gain mutex
-   std::unique_lock<std::mutex> lock( *mtx );
-
-   // check queue size is coherent with the registered number of waiting threads
-   assert( cvs_queue.size() == num_wt );
-
-   if ( value == 0 )      // if the current value is 0, we must wait
-   {
-      // register new waiting thread
-      num_wt += 1 ;
-
-      // create and insert new cond. var. at the end (back) of cond. vars. queue
-      condition_variable * cv_ptr = new condition_variable ;
-      assert( cv_ptr != nullptr );
-      cvs_queue.push_back( cv_ptr );
-
-      // wait until signaled and value > 0
-      while ( value == 0 )
-         cv_ptr->wait( lock ); // release mutex when waiting, re-gain after
-
-      // as this thread was waiting in the beginning (front) node, remove that node and free cv. memory
-      assert( cvs_queue.size() == num_wt ) ; assert( cv_ptr != nullptr ) ;
-      cv_ptr = cvs_queue.front();
-      cvs_queue.pop_front();
-      delete cv_ptr;
-
-      // register the thread is no longer waiting
-      num_wt -= 1 ;
-   }
-
-   // decrease value
-   assert( 0 < value );
-   value -= 1 ;
-
-   // release mutex (implicit)
-}
-// -----------------------------------------------------------------------------
-
-bool SemaphoreRepr::sem_signal()
-{
-  assert( mtx != nullptr );
-
-  // gain mutex
-  std::unique_lock<std::mutex> lock( *mtx );
-
-  // check queue size is coherent with the registered number of waiting threads
-  assert( cvs_queue.size() == num_wt );
-
-  // increase value
-  value += 1 ;
-
-  // signal one waiting thread, if any
-  if ( 0 < num_wt )
-  {
-      assert( cvs_queue.size() > 0 ); // cond. vars. queue must be non-empty
-      condition_variable * cv_ptr = cvs_queue.front() ; // get cond.var. at the first queue node
-      assert( cv_ptr != nullptr );
-      cv_ptr->notify_one() ; // wake up the thread waiting in that cond.var.
-                             // that thread will release memory used by the cond.var. and remove the front node
-      return true ;
-  }
-  return false ;
-
-}
-// -----------------------------------------------------------------------------
-
-SemaphoreRepr::~SemaphoreRepr()
-{
-  using namespace std ;
-  //cout << "begins ~SemaphoreRepr( value == " << value << ") ...." << endl << flush ;
-  assert( mtx != nullptr );
-
-  delete mtx ;
-  mtx = nullptr ;
-  num_instances -- ;
-  //cout << "ends" << endl ;
-}
 
 // *****************************************************************************
 // Class: FIFOQueue
@@ -468,7 +265,301 @@ unsigned FIFOQueue::get_nwt()
 FIFOQueue::~FIFOQueue()
 {
   using namespace std ;
-  cout << "~FIFOQueue(): num waiting threads == " << num_wt << endl << flush ;
+  //cout << "~FIFOQueue(): num waiting threads == " << num_wt << endl << flush ;
+}
+
+
+// *****************************************************************************
+// representation of semaphores (not public)
+// The implementation is similar to an Hoare SU monitor, but without the 'urgent' queue
+
+class SemaphoreRepr
+{
+   friend class Semaphore ;
+
+   public:
+   // create with an initial unsigned value
+   SemaphoreRepr( unsigned init_value ) ;
+   SemaphoreRepr( unsigned init_value, const std::string & p_name );
+   ~SemaphoreRepr() ;
+
+   private:
+
+   // current semaphore value
+   unsigned value ;
+
+   // current number of waiting threads
+   unsigned num_wt = 0 ;    
+
+   // true iif any thread is running inside the semaphore (the semaphore is being updated)
+   bool is_running = false ;  
+   
+   // lock used to serialize access to any of the two semaphore queues
+   // (I mean entry and exit from/to any of the two semaphore queues).
+   // this is the lock used for all calls to 'condition_variable.wait( lock_guard )'
+   std::mutex access_mutex ;
+   
+   // queue for threads waiting to access the semaphore for 'sem_wait' or 'sem_signal'
+   FIFOQueue * enter_queue = nullptr ; 
+
+   // queue for threads waiting in a call to 'sem_wait' when value is 0.
+   FIFOQueue * wait_queue = nullptr; 
+   
+   // identifier for thread currently in the monitor (when 'is_running' is true)
+   std::thread::id running_thread_id  ;
+
+   // name of the semaphore (can be used for debugging)
+   std::string name = "not given" ;      
+
+   // 'public' semaphore operations (called from Semaphore)
+
+   void sem_wait();    // wait operation
+   void sem_signal();  // signal operation 
+
+   // enter and leave operations at the begining and end of 'sem_wait' and 'sem_signal'
+   void enter();
+   void leave();
+
+} ;
+
+// *****************************************************************************
+// Implementation of 'Semaphore' interface
+
+Semaphore::Semaphore( unsigned init_value )
+{
+   assert( repr == nullptr );
+   //LOGM( "constructor sem. sin nombre: value == "+to_string( init_value )+" )" );
+   repr = new SemaphoreRepr( init_value );
+   assert( repr != nullptr );
+
+   //LOGM( "constructor sem. sin nombre: ends" );
+}
+// -----------------------------------------------------------------------------
+
+Semaphore::Semaphore( unsigned init_value, const std::string & p_name )
+{
+   //LOGM( "constructor sem. '"+p_name+"': value == "+to_string( init_value )+" )" );
+
+   assert( repr == nullptr );
+   repr = new SemaphoreRepr( init_value, p_name );
+   assert( repr != nullptr );
+
+   //LOGM( "constructor sem. '"+p_name+"': end" );
+}
+// -----------------------------------------------------------------------------
+
+Semaphore::Semaphore( Semaphore && sem )
+{
+  // LOGM( "begins Semaphore::Semaphore( Semaphore && sem )" );
+  assert( sem.repr != nullptr );
+  
+  // move the pointer to this object
+  repr = sem.repr ;
+
+  // void the other object 
+  sem.repr = nullptr ;
+}
+// -----------------------------------------------------------------------------
+
+Semaphore::~Semaphore()
+{
+   // LOGM( "begins Semaphore::~Semaphore(), repr == " << repr );
+
+   // free memory if this pointer has not been moved to another one
+   if ( repr != nullptr )
+      delete repr ;
+
+   repr = nullptr ; // useful at all ????
+   // LOGM( "ends"  );
+}
+// -----------------------------------------------------------------------------
+
+void Semaphore::sem_wait(  )
+{
+   assert( repr != nullptr );
+   repr->sem_wait();
+}
+// -----------------------------------------------------------------------------
+
+void Semaphore::sem_signal(  )
+{
+   assert( repr != nullptr );
+   repr->sem_signal() ;
+}
+
+// -----------------------------------------------------------------------------
+// Private access method, just used for debugging
+
+// int Semaphore::get_value()
+// {
+//    return repr != nullptr ? repr->value : -1 ;
+// }
+
+// *****************************************************************************
+// Implementation of (private) semaphore representation methods
+
+SemaphoreRepr::SemaphoreRepr( unsigned init_value )
+{
+  // LOGM( "begins SemaphoreRepr::SemaphoreRepr( int == " << init_value << ")" );
+  
+  value       = init_value ;
+  enter_queue = new FIFOQueue();
+  wait_queue  = new FIFOQueue();
+  num_wt      = 0 ;
+  is_running  = false ;
+  name        = "(name not given)" ;
+
+  num_instances ++  ;
+  // LOGM( "ends" );
+}
+// -----------------------------------------------------------------------------
+
+SemaphoreRepr::SemaphoreRepr( unsigned init_value, const std::string & p_name )
+{
+  // LOGM( "begins  SemaphoreRepr::SemaphoreRepr( int == " << init_value << ", name = " << p_name << ")" );
+
+  value       = init_value ;
+  enter_queue = new FIFOQueue();
+  wait_queue  = new FIFOQueue();
+  num_wt      = 0 ;
+  is_running  = false ;
+  name        = p_name ;
+
+  num_instances++ ;
+  // LOGM( "ends" );
+}
+
+// -----------------------------------------------------------------------------
+
+void SemaphoreRepr::enter() 
+{
+   using namespace std ;
+   unique_lock<mutex> guard( access_mutex ); // wait for any operation to complete (gain ME)
+
+   if ( is_running )
+      enter_queue->wait( guard ); // free ME + blocked wait + gain ME
+   else 
+      is_running = true ;
+
+   assert( is_running );
+   running_thread_id = std::this_thread::get_id();
+   
+   // free ME (implicit)
+}
+// -----------------------------------------------------------------------------
+
+void SemaphoreRepr::leave() 
+{
+   // check this is the thread running in the monitor
+   assert( is_running );
+   assert( std::this_thread::get_id() == running_thread_id );
+
+   unique_lock<mutex> guard( access_mutex ); // wait for any operation to complete (gain ME)
+   
+   if ( enter_queue->get_nwt() > 0 )
+      enter_queue->signal() ; // free one thread in the enter queue, it waits for this thread to leave
+   else 
+      is_running = false ; // no one wants to enter, the semaphore is going to be freed
+
+   // free ME (implicit)
+}
+// -----------------------------------------------------------------------------
+
+void SemaphoreRepr::sem_wait()
+{
+   //LOGM( "sem. " + name+": antes de 'enter' " );
+
+   enter();  // wait in 'enter_queue' if neccesary
+
+   assert( is_running ); // quitar??
+
+   if ( value == 0 ) // then wait for value > 0
+   {
+      unique_lock<mutex> guard( access_mutex ); // wait any operation on queues to be fully completed
+      
+      if ( enter_queue->get_nwt() > 0  )
+         enter_queue->signal( ); // free a thread (it isn't allowed to continue until this thread enters wait)
+      else 
+         is_running = false ; // no one wants to enter, the semaphore is going to be freed
+      
+      //LOGM( "sem. " + name+": después de 'enter', valor es 0, voy a bloquearme, nwt == "+to_string( wait_queue->get_nwt() )+", is_running == "+to_string( is_running ));
+      wait_queue->wait( guard ); // unlock 'acces_mutex' +  blocked wait + lock 'access_mutex' once value>0
+      //LOGM( "sem. " + name+": he salido del bloqueo " );
+      
+      assert( is_running );
+
+      // if ( ! is_running )
+      // {
+      //    LOGM("sem. " + name+": is_running debería ser true aquí, aborto");
+      //    LOGM(" --------------------------- ");
+      //    LOGM("     ");
+      //    exit(1);
+      // }
+      //assert( is_running ); // the thread has been woked up by the running thread, so the semaphore must be already running
+      
+      running_thread_id = std::this_thread::get_id() ; // this is the running thread again
+      // implicity unlock 'access_mutex' 
+   }
+   // decrease value
+   // if ( value == 0 )
+   // {
+   //    LOGM("sem. " + name+": el valor del sem. debería ser >0 aquí, aborto");
+   //    LOGM(" ------------------ ");
+   //    LOGM("     ");
+   //    exit(1);
+   // }
+
+   assert( value > 0 );
+
+   value -- ;
+
+   leave() ;
+}
+// -----------------------------------------------------------------------------
+
+void SemaphoreRepr::sem_signal()
+{
+   //LOGM( "sem. " + name+": antes de 'enter' " );
+
+   bool do_leave =  true ;
+
+   enter();  // wait in 'enter_queue' if neccesary
+
+   // increase value 
+   value++ ;
+
+   // check for waiting threads and signal one if needed 
+
+   if ( value == 1 ) // only when value has become 1 we must check for waiting threads 
+   {
+      unique_lock<mutex> guard( access_mutex ); // wait any operation on queues to be fully completed
+      
+      if ( wait_queue->get_nwt() > 0 )
+      {
+         do_leave = false ; // no need to call 'leave' because the signaled thread re-enters the monitor
+         //LOGM( "sem. " + name+": después de 'enter', voy a hacer signal, nwt == "+ to_string( wait_queue->get_nwt())+ ", is_running == "+to_string( is_running ) );
+         wait_queue->signal() ;
+      }
+      // implicitly unlock access mutex
+   }
+   
+   if ( do_leave )
+      leave();
+}
+// -----------------------------------------------------------------------------
+
+SemaphoreRepr::~SemaphoreRepr()
+{
+  using namespace std ;
+  
+  delete wait_queue ;
+  wait_queue = nullptr ;
+
+  delete enter_queue ;
+  enter_queue = nullptr ;
+
+  num_instances -- ;
+  
 }
 
 
@@ -519,8 +610,8 @@ void CondVar::wait()
    
    if ( monitor->urgent_queue->get_nwt() > 0 )
       monitor->urgent_queue->signal() ; // free one thread in urgent queu, it waits for ME
-   else if ( monitor->monitor_queue->get_nwt() > 0 )
-      monitor->monitor_queue->signal() ; // free one thread in monitor queu, it waits for ME
+   else if ( monitor->enter_queue->get_nwt() > 0 )
+      monitor->enter_queue->signal() ; // free one thread in monitor queu, it waits for ME
    else 
       monitor->is_running = false ; // no one wants to enter, the monitor is going to be freed
 
@@ -567,16 +658,16 @@ unsigned CondVar::get_nwt()
 HoareMonitor::HoareMonitor()
 {
    name = "unknown" ;
-   monitor_queue = new FIFOQueue() ;
-   urgent_queue  = new FIFOQueue() ;
+   enter_queue = new FIFOQueue() ;
+   urgent_queue        = new FIFOQueue() ;
 }
 // -----------------------------------------------------------------------------
 
 HoareMonitor::HoareMonitor( const std::string & p_name )
 {
    name = p_name ;
-   monitor_queue = new FIFOQueue() ;
-   urgent_queue  = new FIFOQueue() ;
+   enter_queue = new FIFOQueue() ;
+   urgent_queue        = new FIFOQueue() ;
 }
 // -----------------------------------------------------------------------------
 HoareMonitor::~HoareMonitor()
@@ -599,7 +690,7 @@ void HoareMonitor::enter()
    unique_lock<mutex> guard( access_mutex ); // wait for any operation to complete (gain ME)
 
    if ( is_running )
-      monitor_queue->wait( guard ); // free ME + blocked wait + gain ME
+      enter_queue->wait( guard ); // free ME + blocked wait + gain ME
    else 
       is_running = true ;
 
@@ -620,8 +711,8 @@ void HoareMonitor::leave()
    
    if ( urgent_queue->get_nwt() > 0 )
       urgent_queue->signal() ; // free one thread in urgent queu, it waits for ME
-   else if ( monitor_queue->get_nwt() > 0 )
-      monitor_queue->signal() ; // free one thread in monitor queu, it waits for ME
+   else if ( enter_queue->get_nwt() > 0 )
+      enter_queue->signal() ; // free one thread in monitor queu, it waits for ME
    else 
       is_running = false ; // no one wants to enter, the monitor is going to be freed
 

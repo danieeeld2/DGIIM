@@ -115,8 +115,8 @@ class Semaphore
    SemaphoreRepr * repr = nullptr; // pointer to semaphore implementation
 
    // debug methods:
-   inline void * get_ptr_repr() { return repr; }
-   int get_value() ;
+   //inline void * get_ptr_repr() { return repr; }
+   //int get_value() ;
 
    // function which can access the private methods
    friend void test_semaforos();
@@ -187,25 +187,26 @@ class HoareMonitor
    template<typename MonClass> friend class MRef ;
    friend class CondVar ;
 
-   // mutex used to serialize operations which change the monitor and queues state 
-   // (for instance: enter, leave, signal, wait, etc...)
-   // (this is NOT the 'monitor lock')
+   // true iif any thread is running in the monitor
+   bool is_running = false ;
+
+   // lock used to serialize access to any monitor's queue
+   // (I mean entry and exit from/to: monitor queue, urgent queue, any cond. var. queue).
+   // this is the lock used for all calls to 'condition_variable.wait( lock_guard )'
+   // (this is NOT the 'monitor queue', that is below)
    std::mutex access_mutex ;
 
    // name of this monitor (useful for debugging)
    std::string name = "monitor name not assigned" ;
 
-   // true iif any thread is running in the monitor
-   bool is_running = false ;
+   // queue for threads waiting to enter the monitor (this IS the 'monitor queue')
+   FIFOQueue * enter_queue = nullptr ;
+
+   // queue for threads waiting to re-enter the monitor after a call to 'signal'
+   FIFOQueue * urgent_queue = nullptr ; 
 
    // identifier for thread currently in the monitor (when running==true)
    std::thread::id running_thread_id ;
-
-   // queue for threads waiting to enter the monitor
-   FIFOQueue * monitor_queue = nullptr ;
-
-   // queue for threads waiting to re-enter the monitor after signal
-   FIFOQueue * urgent_queue = nullptr ; 
 
    // enter and leave the monitor
    void enter();
