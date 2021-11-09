@@ -107,7 +107,7 @@ class ProdCons1SC
    num_celdas_total = 10;   //  núm. de entradas del buffer
  int                        // variables permanentes
    buffer[num_celdas_total],//  buffer de tamaño fijo, con los datos
-   primera_libre ;          //  indice de celda de la próxima inserción
+   primera_libre ;          //  indice de celda de la próxima inserción (también sirve para indicar el número de celdas ocupadas)
  mutex
    cerrojo_monitor ;        // cerrojo del monitor
  condition_variable         // colas condicion:
@@ -196,7 +196,7 @@ void funcion_hebra_consumidora( ProdCons1SC * monitor )
 int main()
 {
    cout << "-------------------------------------------------------------------------------" << endl
-        << "Problema de los productores-consumidores (1 prod/cons, Monitor SC, buffer FIFO). " << endl
+        << "Problema de los productores-consumidores (1 prod/cons, Monitor SC, buffer LIFO). " << endl
         << "-------------------------------------------------------------------------------" << endl
         << flush ;
 
