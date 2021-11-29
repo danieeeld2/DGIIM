@@ -1,0 +1,112 @@
+% Preámbulo
+
+% Tipo de documento
+\documentclass[a4paper, 12pt]{article}
+% Codificación
+\usepackage[utf8]{inputenc} 
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+% Idioma
+\usepackage[spanish]{babel}
+%Tipografía
+\usepackage{gfsartemisia}
+\usepackage[T1]{fontenc}
+\usepackage[usenames]{color}
+\definecolor{Lila}{rgb}{0.39,0.17,0.63}
+\definecolor{Azul}{rgb}{0.17,0.39,0.63}
+%%% Matemáticas Paquetes AMS
+\usepackage{amsfonts}
+\usepackage{amsmath} % Matemáticas
+\usepackage{amssymb,amsthm} % Símbolos y teoremas
+\usepackage{mathtools} % % Algunos añadidos y correcciones a amsmath
+\usepackage{esvect}
+%referencia
+\usepackage{hyperref}
+% Título y autor de un documento. Fecha. Tabla de contenido
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Ejercicio de Entrega 3}
+\lhead{Daniel Alconchel Vázquez}
+\rfoot{Page \thepage}
+
+%Maths
+\theoremstyle{plain}
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{coro}[teorema]{Corolario}
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{lema}[teorema]{Lema}
+\theoremstyle{definition}
+\newtheorem{definicion}[teorema]{Definición}
+\theoremstyle{remark}
+\newtheorem*{observacion}{Observación}
+
+\begin{document}
+	\begin{flushleft}
+		\textbf{1.} Para cualesquiera $(a_1,...,a_n) \in \mathbb{R}^n$, calcular detalladamente, indicando las fórmulas aplicadas, la expresión de la varianza:
+		\[
+		\exists E[X_i^2],i=1,...,n \implies \exists Var \left[\sum_{i=1}^{n}a_iX_i\right]
+		\]
+		\[
+		Var \left[\sum_{i=1}^{n}a_iX_i\right] = \sum_{i=1}^{n}a_i^2Var(X_i)+2\sum_{i\not = j}^{n}a_ia_jCov(X_i,X_j)
+		\]
+	\end{flushleft}
+	Para demostrarlo, recordemos primero la fórmula de la varianza de una variable aleatoria. Sea $X$ una variable aleatoria arbitraria, su varianza se calcula como:
+	\[
+	Var(X)=E\left[(X-E[X])^2\right]=E[X^2]-E[X]^2
+	\]
+	Aplicando esta fórmula a nuestra combinación lineal de variables aleatorias tendríamos:
+	\[
+	Var\left(\sum_{i=1}^{n}a_iX_i\right)=E\left[\left(\sum_{i=1}^{n}a_iX_i\right)^2\right]-\left(E\left[\sum_{i=1}^{n}a_iX_i\right]\right)^2
+	\]
+	Desarrollando el primer sumando, obtendríamos:
+	\[
+	E\left[\sum_{i=1}^{n}\sum_{j=1}^{n}a_ia_jX_iX_j\right]-\left(E\left[\sum_{i=1}^{n}a_iX_i\right]\right)^2
+	\]
+	Ahora podemos aplicar la propiedad de linealidad de la esperanza:
+	\[
+	\sum_{i=1}^{n}\sum_{j=1}^{n}a_ia_jE\left[X_iX_j\right]-\left(\sum_{i=1}^{n}a_iE[X_i]\right)^2
+	\]
+	Desarrollamos ahora el segundo sumando, y obtenemos:
+	\[
+	\sum_{i=1}^{n}\sum_{j=1}^{n}a_ia_jE\left[X_iX_j\right]-\sum_{i=1}^{n}\sum_{j=1}^{n}a_ia_jE\left[X_i\right]E[X_j]
+	\]
+	Como las sumatorias tienen mismos índices, podemos combinarlas en una sola, obteniendo de esta forma:
+	\[
+	\sum_{i=1}^{n}\sum_{j=1}^{n}a_ia_j\left(E[X_iX_j]-E[X_i]E[X_j]\right)
+	\]
+	Recordemos que la covarianza de dos variables aleatorias, $X,Y$ viene definida como:
+	\[
+	Cov(X,Y)=E\left[(X-E[X])(Y-E[Y])\right]=E[XY]-E[X]E[Y]
+	\]
+	Luego, podemos sustituir en el desarrollo de nuestra ecuación de la siguiente forma (Aplicando definición de covarianza):
+	\[
+	\sum_{i=1}^{n}\sum_{j=1}^{n}a_ia_j\left(E[X_iX_j]-E[X_i]E[X_j]\right)=
+	\sum_{i=1}^{n}\sum_{j=1}^{n}a_ia_jCov(X_i,X_j)
+	\]
+	Por último, recordemos que la covarianza verifica las siguientes propiedades:
+	\[
+	Cov(X,X)=Var(X)
+	\]
+	\[
+	Cov(X,Y)=Cov(Y,X)
+	\]
+	Por lo que podemos reescribir la sumatoria de la siguiente manera:
+	\[
+	\sum_{i=1}^{n}\sum_{j=1}^{n}a_ia_jCov(X_i,X_j)=\sum_{i=1}^{n}a_i^2Var(X_i)+2\sum_{i=1}^{n}\sum_{j\not =i}^{n}a_ia_jCov(X_i,X_j)
+	\]
+	Notemos que en todo este proceso, hemos necesitado la hipótesis de que $\exists E[X_i^2], i=1,...,n$ para que exista la varianza de cada una de las variables.
+	
+	\bigskip
+	Luego, hemos demostrado que si $\exists E[X_i^2], i=1,...,n$, entonces existe la varianza de la combinación lineal de dichas variables, independientemente del valor de $(a_1,...,a_n)\in\mathbb{R}^n$ y su valor es:
+	\[
+	Var \left[\sum_{i=1}^{n}a_iX_i\right] = \sum_{i=1}^{n}a_i^2Var(X_i)+2\sum_{i\not = j}^{n}a_ia_jCov(X_i,X_j)
+	\]
+	
+	$\hfill\square$
+	
+	\bigskip
+	Como curiosidad, notemos que si las variables son independientes, entonces su covarianza es 0, por lo que obtendríamos la expresión esperada para la varianza de una combinación lineal de variables aleatorias independientes que es:
+	\[
+	Var \left[\sum_{i=1}^{n}a_iX_i\right] = \sum_{i=1}^{n}a_i^2Var(X_i)
+	\]
+	\end{document}
