@@ -22,6 +22,7 @@ const int
    id_buffer = 0,       // Id del buffer
    num_items = 100,     
    tam_vector = 10;     // Tamaño del buffer
+int producidos[num_productores] = {0};
 
 
 //**********************************************************************
@@ -39,24 +40,24 @@ template< int min, int max > int aleatorio()
 // ---------------------------------------------------------------------
 // ptoducir produce los numeros en secuencia (1,2,3,....)
 // y lleva espera aleatorio
-int producir()
+int producir(int orden)
 {
-   static int contador = 0 ;
+   static int contador = (orden*num_items/num_productores)+producidos[orden];
+   producidos[orden]++;
    sleep_for( milliseconds( aleatorio<10,100>()) );
-   contador++ ;
-   cout << "Productor ha producido valor " << contador << endl << flush;
+   cout << "Productor " << orden << " ha producido valor " << contador << endl << flush;
    return contador ;
 }
 // ---------------------------------------------------------------------
 
-void funcion_productor()
+void funcion_productor(int orden)
 {
    for ( unsigned int i= 0 ; i < num_items/num_productores ; i++ )
    {
       // producir valor
-      int valor_prod = producir();
+      int valor_prod = producir(orden);
       // enviar valor
-      cout << "Productor va a enviar valor " << valor_prod << endl << flush;
+      cout << "Productor " << orden << " va a enviar valor " << valor_prod << endl << flush;
       MPI_Ssend( &valor_prod, 1, MPI_INT, id_buffer, etiq_productor, MPI_COMM_WORLD );
    }
 }
@@ -70,7 +71,7 @@ void consumir( int valor_cons )
 }
 // ---------------------------------------------------------------------
 
-void funcion_consumidor()
+void funcion_consumidor(int orden)
 {
    int         peticion,
                valor_rec = 1 ;
@@ -80,7 +81,7 @@ void funcion_consumidor()
    {
       MPI_Ssend( &peticion,  1, MPI_INT, id_buffer, etiq_consumidor, MPI_COMM_WORLD);
       MPI_Recv ( &valor_rec, 1, MPI_INT, id_buffer, 0, MPI_COMM_WORLD,&estado );
-      cout << "Consumidor ha recibido valor " << valor_rec << endl << flush ;
+      cout << "Consumidor " << orden << " ha recibido valor " << valor_rec << endl << flush ;
       consumir( valor_rec );
    }
 }
@@ -148,11 +149,11 @@ int main( int argc, char *argv[] )
    {
       // ejecutar la operación apropiada a 'id_propio'
       if ( 1 <= id_propio && id_propio <= num_productores )
-         funcion_productor();
+         funcion_productor(id_propio-1);
       else if ( id_propio == id_buffer )
          funcion_buffer();
       else
-         funcion_consumidor();
+         funcion_consumidor(id_propio-num_productores-1);
    }
    else
    {
