@@ -114,7 +114,8 @@ void funcion_hebra_impresora( )
 {
    for(int i=0; i<num_items/5; i++){
       sem_wait(impresora);       // Bloquea una posible nueva impresora
-      cout << "Impresora: " << buffer[tam_vec] << endl;
+      int num = primera_libre - primera_ocupada;
+      cout << "Impresora: " << (num >= 0 ? num : (-1)*num) << endl;
       sem_signal(productor);     // Desbloquea productor
    }
 }

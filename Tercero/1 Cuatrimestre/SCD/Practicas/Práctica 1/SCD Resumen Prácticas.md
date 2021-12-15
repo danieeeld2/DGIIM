@@ -299,3 +299,29 @@ Los semáforos cumplen estas propiedades:
 
 ![Captura de pantalla de 2021-11-06 11-51-03](.imagenes/Captura de pantalla de 2021-11-06 11-51-03.png)
 
+#### Problema de sincronización
+
+Un problema básico de sincronización ocurre cuando:
+
+- Un proceso **P2** no debe pasar de un punto de su código hasta que otro proceso **P1** no haya llegado a otro punto del suyo. El caso típico es **P1** debe escribir en una variable compartida y **P2** debe leerla luego.
+
+  ![Captura de pantalla de 2021-11-09 01-06-51](.imagenes/Captura de pantalla de 2021-11-09 01-06-51.png)
+
+Para que este programa funcione correctamente, la sentencia de escritura (que llamamos **E**) debe terminar antes de la sentencia de lectura (**L**).
+
+- La **condición de sincronización** es evitar la interfolación de **L**,**E** y solo permitimos la interfolación de **E,L.**
+
+En adelante, para cualquier sentencia **S** de un programa concurrente y para cualquier estado durante la ejecución del programa, llamaremos **#S** al número de veces que se ha completado la ejecución de **S**, por cualquier proceso, desde en inicio hasta llegar al estado.
+
+- Por tanto, la condición que queremos cumplir es **#L $$\leq$$  #E**, es decir, en cualquier estado: **0 $$\leq$$ #E - #L**
+
+La **solución con semáforos** es usar un semáforo, cuyo valor será **#E - #L**, que es el valor no negativo que queremos mantener a lo largo del tiempo. Para que el semáforo tenga ese valor, se deben usar estas operaciones:
+
+- Inicializar el semáforo a 0 (ya que en estado inicial **#E - #L = 0** ya que **#E=#L=0**).
+
+- Inmediatamente después de **E**, incrementar el valor del semáforo con **sem_signal**, ya que **#E** aparece con signo positivo en la expresión **#E - #L**.
+
+- Inmediatamente, antes de **L**, decrementamos el valor del semáforo con **sem_wait**, ya que **#L** aparece con signo negativo. Se debe hacer antes de **L** para que **sem_wait** espere si es necesario y así evitar que la expresión **#E - #L** tome un valor negativo.
+
+  ![Captura de pantalla de 2021-11-09 01-18-49](.imagenes/Captura de pantalla de 2021-11-09 01-18-49.png)
+
