@@ -1,5 +1,30 @@
 // -----------------------------------------------------------------------------
 // Daniel Alconchel Vázquez
+// 49617109Z
+
+
+/**
+ * Respuestas a las preguntas del ejercicio:
+ * 1) ¿Cuál es el mínimo tiempo de espera que queda al final de las iteraciones del ciclo
+ *    secundario de tu solución?
+ * Respuesta: El mínimo es el restante en el segundo ciclo secundario, el cual tiene un valor de 
+ *    10 ms, ya que cada ciclo dura 500 ms y en el primero tienen lugar la tarea A, B y D, que 
+ *    tienen una duración de 100ms, 150ms y 240 ms, respectivamente, lo que da lugar a un
+ *    total de 490 ms, luego 500ms-490ms=10ms
+ * 
+ * 2) ¿Sería planificable si la tarea D tuviese un tiempo de computo de 250 ms?
+ * Respuesta: Seguiría siendo planificable con el mismo esquema propuesto en este ejercicio. Sin
+ *    embargo, llenaría completamente el ciclo secundario. 
+ * 
+ *    A priori, esto no debe suponer ningún
+ *    problema en un entorno controlado (como es nuestro caso), pero en la realidad hay que
+ *    tener en cuenta que la duración real de las tareas no son las especificadas, ya que
+ *    alguna tarea puede demorarse algo más de tiempo que el planeado por el sistema (el
+ *    sistema no siempre puede reanudar inmediatamente una tarea), lo
+ *    que provocaría que este sintiese retrasos. * 
+ */
+
+
 // Preguntas Respondidas al Final
 // Sistemas concurrentes y Distribuidos.
 // Práctica 4. Implementación de sistemas de tiempo real.
@@ -19,7 +44,7 @@
 //
 //  Planificación (con Ts == 500 ms)
 //  *---------*----------*---------*--------*
-//  | A B D  | A B C     | A B     | A B C  |
+//  | A B C  | A B D     | A B     | A B C  |
 //  *---------*----------*---------*--------*
 //
 //
@@ -82,8 +107,8 @@ int main( int argc, char *argv[] )
 
          switch( i )
          {
-            case 1 : TareaA(); TareaB(); TareaD();           break ;
-            case 2 : TareaA(); TareaB(); TareaC();           break ;
+            case 1 : TareaA(); TareaB(); TareaC();           break ;
+            case 2 : TareaA(); TareaB(); TareaD();           break ;
             case 3 : TareaA(); TareaB();                     break ;
             case 4 : TareaA(); TareaB(); TareaC();           break ;
          }
@@ -99,21 +124,3 @@ int main( int argc, char *argv[] )
    }
 }
 
-
-/**
- * Respuestas a las preguntas del ejercicio:
- * 1) ¿Cuál es el mínimo tiempo de espera que queda al final de las iteraciones del ciclo
- *    secundario de tu solución?
- * Respuesta: El mínimo es el restante en el primer ciclo secundario, el cual tiene un valor de 
- *    10 ms, ya que cada ciclo dura 500 ms y en el primero tienen lugar la tarea A, B y D, que 
- *    tienen una duración de 100ms, 150ms y 240 ms, respectivamente, lo que da lugar a un
- *    total de 490 ms, luego 500ms-490ms=10ms
- * 
- * 2) ¿Sería planificable si la tarea D tuviese un tiempo de computo de 250 ms?
- * Respuesta: Seguiría siendo planificable con el mismo esquema propuesto en este ejercicio. Sin
- *    embargo, llenaría completamente el ciclo secundario. A priori, esto no debe suponer ningún
- *    problema en un entorno controlado (como es nuestro caso), pero en la realidad hay que
- *    tener en cuenta que la duración real de las tareas no son las especificadas, ya que
- *    alguna tarea puede demorarse algo más de tiempo que el planeado por el sistema, lo
- *    que provocaría que este sintiese retrasos. * 
- */
