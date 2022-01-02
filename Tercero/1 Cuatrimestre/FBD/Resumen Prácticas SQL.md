@@ -100,9 +100,9 @@ CREATE TABLE serjefe(
 
 #### Tipos de Datos y Operadores
 
-![Imagen1](.Imagen1.png)
+![Imagen1](.sources/imagen1.png)
 
-![Imagen2](.Imagen2.png)
+![Imagen2](.sources/imagen2.png)
 
 #### Eliminación de tablas
 
@@ -215,7 +215,7 @@ VALUES (..., TO_DATE('22/10/2005','dd/mm/yyyy'));
 
 Para la recuperación de datos de tipo fecha en *un formato concreto*, la función que debe usarse es **TO_CHAR**, que transforma el valor de una fecha (en su formato interno) al de una cadena de caracteres según un formato especificado.
 
-![imagen3](.imagen3.png)
+![imagen3](.sources/imagen3.png)
 
 ```sql
 SELECT TO_CHAR (atributotipofecha, 'dd-mon-yyyy') FROM tabla
@@ -237,7 +237,7 @@ FROM [esquema.]tabla|vista [alias_tabla_vista]
 [ORDER BY {expresion} [ASC | DESC]]
 ```
 
-![imagen4](.imagen4.png)
+![imagen4](.sources/imagen4.png)
 
 #### Operadores adicionales específicos de SQL
 
@@ -253,7 +253,7 @@ SELECT table_name
 
 ##### Uso de operadores aritméticos y funciones numéricas
 
-![imagen5](.imagen5.png)
+![imagen5](.sources/imagen5.png)
 
 ##### Comparación con el valor nulo
 
@@ -269,13 +269,13 @@ IS [NOT] NULL
 <SELECT instruction>
 ```
 
-![imagen6](.imagen6.png)
+![imagen6](.sources/imagen6.png)
 
 #### Producto Cartesiano
 
 En la cláusula FROM de una sentencia de consulta puede aparecer una lista de tablas en lufar de una sola. En este caso, el sistema realiza el producto cartesiano de todas las tablas (o subconsultas) incluidas en dicha lista, y selecciona las que sean ciertas para la condición de WHERE.
 
-![imagen7](.imagen7.png)
+![imagen7](.sources/imagen7.png)
 
 #### Renombramiento o alias en SQL
 
@@ -291,7 +291,7 @@ WHERE S.ciudad=Y.ciudad and Y.ciudad=P.ciudad;
 
 Se utiliza la cláusula **NATURAL JOIN** dentro de la cláusula FROM entres las tablas participantes.
 
-![imagen8](.imagen8.png)
+![imagen8](.sources/imagen8.png)
 
 #### Ordenaión de resultados
 
@@ -355,12 +355,63 @@ Podemos hacerlo de 3 formas distintas:
 
 ##### Aproximación mediante AR
 
-![imagen9](.imagen9.png)
+![imagen9](.sources/imagen9.png)
 
 ##### Usando Cálculo Relacional
 
-![imagen10](.imagen10.png)
+![imagen10](.sources/imagen10.png)
 
 ##### Usando NOT EXITS
 
-![imagen11](.imagen11.png)
+![imagen11](.sources/imagen11.png)
+
+### Funciones de agregación
+
+En ocasiones, puede ser interesante resumir la información relativa a un determinado conjunto de tuplas. Para ello están las funciones:
+
+```sql
+SUM(),MIN(),MAX(),AVG(),COUNT(),STDDEV()...,
+```
+
+que respectivamente calculan: la suma, el mínimo, el máximo, la media, el cardinal y la desviación típica sobre el conjunto. Cuando se usa la cáusula **DISTINCT**, solo se tendrán en cuenta los valores distintos
+
+```sql
+SELECT MAX(atributo),MIN(atributo),SUM(cantidad) FROM nombre_tabla;
+```
+
+#### Formando grupos
+
+Todas las funciones de agregación se han aplicado sobre todas las tuplas que devuelve la consulta. Sin embargo, es posiblerealizar un particionado sobre el conjunto de las tuplas usando la claúsula **GROUP BY**. Mediante esta cláusula se indica el atributo o conjunto de atributos por cuyos valores se quiere agrupar las tupplas y proceder así a aplicar las funciones de agregación a cada uno de los grupos.
+
+```sql
+SELECT [ DISTINCT | ALL]
+    expresion [alias_columna_expresion]
+    {,expresion [alias_columna_expresion]}
+FROM [esquema.]tabla|vista [alias_tabla_vista]
+[WHERE <condicion>]
+GROUP BY expresion {,expresion}
+```
+
+![14](.sources/14.png)
+
+#### Seleccionando grupos
+
+Es posible establecer condiciones sobre los grupos mediante la cláusula **HAVING** junto con una <condicion>
+
+```sql
+SELECT [ DISTINCT | ALL]
+    expresion [alias_columna_expresion]
+    {,expresion [alias_columna_expresion]}
+FROM [esquema.]tabla|vista [alias_tabla_vista]
+[WHERE <condicion>]
+GROUP BY expresion {,expresion}
+[HAVING <condicion>]
+```
+
+Además, la <condicion> también puede ser una subconsulta, como ya hemos visto en casos anteriores.
+
+#### Consultas con el tipo DATE
+
+Para hacer comparaciones entre fechas debemos hacerla en su formato interno, usando la función **TO_DATE**
+
+![15](.sources/15.png)
