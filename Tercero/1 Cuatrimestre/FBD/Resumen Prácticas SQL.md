@@ -415,3 +415,128 @@ Además, la <condicion> también puede ser una subconsulta, como ya hemos visto 
 Para hacer comparaciones entre fechas debemos hacerla en su formato interno, usando la función **TO_DATE**
 
 ![15](.sources/15.png)
+
+### Definición del nivel externo de un DBMS
+
+#### Creación y manipulación de vistas
+
+Una vista es una presentación de datos procedentes de una o más tablas, hecha a la medida de un usuario. Básicamente, consiste en asignar un nombre a la salida de una consulta y utilizarla como si de una tabla almacenada se tratara.
+
+Gracias a las vistas, podemos estableces niveles de seguridad adicionales a los que ofrece el sistema, ya que se puede ocultar cierta información y hacer visibles a los usuarios solo la parte de la BD que necesiten para realizar sus tareas.
+
+En SQL, la creación de vistas se hace mediante el comando **CREATE VIEW**
+
+```sql
+CREATE VIEW VentasParis (codpro,codpie,codpj,cantidad,fecha) AS
+    SELECT codpro,codpie,codpj,cantidad,fecha
+    FROM ventas
+    WHERE (codpro,codpie,codpj) IN
+        (SELECT codpro,codpie,codpj
+        FROM proveedor,pieza,proyecto
+        WHERE proveedor.ciudad='Paris' AND
+            pieza.ciudad='Paris' AND
+            proyecto.ciudad='Paris');
+```
+
+En la cláusula **AS** se especifica la consulta que determina qué filas y columnas de la tabla o tablas almacenadas forman parte de la vista.
+
+La ejecución de esta sentencia, basicamente produce la inserción de una fila en el catálogo. La información registrada puede consultarse a través de la vista **all_views**, cuyos atributos más relevantes son, **owner** (propietario de la vista), **view_name** (nombre de la lista) y **text**. La sentencia **SELECT** permite su reconstrucción.
+
+#### Actualización de vistas
+
+Por su carácter virtual, existen fuertes restricciones a la hora de insertar o actualizar datos en (a través de) una vista debido principalmente a que no siempre cada fila de una vista se corresponde con una fila de una tabla concreta. Cuando esto sucede, puede resultar imposible aplicar una modificación sobre una fila o un campo de una vista al no poderse encontrar el origen ni la ubicación real de la información a modificar. Por ello, los comandos
+**DELETE, INSERT, UPDATE** solo se podrán utilizar en determinadas ocasiones.
+
+Algunas de las restricciones más relevantes son:
+
+- La definición de la vista no podrá incluir cláusulas de agrupamiento de tuplas (**GROUP BY**) o funciones de agregación (**MAX, COUNT, AVG,. . .** ).
+- La definición de la vista no podrá incluir la cláusula **DISTINCT**.
+- La definición de la vista no podrá incluir operaciones de reunión ni de conjuntos.
+- Todos los atributos que deban tomar siempre valor (**NOT NULL y PRIMARY KEY**) han de estar incluidos necesariamente en la definición de la vista.
+
+#### Eliminación de vistas
+
+- El comando para borrar una vista es **DROP VIEW <vista>**.
+- Si se pretende cambiar la definición de una vista existete, es mejor usar: **CREATE OR REPLACE VIEW <vista>** 
+
+### Introducción a la administración: El catálogo y gestión de privilegios
+
+El catálogo o diccionario de una base de daos está formado por una serie de tablas y vistas que almacenan datos sobre todos los objetos que hay en nuestra base de datos (tablas, restricciones, usuarios, roles, ...). Para poder ver las vistas en su totalidad hace falta privilegios espaciales, y para modificarlas también. Algunas vistas relevantes del catálogo de la base de datos son:
+
+![16](.sources/16.png)
+
+#### Privilegios del sistema
+
+##### Concesión de un privilegio de sistema
+
+```sql
+GRANT {system_priv | role} [,{system_priv | role}] ... TO {user | role | PUBLIC} [,{user | role | PUBLIC}]...
+[WITH ADMIN OPTION]
+```
+
+- **PUBLIC** se refiere a todos los usuarios
+- **WITH ADMIN OPTION** permite que un usuario autorizado pueda, a su vez, otorgar privilegios
+
+##### Derogación de privilegios de sistema
+
+```sql
+REVOKE {system_priv | role} [,{system_priv | role}] ... FROM {user | role | PUBLIC} [,{user | role | PUBLIC}]...
+```
+
+- Solo permite derogar los privilegios concedidos con **GRANT**
+- Hay que vigilar los efectos sobre otros privilegios al derogar uno dado
+- No hay efecto cascada, aunque se haya usado en el **GRANT WITH ADMIN OPTION**
+
+#### Privilegios sobre los objetos
+
+##### Concesión de privilegios sobre objetos
+
+```sql
+GRANT {object_priv [(column_list)] [,object_priv [(column_list)]] ... | ALL [PRIVILEGES]
+ON [schema.]object TO {user | role | PUBLIC} [,{user | role | PUBLIC}]... [WITH GRANT OPTION]
+```
+
+- **ALL** se refiere a todos los privilegios que han sido concedidos sobre el objeto con **WITH GRANT OPTION**
+- **WITH GRANT OPTION** autoriza al usuario para conceder a su vez el privilegio
+
+##### Derogación de privilegios de objetos
+
+```sql
+REVOKE {object_priv [(column_list)] [,object_priv [(column_list)]]... | ALL [PRIVILEGES]} ON
+[schema.]object FROM {user | role | PUBLIC} [,{user | role | PUBLIC}]... [CASCADE CONSTRAINTS]
+```
+
+- **CASCADE CONTRAINTS** propaga la derogación hacia restricciones de integridad referencial relacionadas con el privilegio **REFERENCES** o **ALL**
+- Un usuario solo puede derogar aquellos privilegios que él mismo haya concedido mediante **GRANT**
+- Siempre se hace derogación en cascada con respecto a la concesión con la opción **WITH GRANT OPTION**
+
+### Nivel Interno: índices, clusters y hashing
+
+#### Creación de índices
+
+En el mundo de las bases de datos relacionales, los índices son estructuras que se pueden crear asociadas a tablas, con el objetivo de acelerar algunas sentencias, sin embargo, pueden realentizar las actualizaciones y ocupan espacio en disco, por lo que antes de crear un índice se debe determinar si es necesario. Por ejemplo, cuando creamos una tabla, automáticamente e crea un índice asociado a la clave primaria de la misma, por lo que no es conveniente crear más índices sobre la clave primaria.
+
+```sql
+CREATE INDEX nombre_del_indice
+	ON tabla(campo [ASC | DESC],...)
+```
+
+![17](.sources/17.png)
+
+En el siguiente ejemplo:
+
+```sql
+CREATE INDEX indicelibros ON libros(genero,titulo,editorial);
+```
+
+Dicho índice acelerará la recuperación de información de las consultas cuya condición incluya referencias al campo género, a los campos género y título o a los campos género, título y editorial. Es decir, solo mejorará el acceso si incluye referencias  los primeros campos del índice.
+
+#### Eliminación de índices
+
+```sql
+DROP INDEX nombre_indice
+```
+
+Al borrar una tabla, se borran todos los índices asociados.
+
+# FALTA CLUSTERS Y BMAP
