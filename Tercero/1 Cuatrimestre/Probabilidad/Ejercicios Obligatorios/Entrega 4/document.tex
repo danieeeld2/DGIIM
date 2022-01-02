@@ -1,0 +1,59 @@
+% Preámbulo
+
+% Tipo de documento
+\documentclass[a4paper, 12pt]{article}
+% Codificación
+\usepackage[utf8]{inputenc} 
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+% Idioma
+\usepackage[spanish]{babel}
+%Tipografía
+\usepackage{gfsartemisia}
+\usepackage[T1]{fontenc}
+\usepackage[usenames]{color}
+\definecolor{Lila}{rgb}{0.39,0.17,0.63}
+\definecolor{Azul}{rgb}{0.17,0.39,0.63}
+%%% Matemáticas Paquetes AMS
+\usepackage{amsfonts}
+\usepackage{amsmath} % Matemáticas
+\usepackage{amssymb,amsthm} % Símbolos y teoremas
+\usepackage{mathtools} % % Algunos añadidos y correcciones a amsmath
+\usepackage{esvect}
+%referencia
+\usepackage{hyperref}
+% Título y autor de un documento. Fecha. Tabla de contenido
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Ejercicio de Entrega 4}
+\lhead{Daniel Alconchel Vázquez}
+\rfoot{Page \thepage}
+
+%Maths
+\theoremstyle{plain}
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{coro}[teorema]{Corolario}
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{lema}[teorema]{Lema}
+\theoremstyle{definition}
+\newtheorem{definicion}[teorema]{Definición}
+\theoremstyle{remark}
+\newtheorem*{observacion}{Observación}
+
+\begin{document}
+	Completar las siguientes afirmaciones:
+	\begin{flushleft}
+		\begin{enumerate}
+			\item Sean $X_1,...,X_m$ son independientes si y sólo sí, para cualquiera $B_i \in \mathcal{B}^{n_i},i=1,...,m$ se tienen las siguientes identidades:
+				\[
+				P_{X_1,...,X_m}(B_1\times...\times B_m)=P(X_1\in B_1,...,X_n \in B_n)=P_{X_1}(B_1)...P_{X_n}(B_n)=P(X_1\in B_1)...P(X_n\in B_n)
+				\]
+			\item Supongamos que existen las funciones generatrices de momentos de $X_1,...,X_n$, respectivamente, definidas en los intervalos $I_i=\prod_{j=1}^{n_i}(-a_{j,i},b_{j,i}),a_{j,i},b_{j,i}>0,I_i\subseteq R^{n_i},i=1,...,m$. Entonces, $X_1,...,X_m$ son independientes si y sólo sí, para cualesquiera $(t_1,...,t_m)\in I_1\times ...\times I_m$, se tiene:
+			\[
+			M_{X_1,...,X_m}(t_1,...,t_m)=M_{X_1}(t_1)...M_{X_m}(t_m)
+			\]
+			\item Si $X_1,...,X_m$ son independientes, cualquier subconjunto $X_{i_1},...,X_{i_k},0<k<n$, de $X_1,...,X_m$ \textbf{son también independientes}.
+			\item Si $X_1,...,X_m$, son variables aleatorios independientes, para cualesquiera $g_i, i=1,...,m$, aplicaciones medibles, las variables aleatorias $g_1(X_1),...,g_m(X_m)$ \textbf{también son independientes}.
+		\end{enumerate}
+	\end{flushleft}
+\end{document}

@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.9.26)  29 NOV 2021 23:42
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.9.26)  20 DEC 2021 14:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**"Entrega 3.tex"
-(./Entrega 3.tex
+**document.tex
+(./document.tex
 LaTeX2e <2020-02-02> patch level 2
 L3 programming layer <2020-02-14>
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -1109,16 +1109,13 @@ File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
 \l__kernel_color_stack_int=\count272
 \l__pdf_internal_box=\box47
 )
-(./Entrega 3.aux
-LaTeX Info: Redefining \. on input line 24.
-LaTeX Info: Redefining \% on input line 24.
-)
-\openout1 = `"Entrega 3.aux"'.
+No file document.aux.
+\openout1 = `document.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/txmi/m/it on input line 43.
 LaTeX Font Info:    Trying to load font information for OML+txmi on input line 
 43.
- (/usr/share/texlive/texmf-dist/tex/latex/txfonts/omltxmi.fd
+(/usr/share/texlive/texmf-dist/tex/latex/txfonts/omltxmi.fd
 File: omltxmi.fd 2000/12/15 v3.1
 )
 LaTeX Font Info:    ... okay on input line 43.
@@ -1204,59 +1201,71 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 43.
 LaTeX Info: Redefining \pageref on input line 43.
 LaTeX Info: Redefining \nameref on input line 43.
-
-(./Entrega 3.out) (./Entrega 3.out)
 \@outlinefile=\write3
-\openout3 = `"Entrega 3.out"'.
+\openout3 = `document.out'.
 
-LaTeX Font Info:    Font shape `T1/artemisia/b/n' will be
-(Font)              scaled to size 11.15991pt on input line 45.
 LaTeX Font Info:    Trying to load font information for OT1+txr on input line 4
-5.
+7.
 
 (/usr/share/texlive/texmf-dist/tex/latex/txfonts/ot1txr.fd
 File: ot1txr.fd 2000/12/15 v3.1
 )
 LaTeX Font Info:    Trying to load font information for U+txmia on input line 4
-5.
+7.
 
 (/usr/share/texlive/texmf-dist/tex/latex/txfonts/utxmia.fd
 File: utxmia.fd 2000/12/15 v3.1
 )
-LaTeX Font Info:    Trying to load font information for U+msa on input line 45.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 47.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 45.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 47.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Trying to load font information for U+txsyc on input line 4
-5.
+7.
 
 (/usr/share/texlive/texmf-dist/tex/latex/txfonts/utxsyc.fd
 File: utxsyc.fd 2000/12/15 v3.1
 )
 LaTeX Font Info:    Trying to load font information for OT1+artemisia on input 
-line 45.
+line 47.
 
 (/usr/share/texlive/texmf-dist/tex/latex/gfsartemisia/ot1artemisia.fd)
 LaTeX Font Info:    Font shape `OT1/artemisia/m/n' will be
-(Font)              scaled to size 11.15991pt on input line 45.
+(Font)              scaled to size 11.15991pt on input line 47.
 LaTeX Font Info:    Font shape `OT1/artemisia/m/n' will be
-(Font)              scaled to size 7.43994pt on input line 45.
+(Font)              scaled to size 7.43994pt on input line 47.
 LaTeX Font Info:    Font shape `OT1/artemisia/m/n' will be
-(Font)              scaled to size 5.57996pt on input line 45.
+(Font)              scaled to size 5.57996pt on input line 47.
 LaTeX Font Info:    Trying to load font information for U+esvect on input line 
-45.
+47.
 
 (/usr/share/texlive/texmf-dist/tex/latex/esvect/uesvect.fd
 File: uesvect.fd 
 )
+Overfull \hbox (76.48032pt too wide) detected at line 50
+\OML/txmi/m/it/12 P[]\OT1/txr/m/n/12 (\OML/txmi/m/it/12 B[] \OMS/txsy/m/n/12 ^^
+B \OML/txmi/m/it/12 ::: \OMS/txsy/m/n/12 ^^B \OML/txmi/m/it/12 B[]\OT1/txr/m/n/
+12 ) = \OML/txmi/m/it/12 P\OT1/txr/m/n/12 (\OML/txmi/m/it/12 X[] \OMS/txsy/m/n/
+12 2 \OML/txmi/m/it/12 B[]; :::; X[] \OMS/txsy/m/n/12 2 \OML/txmi/m/it/12 B[]\O
+T1/txr/m/n/12 ) = \OML/txmi/m/it/12 P[]\OT1/txr/m/n/12 (\OML/txmi/m/it/12 B[]\O
+T1/txr/m/n/12 )\OML/txmi/m/it/12 :::P[]\OT1/txr/m/n/12 (\OML/txmi/m/it/12 B[]\O
+T1/txr/m/n/12 ) = \OML/txmi/m/it/12 P\OT1/txr/m/n/12 (\OML/txmi/m/it/12 X[] \OM
+S/txsy/m/n/12 2 \OML/txmi/m/it/12 B[]\OT1/txr/m/n/12 )\OML/txmi/m/it/12 :::P\OT
+1/txr/m/n/12 (\OML/txmi/m/it/12 X[] \OMS/txsy/m/n/12 2 \OML/txmi/m/it/12 B[]\OT
+1/txr/m/n/12 )
+ []
+
+LaTeX Font Info:    Font shape `T1/artemisia/b/n' will be
+(Font)              scaled to size 11.15991pt on input line 55.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 59.
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
 Make it at least 14.49998pt.
@@ -1266,44 +1275,46 @@ This may cause the page layout to be inconsistent, however.
 [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 109.
- [2]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 109.
- (./Entrega 3.aux
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 59.
+ (./document.aux
 LaTeX Info: Redefining \. on input line 24.
 LaTeX Info: Redefining \% on input line 24.
 )
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 109.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 109.
-Package rerunfilecheck Info: File `"Entrega 3".out' has not changed.
-(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 109.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 59.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 59.
+
+
+Package rerunfilecheck Warning: File `document.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `document.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  D41D8CD98F00B204E9800998ECF8427E;0.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 59.
  ) 
 Here is how much of TeX's memory you used:
- 10193 strings out of 481239
- 149630 string characters out of 5920377
- 408392 words of memory out of 5000000
- 25238 multiletter control sequences out of 15000+600000
- 552274 words of font info for 75 fonts, out of 8000000 for 9000
+ 10196 strings out of 481239
+ 149622 string characters out of 5920377
+ 405285 words of memory out of 5000000
+ 25242 multiletter control sequences out of 15000+600000
+ 554097 words of font info for 78 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 34i,12n,45p,466b,361s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/gfsartemisia/artemisia.enc}{/u
-sr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texlive/tex
-mf-dist/fonts/enc/dvips/gfsartemisia/artemisiaec.enc}</usr/share/texlive/texmf-
+ 34i,11n,45p,463b,361s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/gfsartemisia/artemisiaec.enc}{
+/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texlive/t
+exmf-dist/fonts/enc/dvips/gfsartemisia/artemisia.enc}</usr/share/texlive/texmf-
 dist/fonts/type1/public/gfsartemisia/GFSArtemisia-Bold.pfb></usr/share/texlive/
 texmf-dist/fonts/type1/public/gfsartemisia/GFSArtemisia-Regular.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/
-texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/t
-exlive/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fonts
-/type1/public/txfonts/txex.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
-c/txfonts/txsy.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/tx
-syc.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on "Entrega 3.pdf" (2 pages, 93744 bytes).
+/texlive/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/txfonts/txex.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/txfonts/txsy.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8
+a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on document.pdf (1 page, 83213 bytes).
 PDF statistics:
- 66 PDF objects out of 1000 (max. 8388607)
- 50 compressed objects within 1 object stream
- 3 named destinations out of 1000 (max. 500000)
+ 54 PDF objects out of 1000 (max. 8388607)
+ 42 compressed objects within 1 object stream
+ 6 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

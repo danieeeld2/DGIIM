@@ -47,7 +47,7 @@
 		\exists E[X_i^2],i=1,...,n \implies \exists Var \left[\sum_{i=1}^{n}a_iX_i\right]
 		\]
 		\[
-		Var \left[\sum_{i=1}^{n}a_iX_i\right] = \sum_{i=1}^{n}a_i^2Var(X_i)+2\sum_{i\not = j}^{n}a_ia_jCov(X_i,X_j)
+		Var \left[\sum_{i=1}^{n}a_iX_i\right] = \sum_{i=1}^{n}a_i^2Var(X_i)+\sum_{i\not = j}^{n}a_ia_jCov(X_i,X_j)
 		\]
 	\end{flushleft}
 	Para demostrarlo, recordemos primero la fórmula de la varianza de una variable aleatoria. Sea $X$ una variable aleatoria arbitraria, su varianza se calcula como:
@@ -83,23 +83,20 @@
 	\sum_{i=1}^{n}\sum_{j=1}^{n}a_ia_j\left(E[X_iX_j]-E[X_i]E[X_j]\right)=
 	\sum_{i=1}^{n}\sum_{j=1}^{n}a_ia_jCov(X_i,X_j)
 	\]
-	Por último, recordemos que la covarianza verifica las siguientes propiedades:
+	Por último, recordemos que la covarianza verifica la siguiente propiedad:
 	\[
 	Cov(X,X)=Var(X)
 	\]
-	\[
-	Cov(X,Y)=Cov(Y,X)
-	\]
 	Por lo que podemos reescribir la sumatoria de la siguiente manera:
 	\[
-	\sum_{i=1}^{n}\sum_{j=1}^{n}a_ia_jCov(X_i,X_j)=\sum_{i=1}^{n}a_i^2Var(X_i)+2\sum_{i=1}^{n}\sum_{j\not =i}^{n}a_ia_jCov(X_i,X_j)
+	\sum_{i=1}^{n}\sum_{j=1}^{n}a_ia_jCov(X_i,X_j)=\sum_{i=1}^{n}a_i^2Var(X_i)+\sum_{i=1}^{n}\sum_{j\not =i}^{n}a_ia_jCov(X_i,X_j)
 	\]
 	Notemos que en todo este proceso, hemos necesitado la hipótesis de que $\exists E[X_i^2], i=1,...,n$ para que exista la varianza de cada una de las variables.
 	
 	\bigskip
 	Luego, hemos demostrado que si $\exists E[X_i^2], i=1,...,n$, entonces existe la varianza de la combinación lineal de dichas variables, independientemente del valor de $(a_1,...,a_n)\in\mathbb{R}^n$ y su valor es:
 	\[
-	Var \left[\sum_{i=1}^{n}a_iX_i\right] = \sum_{i=1}^{n}a_i^2Var(X_i)+2\sum_{i\not = j}^{n}a_ia_jCov(X_i,X_j)
+	Var \left[\sum_{i=1}^{n}a_iX_i\right] = \sum_{i=1}^{n}a_i^2Var(X_i)+\sum_{i\not = j}^{n}a_ia_jCov(X_i,X_j)
 	\]
 	
 	$\hfill\square$
