@@ -1,0 +1,2 @@
+SELECT MAX(DISTINCT peso)
+FROM pieza;
