@@ -293,6 +293,8 @@ Se utiliza la cláusula **NATURAL JOIN** dentro de la cláusula FROM entres las 
 
 ![imagen8](.sources/imagen8.png)
 
+![imagen12](.sources/imagen12.png)
+
 #### Ordenaión de resultados
 
 ```sql
