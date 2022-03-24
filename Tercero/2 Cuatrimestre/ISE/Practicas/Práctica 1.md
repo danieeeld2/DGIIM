@@ -101,7 +101,7 @@ Esta práctica es parecida a la anterior, pero nos piden cifrar newvar y hacer u
 
 
 
-![photo_2022-03-24_03-06-33.jpg](/home/daniel/Git/DGIIM/Tercero/2%20Cuatrimestre/ISE/Practicas/.sources/photo_2022-03-24_03-06-33.jpg)
+![photo_2022-03-24_03-06-33.jpg](./.sources/photo_2022-03-24_03-06-33.jpg)
 
 Notemos que resulta interesante crear un nuevo Volume Group, porque de esta forma nos garantizamos que la información de /var se esté escribiendo en el RAID1. Si decidiésemos extender cl, al igual que hicimos en la práctica pasada, puede que se estuvieran guardando datos en sda.
 
