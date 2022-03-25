@@ -130,9 +130,9 @@ lvcreate -n nwevar -L 1G vg0
 Ahora **vamos a cifrarlo:**
 
 ```bash
-cryptsetup luskFormat /dev/vg0/newvar
+cryptsetup luksFormat /dev/vg0/newvar
 # Para abrirlo tenemos que indicar donde lo vamos a descifrar
-cryptsetup luskOpen /dev/vg0/newvar vg0-newvar_crypt
+cryptsetup luksOpen /dev/vg0/newvar vg0-newvar_crypt
 ```
 
 A partir de aquí, todo el proceso de copiar el contenido de /var, montaje,... es exactamente igual al de la semana pasada:
@@ -142,7 +142,7 @@ mkfs -t ext4 /dev/mapper/vg0-newvar_crypt
 mkdir /mnt/newvar
 mount /dev/mapper/vg0-newvar_crypt /mnt/newvar
 # Reboot y entrar como root
-systemctl rescue isolate
+systemctl isolate rescue
 cp -a /var/. /mnt/newvar
 vi /etc/fstab
     /dev/mapper/vg0-newvar_crypt /var ext4 defaults 0 0
