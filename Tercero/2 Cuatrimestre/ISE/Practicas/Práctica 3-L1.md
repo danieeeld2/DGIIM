@@ -161,5 +161,3 @@ sudo apt install openssh-server
 Os tiene que salir esto:
 
 ![ImportanteISE.png](./.sources/ImportanteISE.png)
-
-

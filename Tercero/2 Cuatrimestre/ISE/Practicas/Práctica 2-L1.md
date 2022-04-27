@@ -82,7 +82,7 @@ sudo yum install semanage
 Ahora, ya podemos hacer uso del paquete. Si realizamos el comando `sudo semanage port -l | grep ssh` podremos ver que puertos están configurados para ssh. Notemos que el puerto *22022* no aparece en esa lista, por lo que vamos a añadirlo. Para ello:
 
 ```bash
-sudo semanage port -a t ssh_port_t_p tcp 22022
+sudo semanage port -a -t ssh_port_t -p tcp 22022
 # Volvemos a comprobar que se ha añadido correctamente
 sudo semanage port -l | grep ssh
 ```
@@ -125,5 +125,3 @@ sudo nano /etc/ssh/sshd_config
 # Reiniciamos el servicio
 sudo systemctl restart sshd
 ```
-
-
