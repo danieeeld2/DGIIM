@@ -74,9 +74,7 @@ sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g'
 El paquete no se puede instalar directamente. Si realizamos `sudo yum provides semanage` obtendremos las distintas dependencias requeridas. Instalamos la siguiente:
 
 ```bash
-sudo yum install policitycoreutils-python-utils
-# Una vez instalada podemos instalar semanage
-sudo yum install semanage
+sudo yum install policycoreutils-python-utils
 ```
 
 Ahora, ya podemos hacer uso del paquete. Si realizamos el comando `sudo semanage port -l | grep ssh` podremos ver que puertos están configurados para ssh. Notemos que el puerto *22022* no aparece en esa lista, por lo que vamos a añadirlo. Para ello:
