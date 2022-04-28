@@ -190,11 +190,13 @@ Ahora, nos conectamos desde nuestro Linux a CentOS e introducimos de forma erró
 ssh danielav@192.168.56.110 -p 22022
 ```
 
-Ahora si miramos el estado de nuevo, veremos que nuestr IP de Ubuntu aparece baneda. Podemos desbloquearla de la siguiente forma:
+Ahora si miramos el estado de nuevo, veremos que nuestra IP de Ubuntu aparece baneda. Podemos desbloquearla de la siguiente forma:
 
 ```bash
 sudo fail2ban-client status
 sudo fail2ban-client status sshd
+# Nos saldrá el nombre de la cárcel donde se encuentra la IP bloqueada
+# sudo fail2ban-client set carcel unbanip ip
 sudo fail2ban-client set sshd unbanip 192.168.56.1
 sudo fail2ban-client status sshd
 ```
