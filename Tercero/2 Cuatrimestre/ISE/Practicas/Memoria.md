@@ -97,11 +97,11 @@ Si vamos a **Monitoring > Latest Data** y seleccionamos el **ssh_status**, pero,
 
 Pero, si ahora lo hacemos con el servicio `http`, para lo que ejecutamos `sudo systemctl stop apache2`, vemos que, evidentemente, el frontend no recarga, ya que hemos parado el servicio de apache:
 
-![10.png](/home/daniel/Git/DGIIM/Tercero/2%20Cuatrimestre/ISE/Practicas/.sources/10.png)
+![10.png](./.sources/10.png)
 
 Al reiniciar el servicio, ya procesa el pico:
 
-![11.png](/home/daniel/Git/DGIIM/Tercero/2%20Cuatrimestre/ISE/Practicas/.sources/11.png)
+![11.png](./.sources/11.png)
 
 ### Ejercicio 2: Ansible
 
