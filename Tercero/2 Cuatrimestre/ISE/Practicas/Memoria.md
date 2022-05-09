@@ -32,7 +32,7 @@ Si seguimos consultando la [documentación](https://www.zabbix.com/documentation
 ```bash
 sudo nano /etc/selinux/config
 # Change the following line: SELINUX=disable
-sudo dnf install https://repo.zabbix.com/zabbix/4.4/rhel/8/x86_64/zabbix-release-4.4-1.el8.noarch.rpm
+sudo dnf install https://repo.zabbix.com/zabbix/5.0/rhel/8/x86_64/zabbix-release-5.0-1.el8.noarch.rpm
 sudo dnf install zabbix-agent
 ```
 
