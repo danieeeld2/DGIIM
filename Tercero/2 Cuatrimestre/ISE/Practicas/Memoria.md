@@ -79,7 +79,7 @@ Si vamos a **Monitoring > Latest Data** y seleccionamos el **ssh_status**, podem
 
 ![5.png](./.sources/5.png)
 
-![6.png](/home/daniel/Git/DGIIM/Tercero/2%20Cuatrimestre/ISE/Practicas/.sources/6.png)
+![6.png](./.sources/6.png)
 
 Análogamente con `httpd`:
 
