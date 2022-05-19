@@ -63,7 +63,7 @@ He decidio ejecutar el test `pts/webp`.Para ejecutar los test tenemos dos opcion
 # Bajar y ejecutar el test (todo en un solo comando)
 phoronix-test-suite benchmark pts/webp
 # Bajar y ejecutar el test (por separado)
-phoronix-test-suite install pts/webp	
+phoronix-test-suite install pts/webp    
 phoronix-test-suite run pts/webp
 ```
 
@@ -79,5 +79,20 @@ phoronix-test-suite result-file-to-text isetest2
 ```
 
 ![T6.png](./.sources/T6.png)
+
+Vamos a elegir otro test más. En mi caso, he escogido `pts/ethr`. Nuevamente, ejecutamos:
+
+```bash
+phoronix-test-suite benchmark pts/ethr
+```
+
+![T7.png](./.sources/T7.png)
+
+```bash
+phoronix-test-suite list-saved-results
+phoronix-test-suite result-file-to-text isetest3
+```
+
+![T8.png](./.sources/T8.png)
 
 
