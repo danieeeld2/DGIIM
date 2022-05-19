@@ -57,7 +57,7 @@ phoronix-test-suite info <pts/nombre>
 
 *Todos estos procesos no ocupan memoria, ya que son simples consultas*. 
 
-He decidio ejecutar el test `pts/webp`.Para ejecutar los test tenemos dos opciones:
+He decidido ejecutar el test `pts/webp`.Para ejecutar los test tenemos dos opciones:
 
 ```bash
 # Bajar y ejecutar el test (todo en un solo comando)
@@ -94,5 +94,56 @@ phoronix-test-suite result-file-to-text isetest3
 ```
 
 ![T8.png](./.sources/T8.png)
+
+Vamos ahora con **CentOS**
+
+Nuevamente, vamos a instalar phoronix en *CentOS*. Para ello, he consultado esta [página](https://arstech.net/phoronix-test-suite/). Como vemos, el proceso es bastante similar al de **Ubuntu** y, para realizarlo, voy a usar ssh para que sea más fácil copiar los comandos:
+
+```bash
+# Notemos que necesitamos instalado algunas dependencias previas
+# Recuerda levantar las interfaces de red
+sudo yum install wget php-cli php-xml bzip2
+sudo wget https://phoronix-test-suite.com/releases/phoronix-test-suite-8.4.1.tar.gz
+sudo tar xvfz phoronix-test-suite-8.4.1.tar.gz
+cd phoronix-test-suite
+sudo ./install-sh
+```
+
+Para ver los test disponibles:
+
+```bash
+/usr/bin/phoronix-test-suite list-available-suites
+```
+
+Al hacerlo, me sale el siguiente error:
+
+![T9.png](./.sources/T9.png)
+
+Luego, vamos a instalar dicha extensión requerida. Para ello, ejecutamos `sudo yum install php-json`.  Ahora, al ejecutar el comando anterior, si nos dará una salida válida:
+
+![T10.png](./.sources/T10.png)
+
+Como para *Ubuntu* he ejecutado suites, ahora voy a ejecutar test directamente para **CentOS**. Los comandos son análogos, pero llamamos al programa mediante `/usr/bin/phoronix-test-suite`:
+
+```bash
+/usr/bin/phoronix-test-suite list-tests
+/usr/bin/phoronix-test-suite benchmark pts/php
+/usr/bin/phoronix-test-suite list-saved-results
+/usr/bin/phoronix-test-suite result-file-to-text practicasise
+```
+
+![T12.png](./.sources/T12.png)
+
+```bash
+/usr/bin/phoronix-test-suite benchmark pts/idle
+/usr/bin/phoronix-test-suite list-saved-results
+/usr/bin/phoronix-test-suite show-result isetest
+```
+
+![T13.png](./.sources/T13.png)
+
+![T14.png](./.sources/T14.png)
+
+## Ejercicio 2: JMeter
 
 
