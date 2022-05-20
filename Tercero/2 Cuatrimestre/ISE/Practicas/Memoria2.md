@@ -144,6 +144,53 @@ Como para *Ubuntu* he ejecutado suites, ahora voy a ejecutar test directamente p
 
 ![T14.png](./.sources/T14.png)
 
+*No ejecuto los mismos test por falta de espacio en /var (Se podría aumentar el espacio usando los conocimientos aprendidos en la práctica1)*
+
 ## Ejercicio 2: JMeter
 
+Vamos a comenzar instalando **JMeter** en nuestro ordenador. Para ello, basta con ir a la  web oficial al apartado de descargas: https://jmeter.apache.org/download_jmeter.cgi
 
+Descargamos los binarios y los descomprimimos. Para ejecutar el porgrama, basta con abrir una terminal en la carpeta donde hemos instalado el programa, acceder a la carpeta `bin` y ejecutar `jmeter`
+
+![](./.sources/T15.png)
+
+Si consultamos la [documentación](https://jmeter.apache.org/usermanual/build-web-test-plan.html), podemos ver como crear un test básico para la web. Vamos a realizar dicho tutorial antes de pasar a docker (*No explicaré los pasos, solo capturas de los mismos, ya que viene explicado detalladamente en la documentación*). 
+
+![T16.png](./.sources/T16.png)
+
+![T19.png](./.sources/T19.png)
+
+![T20.png](./.sources/T20.png)
+
+![T21.png](./.sources/T21.png)
+
+![T22.png](./.sources/T22.png)
+
+Vamos ahora con la instalación de **docker** y **docker-compose** en **Ubuntu Server**. Para ello vamos  seguir los pasos indicados en el guión de la asignatura (*los comandos son directamente copiados del guión)*:
+
+Añadimos la llave GPG para validar el repositorio:
+
+```bash
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+```
+
+Añadimos el respositorio:
+
+```bash
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+```
+
+Actualizamos lista de repositorios:
+
+```bash
+sudo apt update
+```
+
+Buscamos el repositorio de docker y lo instalamos:
+
+```bash
+apt search docker-ce
+sudo apt install docker-ce
+# Comprobamos que el servicio está instalado y activo
+
+```
