@@ -284,7 +284,7 @@ Volvemos a **JMeter** y vamos a crear el test con las condiciones que nos pide e
   
   Además, si consultamos nuestra API, veremos que necesitamos almacenarlo para realizar peticiones de tipo **GET**.
   
-  *Si se quiere consultar más información de los JWT ver [aqui]([JSON Web Token Introduction - jwt.io](https://jwt.io/introduction).* 
+  *Si se quiere consultar más información de los JWT ver [aqui](https://jwt.io/introduction).* 
   
   Para almacenarlo, desde *Login Alumnos>Edit>Add>Post Processor>Regular Expresion Extractor.* Tendremos que modificar *Name of created vairable, Regular Expression y Template*, que hacer referencia al nombre de la variable, a la expresión regular que extraemos y lo que guardamos en la variable respectivamente. Al final nos quedará tal que así:
   
