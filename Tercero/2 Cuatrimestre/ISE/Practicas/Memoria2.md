@@ -57,43 +57,43 @@ phoronix-test-suite info <pts/nombre>
 
 *Todos estos procesos no ocupan memoria, ya que son simples consultas*. 
 
-He decidido ejecutar el test `pts/webp`.Para ejecutar los test tenemos dos opciones:
+He decidido ejecutar el test `pts/php`.Para ejecutar los test tenemos dos opciones:
 
 ```bash
 # Bajar y ejecutar el test (todo en un solo comando)
-phoronix-test-suite benchmark pts/webp
+phoronix-test-suite benchmark pts/php
 # Bajar y ejecutar el test (por separado)
-phoronix-test-suite install pts/webp    
-phoronix-test-suite run pts/webp
+phoronix-test-suite install pts/php    
+phoronix-test-suite run pts/php
 ```
 
-![T4.png](./.sources/T4.png)
+![T4.png](./.sources/Corregir1.png)
 
-![T5.png](./.sources/T5.png)
+![T5.png](./.sources/Corregir2.png)
 
-Para ver los resultados almacenados, podemos ejecutar (*Hay una salida de un test previo fallido*):
+Para ver los resultados almacenados, podemos ejecutar:
+
+```bash
+phoronix-test-suite list-saved-results
+phoronix-test-suite result-file-to-text isetest
+```
+
+![T6.png](./.sources/Corregir3.png)
+
+Vamos a elegir otro test más. En mi caso, he escogido `pts/idle`. Nuevamente, ejecutamos:
+
+```bash
+phoronix-test-suite benchmark pts/idle
+```
+
+![T7.png](./.sources/Corregir4.png)
 
 ```bash
 phoronix-test-suite list-saved-results
 phoronix-test-suite result-file-to-text isetest2
 ```
 
-![T6.png](./.sources/T6.png)
-
-Vamos a elegir otro test más. En mi caso, he escogido `pts/ethr`. Nuevamente, ejecutamos:
-
-```bash
-phoronix-test-suite benchmark pts/ethr
-```
-
-![T7.png](./.sources/T7.png)
-
-```bash
-phoronix-test-suite list-saved-results
-phoronix-test-suite result-file-to-text isetest3
-```
-
-![T8.png](./.sources/T8.png)
+![T8.png](./.sources/Corregir5.png)
 
 Vamos ahora con **CentOS**
 
@@ -144,7 +144,11 @@ Como para *Ubuntu* he ejecutado suites, ahora voy a ejecutar test directamente p
 
 ![T14.png](./.sources/T14.png)
 
-*No ejecuto los mismos test por falta de espacio en /var (Se podría aumentar el espacio usando los conocimientos aprendidos en la práctica1)*
+#### Comparación
+
+En caso del primer test, ambos realizan 3 pruebas y muestran la media de los tiempos obtenidos en cada una. Podemos ver que el rendimiento de UbuntuServer ha sido algo superior al de CentOS.
+
+Por otro lado, el segundo test solo suspende el sistema para hacer mediciones de sensores, baterías, etc..., y, podemos ver que ambos los superan sin problemas.
 
 ## Ejercicio 2: JMeter
 
