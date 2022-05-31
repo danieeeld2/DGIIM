@@ -363,3 +363,27 @@ Vamos a probar a ejecutar el test y visualizar los resultados. Para ello, en la 
 ![TSalida3.png](./.sources/TSalida3-1.png)
 
 Con esto damos por finalizado el ejercicio. 
+
+## Ejercicio Opcional 1
+
+Nos piden lanzar un contenedor con la imagen de phoronix y ejecutar un test de los seleccionados anteriormente. Si miramos la documentación de la web proporcionada en el guión: https://www.phoronix.com/scan.php?page=article&item=docker-phoronix-pts&num=1 , vemos que para instalar y ejecutar la imagen de phoronix hacemos:
+
+```bash
+sudo docker run -it phoronix/pts
+```
+
+![O1.png](./.sources/O1.png)
+
+Una vez ejecutado el contenedor, probamos a ejecutar el test `php` tal y comos hemos hecho en la primera parte de la memoria:
+
+![O2.png](./.sources/O2.png)
+
+![O3.png](./.sources/O3.png)
+
+Vemos que los resultados no varían demasiado, ya que lo estamos ejecutando desde la máquina virtual. Si lo ejecutamos desde el anfitrión:
+
+![O4.png](./.sources/O4.png)
+
+
+
+Vemos que los resultados son mejores (además de obtener más información) ya que usa mas recursos del ordenador. Para más información del test en cuestión, consultar [aquí](https://openbenchmarking.org/test/pts/php).
