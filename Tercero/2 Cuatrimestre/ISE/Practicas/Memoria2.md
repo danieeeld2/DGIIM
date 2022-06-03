@@ -123,7 +123,7 @@ Luego, vamos a instalar dicha extensión requerida. Para ello, ejecutamos `sudo 
 
 ![T10.png](./.sources/T10.png)
 
-Como para *Ubuntu* he ejecutado suites, ahora voy a ejecutar test directamente para **CentOS**. Los comandos son análogos, pero llamamos al programa mediante `/usr/bin/phoronix-test-suite`:
+Los comandos son análogos, pero llamamos al programa mediante `/usr/bin/phoronix-test-suite`:
 
 ```bash
 /usr/bin/phoronix-test-suite list-tests
@@ -383,7 +383,5 @@ Una vez ejecutado el contenedor, probamos a ejecutar el test `php` tal y comos h
 Vemos que los resultados no varían demasiado, ya que lo estamos ejecutando desde la máquina virtual. Si lo ejecutamos desde el anfitrión:
 
 ![O4.png](./.sources/O4.png)
-
-
 
 Vemos que los resultados son mejores (además de obtener más información) ya que usa mas recursos del ordenador. Para más información del test en cuestión, consultar [aquí](https://openbenchmarking.org/test/pts/php).
