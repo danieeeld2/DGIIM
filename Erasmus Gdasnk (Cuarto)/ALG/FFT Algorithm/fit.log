@@ -36,33 +36,3 @@ a               1.000
 b              -1.000  1.000 
 
 
-
-
-*******************************************************************************
-Tue Nov  8 16:04:31 2022
-
-
-FIT:    data read from "data.dat" u 1:2
-        format = x:z
-        #datapoints = 15
-        residuals are weighted equally (unit weight)
-
-function used for fitting: f(x)
-	f(x) = a*x*log(x)
-fitted parameters initialized with current variable values
-
-iter      chisq       delta/lim  lambda   a            
-   0 2.9328830347e-02   0.00e+00  1.54e+00    1.870875e-08
-   3 2.8847587389e-02  -2.89e-06  1.54e-03    1.863975e-08
-
-After 3 iterations the fit converged.
-final sum of squares of residuals : 0.0288476
-rel. change during last iteration : -2.89255e-11
-
-degrees of freedom    (FIT_NDF)                        : 14
-rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0453932
-variance of residuals (reduced chisquare) = WSSR/ndf   : 0.00206054
-
-Final set of parameters            Asymptotic Standard Error
-=======================            ==========================
-a               = 1.86398e-08      +/- 1.428e-10    (0.766%)
