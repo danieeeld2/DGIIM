@@ -1,0 +1,9 @@
+#!/bin/sh
+# Usage: compile c_file_name_without_extention
+# For old labs 411 (rogers) you should uncomment it
+#XLIBS_ROOT=/usr/openwin
+# For usual linux machines
+XLIBS_ROOT=/usr/X11R6
+#gcc -o $1 -I$XLIBS_ROOT/include -L$XLIBS_ROOT/lib -R$XLIBS_ROOT/lib -lX11 $1.c
+gcc -o $1 $1.c -lX11 -lm
+#gcc -o $1 -I$XLIBS_ROOT/include -L$XLIBS_ROOT/lib -lX11 $1.c -lm
