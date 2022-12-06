@@ -12,29 +12,14 @@ int red, green, blue, yellow;
 unsigned long foreground, background;
 
 //*************************************************************************************************************************
-// Initial Draw
 
-int shield(Display* display, Window window, GC gc)
+XArc arc1, arc2, arc3, arc4, arc5;
+XRectangle rec, rec2;
+
+//*************************************************************************************************************************
+
+void ReEvaluate()
 {
-  int width, height;
-  XWindowAttributes attributes;
-  XArc arc1, arc2, arc3, arc4, arc5;
-  XRectangle rec, rec2;
-
-  XGetWindowAttributes(display, window, &attributes);
-  width = attributes.width;
-  height = attributes.height;
-
-  // Shield
-  // Arc 1
-  arc1.x = 125;
-  arc1.y = 100;
-  arc1.width = 250;
-  arc1.height = 175;
-  arc1.angle1 = 270 * 64;
-  arc1.angle2 = -90 * 64;
-
-  // Arc 2
   arc2.x = arc1.x;
   arc2.y = arc1.y;
   arc2.width = arc1.width;
@@ -90,11 +75,72 @@ int shield(Display* display, Window window, GC gc)
   // Arc 5
   arc5 = arc3;
   arc5.x = rec2.x+rec2.width-arc5.height;
+}
 
+//*************************************************************************************************************************
+// Initial Draw
+
+int shield(Display* display, Window window, GC gc)
+{
+  int width, height;
+  XWindowAttributes attributes;
+
+  XGetWindowAttributes(display, window, &attributes);
+  width = attributes.width;
+  height = attributes.height;
+
+  // Shield
+  // Arc 1
+  arc1.x = 125;
+  arc1.y = 100;
+  arc1.width = 250;
+  arc1.height = 175;
+  arc1.angle1 = 270 * 64;
+  arc1.angle2 = -90 * 64;
+
+  ReEvaluate();
   XArc Arcs[5]={arc1,arc2,arc3,arc4,arc5};
 
+  XFillArcs(display,window,gc,Arcs,5);
+  XFillRectangle(display,window,gc,rec.x,rec.y,rec.width,rec.height);
+  XFillRectangle(display,window,gc,rec2.x,rec2.y,rec2.width,rec2.height);
+}
 
-  XSetForeground(display,gc,rand());
+//*************************************************************************************************************************
+
+int Resize(Display* display, Window window, GC gc, int type)
+{
+  if(type == 0){
+    arc1.width+=10;
+    arc1.height+=10;
+  }else{
+    arc1.width-=10;
+    arc1.height-=10;
+  }  
+  ReEvaluate();
+  XArc Arcs[5]={arc1,arc2,arc3,arc4,arc5};
+  XClearWindow(display,window);
+  XFillArcs(display,window,gc,Arcs,5);
+  XFillRectangle(display,window,gc,rec.x,rec.y,rec.width,rec.height);
+  XFillRectangle(display,window,gc,rec2.x,rec2.y,rec2.width,rec2.height);
+}
+
+//*************************************************************************************************************************
+
+int Move(Display* display, Window window, GC gc, char type)
+{
+  if(type == 'a') // Move left
+    arc1.x-=10;
+  if(type == 'd') // Move right
+    arc1.x+=10;
+  if(type == 'w') // Move up
+    arc1.y-=10;
+  if(type == 's') // Move down
+    arc1.y+=10;
+
+  ReEvaluate();
+  XArc Arcs[5]={arc1,arc2,arc3,arc4,arc5};
+  XClearWindow(display,window);
   XFillArcs(display,window,gc,Arcs,5);
   XFillRectangle(display,window,gc,rec.x,rec.y,rec.width,rec.height);
   XFillRectangle(display,window,gc,rec2.x,rec2.y,rec2.width,rec2.height);
@@ -181,6 +227,7 @@ int main(int argc, char *argv[])
         {
           XSetForeground(display, gc, foreground);
           XClearWindow(display, window);
+          XSetForeground(display,gc,rand());
           shield(display,window,gc);
         }
         break;
@@ -192,8 +239,9 @@ int main(int argc, char *argv[])
       case ButtonPress:
         if (event.xbutton.button == Button1)  // Check if left bottom have been clicked
         {
-   		              
-    
+          Resize(display,window,gc,0);
+        } else if (event.xbutton.button == Button3){
+          Resize(display,window,gc,1);
         }
         break;
 
@@ -203,7 +251,18 @@ int main(int argc, char *argv[])
         if (hm_keys == 1)
         {
           if (buffer[0] == 'q') to_end = TRUE;        // End of the program
-          
+          else if (buffer[0] == 'r'){  // Reset Default Set
+            XClearWindow(display, window);
+            shield(display,window,gc);  
+          }
+          else if (buffer[0] == 'c'){ // Color
+            XSetForeground(display,gc,rand());
+            Resize(display,window,gc,0);
+            Resize(display,window,gc,1);
+          }
+          else{
+            Move(display,window,gc,buffer[0]);
+          }
         }
 
       default:
