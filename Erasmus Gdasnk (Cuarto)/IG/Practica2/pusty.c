@@ -15,6 +15,10 @@ unsigned long foreground, background;
 
 XArc arc1, arc2, arc3, arc4, arc5;
 XRectangle rec, rec2;
+XPoint PointD[3], PointD2[3], PointD3[3];
+XPoint PointA[3], PointA2[2], PointA3[4];
+int color;
+int letters;
 
 //*************************************************************************************************************************
 
@@ -107,6 +111,41 @@ int shield(Display* display, Window window, GC gc)
 }
 
 //*************************************************************************************************************************
+// Draw letters (DA)
+
+void DrawLetters(Display* display, Window window, GC gc)
+{
+  // Draw D
+
+  PointD[0].x = arc1.x+20; PointD[0].y = arc1.y+20;
+  PointD[1].x = PointD[0].x+20; PointD[1].y = PointD[0].y;
+  PointD[2].x = PointD[0].x+((PointD[1].x-PointD[0].x)/2); PointD[2].y = PointD[0].y+70;
+  PointD2[0] = PointD[0];
+  PointD2[1] = PointD[1];
+  PointD2[2].x = PointD[0].x+((PointD[1].x-PointD[0].x)*3); PointD2[2].y = PointD[0].y+((PointD[2].y-PointD[0].y)/2);
+  PointD3[0] = PointD2[2];
+  PointD3[1].x = PointD3[0].x-3; PointD3[1].y = PointD3[0].y-3;
+  PointD3[2] = PointD[2];
+  XSetForeground(display,gc,WhitePixel(display, DefaultScreen(display)));
+  XFillPolygon(display,window,gc,PointD,3,Convex,CoordModeOrigin);
+  XFillPolygon(display,window,gc,PointD2,3,Convex,CoordModeOrigin);
+  XFillPolygon(display,window,gc,PointD3,3,Convex,CoordModeOrigin);
+
+  // Draw A
+  PointA[0].x = PointD2[2].x+15; PointA[0].y = PointD[2].y;
+  PointA[1].x = PointA[0].x+20; PointA[1].y = PointD[0].y;
+  PointA[2].x = PointA[1].x+20; PointA[2].y = PointA[1].y;
+  PointA2[0] = PointA[1];
+  PointA2[1] = PointA[2];
+  PointA2[2].x = PointA[2].x+(PointA[1].x-PointA[0].x); PointA2[2].y = PointA[0].y;
+  XFillPolygon(display,window,gc,PointA,3,Convex,CoordModeOrigin);
+  XFillPolygon(display,window,gc,PointA2,3,Convex,CoordModeOrigin);
+
+  XSetForeground(display,gc,color);
+
+}
+
+//*************************************************************************************************************************
 
 int Resize(Display* display, Window window, GC gc, int type)
 {
@@ -123,6 +162,8 @@ int Resize(Display* display, Window window, GC gc, int type)
   XFillArcs(display,window,gc,Arcs,5);
   XFillRectangle(display,window,gc,rec.x,rec.y,rec.width,rec.height);
   XFillRectangle(display,window,gc,rec2.x,rec2.y,rec2.width,rec2.height);
+  if(letters == TRUE)
+    DrawLetters(display,window,gc);
 }
 
 //*************************************************************************************************************************
@@ -144,8 +185,9 @@ int Move(Display* display, Window window, GC gc, char type)
   XFillArcs(display,window,gc,Arcs,5);
   XFillRectangle(display,window,gc,rec.x,rec.y,rec.width,rec.height);
   XFillRectangle(display,window,gc,rec2.x,rec2.y,rec2.width,rec2.height);
+  if(letters == TRUE)
+    DrawLetters(display,window,gc);
 }
-
 
 //*************************************************************************************************************************
 // Color Asing Function
@@ -215,6 +257,7 @@ int main(int argc, char *argv[])
   XMapRaised(display, window);  // Display our window in front of another windows
       
   to_end = FALSE;
+  letters = FALSE;
 
   while (to_end == FALSE)
   {
@@ -227,7 +270,8 @@ int main(int argc, char *argv[])
         {
           XSetForeground(display, gc, foreground);
           XClearWindow(display, window);
-          XSetForeground(display,gc,rand());
+          color = rand();
+          XSetForeground(display,gc,color);
           shield(display,window,gc);
         }
         break;
@@ -256,9 +300,21 @@ int main(int argc, char *argv[])
             shield(display,window,gc);  
           }
           else if (buffer[0] == 'c'){ // Color
-            XSetForeground(display,gc,rand());
+            color = rand();
+            XSetForeground(display,gc,color);
             Resize(display,window,gc,0);
             Resize(display,window,gc,1);
+          }
+          else if(buffer[0] == 'l'){
+            if(letters == FALSE){
+              DrawLetters(display,window,gc);
+              letters = TRUE;
+            }
+            else{
+              letters = False;
+              Resize(display,window,gc,0);
+              Resize(display,window,gc,1);
+            }
           }
           else{
             Move(display,window,gc,buffer[0]);
