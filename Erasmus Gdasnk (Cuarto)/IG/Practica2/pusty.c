@@ -115,10 +115,11 @@ int shield(Display* display, Window window, GC gc)
 
 void DrawLetters(Display* display, Window window, GC gc)
 {
-  // Draw D
+  int aux = 20;
 
+  // Draw D
   PointD[0].x = arc1.x+20; PointD[0].y = arc1.y+20;
-  PointD[1].x = PointD[0].x+20; PointD[1].y = PointD[0].y;
+  PointD[1].x = PointD[0].x+aux; PointD[1].y = PointD[0].y;
   PointD[2].x = PointD[0].x+((PointD[1].x-PointD[0].x)/2); PointD[2].y = PointD[0].y+70;
   PointD2[0] = PointD[0];
   PointD2[1] = PointD[1];
@@ -133,13 +134,18 @@ void DrawLetters(Display* display, Window window, GC gc)
 
   // Draw A
   PointA[0].x = PointD2[2].x+15; PointA[0].y = PointD[2].y;
-  PointA[1].x = PointA[0].x+20; PointA[1].y = PointD[0].y;
-  PointA[2].x = PointA[1].x+20; PointA[2].y = PointA[1].y;
+  PointA[1].x = PointA[0].x+aux; PointA[1].y = PointD[0].y;
+  PointA[2].x = PointA[1].x+aux; PointA[2].y = PointA[1].y;
   PointA2[0] = PointA[1];
   PointA2[1] = PointA[2];
   PointA2[2].x = PointA[2].x+(PointA[1].x-PointA[0].x); PointA2[2].y = PointA[0].y;
+  PointA3[0].x = PointA[0].x+((PointA[1].x-PointA[0].x)/2); PointA3[0].y = PointA[1].y+((PointA[0].y-PointA[1].y)/2);
+  PointA3[1].x = PointA[2].x+((PointA2[2].x-PointA[2].x)/2); PointA3[1].y = PointA3[0].y;
+  PointA3[2].x = PointA3[0].x; PointA3[2].y = PointA3[0].y+5;
+  PointA3[3].x = PointA3[1].x; PointA3[3].y = PointA3[1].y +5;
   XFillPolygon(display,window,gc,PointA,3,Convex,CoordModeOrigin);
   XFillPolygon(display,window,gc,PointA2,3,Convex,CoordModeOrigin);
+  XFillPolygon(display,window,gc,PointA3,4,Convex,CoordModeOrigin);
 
   XSetForeground(display,gc,color);
 
@@ -187,6 +193,13 @@ int Move(Display* display, Window window, GC gc, char type)
   XFillRectangle(display,window,gc,rec2.x,rec2.y,rec2.width,rec2.height);
   if(letters == TRUE)
     DrawLetters(display,window,gc);
+}
+
+//*************************************************************************************************************************
+// Resize Letters
+
+int Resize_Letter(Display* display, Window window, GC gc, int type){
+  
 }
 
 //*************************************************************************************************************************
@@ -289,6 +302,9 @@ int main(int argc, char *argv[])
         }
         break;
 
+      case ButtonRelease:
+        
+      break;
 
       case KeyPress:
         hm_keys = XLookupString(&event.xkey, buffer, 8, &key, 0);
@@ -315,6 +331,9 @@ int main(int argc, char *argv[])
               Resize(display,window,gc,0);
               Resize(display,window,gc,1);
             }
+          }
+          else if(buffer[0] == 'm'){  // Move random
+            // Mover aleatoriamente
           }
           else{
             Move(display,window,gc,buffer[0]);
