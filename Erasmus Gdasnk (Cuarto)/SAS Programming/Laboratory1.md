@@ -39,11 +39,11 @@ run;
 
 ```sas
 DATA mylib.PEOPLE;
-	INPUT Name$ Height Weight;
-	DATALINES;
-	Daniel 184 92
-	Laura 165 52
-	Marta 157 47
+    INPUT Name$ Height Weight;
+    DATALINES;
+    Daniel 184 92
+    Laura 165 52
+    Marta 157 47
 run;
 ```
 
@@ -62,4 +62,4 @@ run;
 
 ![9.png](./.resources/9.png)
 
-
+We can edit the variables we want to see using this interface or addind `put name bmi;` before `run` to the code.
