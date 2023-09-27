@@ -1,0 +1,16 @@
+// see example: https://code.visualstudio.com/docs/cpp/launch-json-reference
+
+{
+    "configurations": 
+    [
+        {
+            "name"        : "Depurar",
+            "type"        : "cppvsdbg",
+            "request"     : "launch",
+            "program"     : "${workspaceFolder}/bin/Debug/ejecutable.exe",
+            "cwd"         : "${workspaceFolder}",
+            "console": true,
+            "environment" : [{ "name": "env:OutputEncoding", "value": "UTF8" }], // no funciona
+        }
+    ]
+}

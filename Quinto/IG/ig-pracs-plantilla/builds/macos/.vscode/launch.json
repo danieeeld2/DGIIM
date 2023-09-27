@@ -1,0 +1,15 @@
+{
+    "configurations": 
+    [
+        {
+            "name"            : "Depurar/ejecutar con LLDB en macOS (CUA)",
+            "type"            : "cppdbg",
+            "MIMode"          : "lldb",
+            "request"         : "launch",
+            "externalConsole" : true,
+            "program"         : "${workspaceFolder}/cmake/pracs_ig_macos_exe",
+            "cwd"             : "${workspaceFolder}/cmake/"
+            
+        }
+    ]
+}

@@ -1,0 +1,96 @@
+// https://code.visualstudio.com/docs/editor/tasks#_custom-tasks
+
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label"   : "Depurar variables",
+      "type"    : "shell",
+      "command" : "echo ${workspaceFolder:MATERIALES}",
+      "group"   : 
+      {
+        "kind"         : "build",
+        "isDefault"    : false
+      },
+      "presentation"   : 
+      {
+        "reveal"           : "always",
+        "clear"            : true,
+        "revealProblems"   : "onProblem",
+        "showReuseMessage" : false
+      }
+    },
+    {
+      "label"   : "Compilar y ejecutar",
+      "type"    : "shell",
+      "command" : "cd cmake && make && ./pracs_ig_macos_exe",
+      "group"   : 
+      {
+        "kind"         : "build",
+        "isDefault"    : true
+      },
+      "problemMatcher" : "$gcc",
+      "presentation"   : 
+      {
+        "reveal"           : "always",
+        "clear"            : true,
+        "revealProblems"   : "onProblem",
+        "showReuseMessage" : false
+      }
+    },
+    {
+      "label"   : "Compilar",
+      "type"    : "shell",
+      "command" : "cd cmake && make",
+      "group"   : 
+      {
+        "kind"         : "build",
+        "isDefault"    : false
+      },
+      "problemMatcher" : "$gcc",
+      "presentation"   : 
+      {
+        "reveal"           : "always",
+        "clear"            : true,
+        "revealProblems"   : "onProblem",
+        "showReuseMessage" : false
+      }
+    },
+    {
+      "label"   : "Compilar todo",
+      "type"    : "shell",
+      "command" : "cd cmake && make clean && make",
+      "group"   : 
+      {
+        "kind"      : "build",
+        "isDefault" : false
+      },
+      "problemMatcher" : "$gcc",
+      "presentation" : 
+      {
+        "reveal"           : "always",
+        "clear"            : true,
+        "revealProblems"   : "onProblem",
+        "showReuseMessage" : false
+      }
+    },
+    {
+      "label"   : "Regenerar archivos de compilación",
+      "type"    : "shell",
+      "command" : "rm -rf cmake && mkdir cmake && cd cmake && cmake ..",
+      "group"   : 
+      {
+        "kind"      : "build",
+        "isDefault" : false
+      },
+      "problemMatcher" : "$gcc",
+      "presentation" : 
+      {
+        "reveal"           : "always",
+        "clear"            : true,
+        "revealProblems"   : "onProblem",
+        "showReuseMessage" : false
+      }
+    }
+  ]    
+}

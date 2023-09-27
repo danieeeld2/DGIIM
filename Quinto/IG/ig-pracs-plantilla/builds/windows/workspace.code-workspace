@@ -1,0 +1,68 @@
+{
+  "folders":
+  [ { "name": "IG BUILD (Windows)",
+      "path": "."
+    },
+    { "name": "MATERIALES",
+      "path": "../../materiales"
+    },
+    { "name": "FUENTES",
+      "path": "../../src"
+    }
+  ],
+
+  "settings" :
+  {
+    "terminal.integrated.shellArgs.windows": ["-NoExit", "/c", "chcp.com 65001"],
+    "terminal.integrated.detectLocale": "on",
+    
+    "C_Cpp.default.cppStandard" : 
+      "c++14",
+
+      // esto es para que el "terminal" sea un powershell
+      // (no funciona ya que no es un "developer powershell" y no encuentra cmake, y 
+      // lo de Enter-DevShell no funciona tampoco, habrá que estudiarlo.
+      // lo de execution policy es importante 
+      // ver: https://stackoverflow.com/questions/56199111/visual-studio-code-cmd-error-cannot-be-loaded-because-running-scripts-is-disabl/67420296#67420296
+      
+      
+       "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+          "source": "PowerShell",
+          "icon": "terminal-powershell",
+          "args": ["-ExecutionPolicy", "Bypass"]
+        }
+      },
+      "terminal.integrated.defaultProfile.windows": "PowerShell",
+
+
+    "C_Cpp.default.includePath" : 
+      [ 
+        "~/vcpkg/installed/x64-windows/include",
+        "${workspaceFolder:FUENTES}",
+        "${workspaceFolder:MATERIALES}/src-cpp",  // workspaceFolder es la carpeta 'windows' 
+        "${default}"
+      ],
+    
+      "files.associations": {
+        "ostream": "cpp",
+        "iostream": "cpp"
+      }
+  },
+
+   // indicar extensiones recomendadas y extensiones que no se deben usar (y que no queremos que se recomienden)
+  "extensions": {
+    "recommendations": 
+    [ 
+      "ms-vscode.cpptools", 
+      "ms-vscode.cpptools-extension-pack", 
+      "ms-vscode.cpptools-themes", 
+      "slevesque.shader"    // soporte para archivos .glsl en GLSL
+    ],
+    "unwantedRecommendations": 
+    [
+      "ms-vscode.makefile-tools",  // no queremos que VS code gestione makefiles 
+      "ms-vscode.cmake-tools"      // tampoco los archivos 'CMakeFiles.txt'
+    ]
+  },
+}

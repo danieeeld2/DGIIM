@@ -1,0 +1,15 @@
+{
+    "configurations": 
+    [
+        {
+            "name"            : "Depurar/ejecutar con GDB en Linux",
+            "type"            : "cppdbg",
+            "MIMode"          : "gdb",
+            "request"         : "launch",
+            "externalConsole" : false,
+            "program"         : "${workspaceFolder}/bin/debug_exe",
+            "cwd"             : "${workspaceFolder}"
+            
+        }
+    ]
+}

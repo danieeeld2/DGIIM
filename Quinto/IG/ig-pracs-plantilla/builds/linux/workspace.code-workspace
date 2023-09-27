@@ -1,0 +1,56 @@
+{
+  "folders":
+  [ { "name": "IG-BUILD-LINUX",
+      "path": "."
+    },
+    { "name": "MATERIALES",
+      "path": "../../materiales"
+    },
+    { "name": "FUENTES",
+      "path": "../../src"
+    }
+  ],
+
+  "settings" :
+  {
+    // es importante decirle aquí a IntelliSense que use el compilador de GNU, 
+    // fijando la variable "compilerPath" a lo que sea. Si no se hace así y se 
+    // tiene también instalado el compilador clang, entonces vscode se hace un 
+    // lio con los includes, y señala con subrayado errores de includes imposibles 
+    // de quitar 
+    "C_Cpp.default.compilerPath" : "/usr/bin/g++", 
+    
+    "C_Cpp.default.includePath"      : 
+    [ 
+      "${workspaceFolder:FUENTES}",
+      "${workspaceFolder:MATERIALES}/src-cpp/**", 
+      "${default}"
+    ],
+
+    "files.associations": 
+    {
+      "iostream": "cpp",
+      "deque": "cpp",
+      "string": "cpp",
+      "vector": "cpp",
+      "cmath": "cpp"
+    }
+
+  },
+
+  // indicar extensiones recomendadas y extensiones que no se deben usar (y que no queremos que se recomienden)
+  "extensions": {
+    "recommendations": 
+    [ 
+      "ms-vscode.cpptools", 
+      "ms-vscode.cpptools-extension-pack", 
+      "ms-vscode.cpptools-themes", 
+      "slevesque.shader"    // soporte para archivos .glsl en GLSL
+    ],
+    "unwantedRecommendations": 
+    [
+      "ms-vscode.makefile-tools",  // no queremos que VS code gestione makefiles 
+      "ms-vscode.cmake-tools"      // tampoco los archivos 'CMakeFiles.txt'
+    ]
+  },
+}

@@ -1,0 +1,120 @@
+// https://code.visualstudio.com/docs/editor/tasks#_custom-tasks
+//
+// instrucciones específicas para VS Code sobre MSVC:
+// https://code.visualstudio.com/docs/cpp/config-msvc
+// https://github.com/microsoft/vscode-cmake-tools/blob/main/docs/build.md#how-cmake-tools-builds
+// 
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label"   : "Compilar y ejecutar",
+      "type"    : "shell",
+      "command" : "cd ${workspaceFolder} ; ./compilar.ps1 ; if ($LASTEXITCODE -eq 0) {./ejecutar.ps1}",
+      "group"   : 
+      {
+        "kind"         : "build",
+        "isDefault"    : true
+      },
+      "problemMatcher" : "$msCompile",   // ver un ejemplo en  https://code.visualstudio.com/docs/cpp/config-msvc
+      "presentation"   : 
+      {
+        "reveal"           : "always",
+        "clear"            : true,
+        "revealProblems"   : "onProblem",
+        "showReuseMessage" : false
+      }
+    },
+    {
+      "label"   : "Compilar",
+      "type"    : "shell",
+      "command" : "cd ${workspaceFolder} ; ./compilar.ps1",
+      "group"   : 
+      {
+        "kind"         : "build",
+        "isDefault"    : false
+      },
+      "problemMatcher" : "$msCompile",
+      "presentation"   : 
+      {
+        "reveal"           : "always",
+        "clear"            : true,
+        "revealProblems"   : "onProblem",
+        "showReuseMessage" : false
+      }
+    },
+    {
+      "label"   : "Ejecutar",
+      "type"    : "shell",
+      "command" : "cd ${workspaceFolder} ; ./ejecutar.ps1",
+      "group"   : 
+      {
+        "kind"         : "build",
+        "isDefault"    : false
+      },
+      "problemMatcher" : [],
+      "presentation"   : 
+      {
+        "reveal"           : "always",
+        "clear"            : true,
+        "revealProblems"   : "onProblem",
+        "showReuseMessage" : false
+      }
+    },
+    {
+      "label"   : "Limpiar (borra ejecutable y objs)",
+      "type"    : "shell",
+      "command" : "cd ${workspaceFolder} ; ./limpiar.ps1",
+      "group"   : 
+      {
+        "kind"      : "build",
+        "isDefault" : false
+      },
+      "problemMatcher" : [],
+      "presentation" : 
+      {
+        "reveal"           : "always",
+        "clear"            : true,
+        "revealProblems"   : "onProblem",
+        "showReuseMessage" : false
+      }
+    },
+
+    {
+      "label"   : "Limpiar y compilar todo (debug)",
+      "type"    : "shell",
+      "command" : "cd ${workspaceFolder} ; ./limpiar.ps1 ; ./compilar.ps1",
+      "group"   : 
+      {
+        "kind"      : "build",
+        "isDefault" : false
+      },
+      "problemMatcher" : [],
+      "presentation" : 
+      {
+        "reveal"           : "always",
+        "clear"            : true,
+        "revealProblems"   : "onProblem",
+        "showReuseMessage" : false
+      }
+    },
+    {
+      "label"   : "Generar archivos para compilar",
+      "type"    : "shell",
+      "command" : "cd ${workspaceFolder} ; ./generar.ps1",
+      "group"   : 
+      {
+        "kind"      : "build",
+        "isDefault" : false
+      },
+      "problemMatcher" : [],
+      "presentation" : 
+      {
+        "reveal"           : "always",
+        "clear"            : true,
+        "revealProblems"   : "onProblem",
+        "showReuseMessage" : false
+      }
+    }
+  ]    
+}

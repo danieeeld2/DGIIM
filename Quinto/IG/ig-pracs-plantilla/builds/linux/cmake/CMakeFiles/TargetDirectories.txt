@@ -1,0 +1,4 @@
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles/rebuild_cache.dir
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles/edit_cache.dir
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles/release_exe.dir
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles/debug_exe.dir
