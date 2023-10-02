@@ -110,6 +110,10 @@ void MallaInd::visualizarGL( )
    //    - hacer push del color actual del cauce
    //    - fijar el color en el cauce usando el color del objeto (se lee con 'leerColor()')
 
+   if(tieneColor()){
+      cauce->pushColor();
+      cauce->fijarColor(leerColor());
+   }
 
    // COMPLETAR: práctica 1: crear el descriptor de VAO, si no está creado
    //  Si el puntero 'dvao' es nulo, crear el descriptor de VAO
@@ -121,15 +125,28 @@ void MallaInd::visualizarGL( )
    //  Si el VAO ya está creado, (dvao no nulo), no hay que hacer nada.
    //
 
+   if(dvao == nullptr){
+      dvao = new DescrVAO(numero_atributos_cauce, new DescrVBOAtribs(ind_atrib_posiciones,vertices));
+      dvao->agregar(new DescrVBOInds(triangulos));
+      if(cc_tt_ver.size() > 0)
+         dvao->agregar(new DescrVBOAtribs(ind_atrib_coord_text, cc_tt_ver));
+      if(col_ver.size() > 0)
+         dvao->agregar(new DescrVBOAtribs(ind_atrib_colores,col_ver));
+      if(nor_ver.size() > 0)
+         dvao->agregar(new DescrVBOAtribs(ind_atrib_normales,nor_ver));
+   }
 
    // COMPLETAR: práctica 1: visualizar el VAO usando el método 'draw' de 'DescrVAO'
 
+   dvao->draw(GL_TRIANGLES);
 
    // COMPLETAR: práctica 1: restaurar color anterior del cauce 
    //
    // Si el objeto tiene un color asignado (se comprueba con 'tieneColor')
    //    - hacer 'pop' del color actual del cauce
 
+   if(tieneColor())
+      cauce->popColor();
 }
 
 
@@ -148,10 +165,21 @@ void MallaInd::visualizarGeomGL( )
    // COMPLETAR: práctica 1: visualizar únicamente la geometría del objeto 
    // 
    //    1. Desactivar todas las tablas de atributos del VAO (que no estén vacías)
+   if(cc_tt_ver.size() > 0)
+      dvao->habilitarAtrib(ind_atrib_coord_text,0);
+   if(col_ver.size() > 0)
+      dvao->habilitarAtrib(ind_atrib_colores,0);
+   if(nor_ver.size() > 0)
+      dvao->habilitarAtrib(ind_atrib_normales,0);
    //    2. Dibujar la malla (únicamente visualizará los triángulos)
+   dvao->draw(GL_TRIANGLES);
    //    3. Volver a activar todos los atributos para los cuales la tabla no esté vacía
-   // ....
-
+   if(cc_tt_ver.size() > 0)
+      dvao->habilitarAtrib(ind_atrib_coord_text,1);
+   if(col_ver.size() > 0)
+      dvao->habilitarAtrib(ind_atrib_colores,1);
+   if(nor_ver.size() > 0)
+      dvao->habilitarAtrib(ind_atrib_normales,1);
 }
 
 // -----------------------------------------------------------------------------
@@ -278,5 +306,60 @@ Cubo::Cubo()
 
 }
 
+Tetraedro::Tetraedro()
+:  MallaInd( "tetraedro 4 vértices" )
+{
+   vertices =
+      {  { -1.0, -1.0, -1.0 }, // 0
+         { +1.0, -1.0, -1.0 }, // 1
+         { +0.0, +1.0, -1.0 }, // 2
+         { +0.0, +0.0, +1.0 }, // 3
+      } ;
+
+   triangulos = {
+      {0,1,2}, {0,1,3}, {1,2,3}, {0,2,3}
+   };
+
+   ponerColor({0.5, 0.5, 0.5});
+}
+
 // -----------------------------------------------------------------------------------------------
 
+CuboColores::CuboColores()
+:  MallaInd("cubo 8 vétices a color")
+{
+   vertices =
+      {  { -1.0, -1.0, -1.0 }, // 0
+         { -1.0, -1.0, +1.0 }, // 1
+         { -1.0, +1.0, -1.0 }, // 2
+         { -1.0, +1.0, +1.0 }, // 3
+         { +1.0, -1.0, -1.0 }, // 4
+         { +1.0, -1.0, +1.0 }, // 5
+         { +1.0, +1.0, -1.0 }, // 6
+         { +1.0, +1.0, +1.0 }, // 7
+      } ;
+
+
+
+   triangulos =
+      {  {0,1,3}, {0,3,2}, // X-
+         {4,7,5}, {4,6,7}, // X+ (+4)
+
+         {0,5,1}, {0,4,5}, // Y-
+         {2,3,7}, {2,7,6}, // Y+ (+2)
+
+         {0,6,4}, {0,2,6}, // Z-
+         {1,5,7}, {1,7,3}  // Z+ (+1)
+      } ;
+
+   col_ver = {
+      {0.0, 0.0, 0.0}, // 0
+      {0.0, 0.0, 1.0}, // 1
+      {0.0, 1.0, 0.0}, // 2
+      {0.0, 1.0, 1.0}, // 3
+      {1.0, 0.0, 0.0}, // 4
+      {1.0, 0.0, 1.0}, // 5
+      {1.0, 1.0, 0.0}, // 6
+      {1.0, 1.0, 1.0}, // 7
+   };  
+}
