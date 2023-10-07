@@ -102,30 +102,6 @@ vector
 ig-aux.h
 ../../../src/ig-aux.h
 
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/aplicacion-ig.h
-vector
--
-ig-aux.h
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/ig-aux.h
-
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/escena.h
-vector
--
-aplicacion-ig.h
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/aplicacion-ig.h
-
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-ind.cpp
-ig-aux.h
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/ig-aux.h
-aplicacion-ig.h
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/aplicacion-ig.h
-malla-ind.h
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-ind.h
-lector-ply.h
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/lector-ply.h
-seleccion.h
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.h
-
 /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-ind.h
 vector
 -
@@ -136,6 +112,22 @@ vaos-vbos.h
 objeto3d.h
 /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.h
 
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-revol.cpp
+ig-aux.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/ig-aux.h
+lector-ply.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/lector-ply.h
+malla-revol.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-revol.h
+
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-revol.h
+vector
+-
+string
+-
+malla-ind.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-ind.h
+
 /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.h
 string
 -
@@ -143,10 +135,4 @@ vector
 -
 glm/glm.hpp
 -
-
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.h
-objeto3d.h
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.h
-escena.h
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/escena.h
 

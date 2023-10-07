@@ -330,6 +330,20 @@ Escena1::Escena1()
 // los objetos que se indican en los guiones de las práctica 2
 // .......
 
+Escena2::Escena2()
+{
+   using namespace std;
+   cout << "Creando objetos de la práctica 2." << endl;
+   objetos.push_back(new MallaPLY("../plys/beethoven.ply"));
+   objetos.push_back(new MallaPLY("../plys/big_dodge.ply"));
+   int nperfiles = 100; // Número de perfiles
+   int nveper = 10; // Número de vértices por perfil
+   objetos.push_back(new MallaRevolPLY("../plys/peon.ply",nperfiles));
+   objetos.push_back(new Cilindro(nveper,nperfiles));
+   nveper = 100;
+   objetos.push_back(new Cono(nveper,nperfiles));
+   objetos.push_back(new Esfera(nveper,nperfiles));
+}
 
 
 // -------------------------------------------------------------------------
