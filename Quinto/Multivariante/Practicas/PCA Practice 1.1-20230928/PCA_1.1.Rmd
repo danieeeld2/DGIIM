@@ -1,0 +1,1069 @@
+---
+title: "Principal component analysis - Practice 1.1"
+author: "José Luis Romero Béjar"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: 6
+    number_sections: yes
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+  word_document:
+    toc: yes
+    toc_depth: '6'
+  pdf_document: default
+---
+<style>
+.math {
+  font-size: 8.25pt;options(encoding = 'UTF-8')
+}
+</style>
+
+<div style="text-align: justify">
+
+© This material is licensed under a **Creative Commons CC BY-NC-ND** attribution which allows *works to be downloaded and shared with others, as long as they are referenced, but may not be modified in any way or used commercially*.
+
+This brief guide is intended to familiarize the reader with the following:
+
++ Loading and installing R packages.
++ Loading data sets of different formats from R base installation and from local directories.
++ Basic descriptive statistics.
++ Graphical utils from *ggplot2* package.
++ Deal with outliers: identification and making decisions.
++ Principal component analysis: requirements, obtaining principal components, explained variance, appropriate number of principal components, graphical outputs, coordenates in the new reference system.
+
+
+
+
+# **Loading packages and data sets**
+
+## Loading and installing R packages
+
+The following source code module is responsible for loading, if they are already installed, all the packages that will be used in this R session. While an R package can be loaded at any time when it is to be used, it is advisable to optimize its calls with this code chunk at the beginning.
+
+Loading a package into an R session **requires it to be already installed**. If it is not, the first step is to run the sentence:
+
+*install.packages("name_of_the_library")*
+
+
+```{r warning=FALSE, message=FALSE}
+
+#########################################
+# Loading necessary packages and reason #
+#########################################
+
+# This is an example of the first installation of a package
+# Only runs once if the package is not installed
+# Once it is installed this sentence has to be commented (not to run again)
+# install.packages("summarytools")
+
+# Package required to call 'freq' and 'descr' functions (descriptive statistics)
+library(summarytools)
+
+# Package required to call 'ggplot' function (graphical tools)
+library(ggplot2)
+
+# Package required to call 'ggarrange' function (graphical tools)
+library(ggpubr)
+
+# Package required to call 'read.spss' function (loading '.spss' data format)
+library(foreign)
+
+# Package required to call 'read_xlsx' function (loading '.xlsx' data format)
+library(readxl)
+
+# Package required to load the data set 'RBGlass1'
+library(archdata)
+
+# Package required to call 'cortest.bartlett' function
+library(psych)
+
+# Package required to call 'fviz_pca_var, fviz_pca_ind and fviz_pca' functions
+library(factoextra)
+
+# Package required to call 'scatterplot3d' function
+library(scatterplot3d)
+
+```
+
+## Loading a data set from different formats
+
+When loading a data set into an R session, it is recommended to save its structure in a data frame. This object (data.frame) is the best to work with data.
+
+The next code chunk shows how to load different data set formats: *.sav (IBM SPSS)*, *.xlsx (Microsoft Excel)*, *.csv (comma separated values)* and *.txt or .dat (plain text)*. First, examples are performed with data sets available from the local working directory (it is relevant that these data sets are in the same directory of the current R working file). All these first examples work with the same data set with different format extension. Then, some examples of loading different data sets available in the base installation of R (running the sentence *data()* in the R console shows all available data sets in the package *dataset*) are performed.
+
+The following code chunks show how to load these different formats.
+
+### IBM SPSS format *(.sav)*
+
+```{r warning=FALSE, message=FALSE}
+
+# Loading a .sav (IBM SPSS) file
+# The output of this function is NOT a data.frame object
+# Remember that package 'foreign' is required
+data_spss<-read.spss("DB.sav", to.data.frame=TRUE)
+
+# This sentence identifies the type of object that the identifier represents
+class(data_spss)
+
+```
+
+### Excel format (*.xlsx*)
+
+```{r warning=FALSE, message=FALSE}
+
+# Loading a .xlsx (excel) file.
+# The output of this function is already a data.frame object
+# Remember that package 'readxl' is required
+data_xlsx<-read_excel("DB.xlsx")
+
+# This sentence identifies the type of object that the identifier represents
+class(data_xlsx)
+
+```
+
+### Comma separated values (*.csv*)
+
+```{r warning=FALSE, message=FALSE}
+
+# Loading a .csv (comma separated values) file
+# The output of this function is already a data.frame object
+data_csv<-read.csv("DB.csv", header = TRUE,sep =";")
+
+# This sentence identifies the type of object that the identifier represents
+class(data_csv)
+
+```
+
+### Plain text (*.txt or .dat*)
+
+```{r warning=FALSE, message=FALSE}
+
+# Loading a .txt (plain text) file (for this example data are separated by tab)
+# The output of this function is already a data.frame object
+data_txt<-read.table("DB.dat", header = TRUE, sep="\t")
+
+# This sentence identifies the type of object that the identifier represents
+class(data_txt)
+
+```
+
+### Preloaded data sets
+
+There are many data sets in different packages preloaded with the base installation of R. There are other packages (need to install) including interesting data sets.
+
+Code chunk bellow shows a list of all the data sets in package *datasets* (preloaded with R.)
+
+```{r echo=TRUE, warning=FALSE, message=FALSE}
+
+# Data sets in a package
+# This line has to be run directly in the R-console
+data()
+
+```
+
+**iris data set**
+
+```{r warning=FALSE, message=FALSE}
+
+# Loading the data set 'iris'
+data("iris")
+
+# Loading 'iris' as data.frame in the new variable data_iris 
+data_iris<-iris
+
+# This sentence identifies the type of object that the identifier represents
+class(data_iris)
+
+```
+**RBGclass1 data set**
+
+The *RBGlass1* dataset is a database within the *archata* package that contains information on 11 chemical elements found in glass remains at two different locations (Mancetter and Leicester). 
+
+**Hereafter, the problem referred by the data set *RBGlass1* is addressed along this guide as an example of pre-processing data and dimensionality reduction**.
+
+```{r warning=FALSE, message=FALSE}
+
+# Loading the data set 'RBGclass1'
+# Remember that package 'archdata' is required
+data("RBGlass1")
+
+# Loading 'RBGlass1' as data.frame in the new variable data_RBGlass1 
+data_RBGlass1<-RBGlass1
+
+# This sentence identifies the type of object that the identifier represents
+class(data_RBGlass1)
+
+```
+
+# **Basic descriptive statistics**
+
+In this section, a preliminary exploratory data analysis of the data set RBGlass1 is performed. For this purpose, if the variable is **quantitative**, the basic **numerical descriptive statistics** and a representation of its **histogram, density and boxplot** are shown. On the other hand, for the only **categorical** variable, *Site*, its **frequency table** and a **sector and bar diagram** are provided.
+
+## **Exploring** the data set
+
+```{r warning=FALSE, message=FALSE}
+
+# This line loads the variable names from this data.frame
+# So that we can access by their name with no refer to the data.frame identifier
+attach(data_RBGlass1)
+
+# Retrieving the name of all variables
+colnames(data_RBGlass1)
+
+# Displaying a few records
+head(data_RBGlass1, n=10)
+
+# Displaying basic descriptives of variable 'Al'
+summary(Al)
+
+# Displaying frequency table of variable 'Site'
+# Absolute
+table(Site)
+# Relative
+round(prop.table(table(Site)),2)
+
+```
+
+## Basic descriptive statistics of **quantitative variables**
+
+
+### Al - Aluminum
+
+```{r warning=FALSE, message=FALSE}
+
+# Basic descriptive statistics
+# Remember that package 'summarytools' is required
+descr(Al)
+
+# Histogram, density and boxplot
+# Remember that package 'ggplot2' is required
+p1<-ggplot(data_RBGlass1,aes(x=Al))+geom_density()+
+  labs(title = "Density function of Al",x="Al",y="Values")
+
+p2<-ggplot(data_RBGlass1,aes(x=Al))+geom_histogram()+
+  labs(title = "Histogram of Al",x="Al",y="Values")
+
+p3<-ggplot(data_RBGlass1,aes(x=Al))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Al",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+
+```
+
+### Fe - Iron
+
+```{r warning=FALSE, message=FALSE}
+
+# Basic descriptive statistics
+# Remember that package 'summarytools' is required
+descr(Fe)
+
+# Histogram, density and boxplot
+# Remember that package 'ggplot2' is required
+p1<-ggplot(data_RBGlass1,aes(x=Fe))+geom_density()+
+  labs(title = "Density function of Fe",x="Fe",y="Values")
+
+p2<-ggplot(data_RBGlass1,aes(x=Fe))+geom_histogram()+
+  labs(title = "Histogram of Fe",x="Fe",y="Values")
+
+p3<-ggplot(data_RBGlass1,aes(x=Fe))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Fe",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+
+```
+
+### Mg - Magnesium
+
+```{r warning=FALSE, message=FALSE}
+
+# Basic descriptive statistics
+# Remember that package 'summarytools' is required
+descr(Mg)
+
+# Histogram, density and boxplot
+# Remember that package 'ggplot2' is required
+p1<-ggplot(data_RBGlass1,aes(x=Mg))+geom_density()+
+  labs(title = "Density function of Mg",x="Mg",y="Values")
+
+p2<-ggplot(data_RBGlass1,aes(x=Mg))+geom_histogram()+
+  labs(title = "Histogram of Mg",x="Mg",y="Values")
+
+p3<-ggplot(data_RBGlass1,aes(x=Mg))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Mg",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+
+```
+
+### Ca - Calcium
+
+```{r warning=FALSE, message=FALSE}
+
+# Basic descriptive statistics
+# Remember that package 'summarytools' is required
+descr(Ca)
+
+# Histogram, density and boxplot
+# Remember that package 'ggplot2' is required
+p1<-ggplot(data_RBGlass1,aes(x=Ca))+geom_density()+
+  labs(title = "Density function of Ca",x="Ca",y="Values")
+
+p2<-ggplot(data_RBGlass1,aes(x=Ca))+geom_histogram()+
+  labs(title = "Histogram of Ca",x="Ca",y="Values")
+
+p3<-ggplot(data_RBGlass1,aes(x=Ca))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Ca",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+
+```
+
+### Na - Sodium
+
+```{r warning=FALSE, message=FALSE}
+
+# Basic descriptive statistics
+# Remember that package 'summarytools' is required
+descr(Na)
+
+# Histogram, density and boxplot
+# Remember that package 'ggplot2' is required
+p1<-ggplot(data_RBGlass1,aes(x=Na))+geom_density()+
+  labs(title = "Density function of Na",x="Na",y="Values")
+
+p2<-ggplot(data_RBGlass1,aes(x=Na))+geom_histogram()+
+  labs(title = "Histogram of Na",x="Na",y="Values")
+
+p3<-ggplot(data_RBGlass1,aes(x=Na))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Na",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+
+```
+
+### K - Potassium
+
+```{r warning=FALSE, message=FALSE}
+
+# Basic descriptive statistics
+# Remember that package 'summarytools' is required
+descr(K)
+
+# Histogram, density and boxplot
+# Remember that package 'ggplot2' is required
+p1<-ggplot(data_RBGlass1,aes(x=K))+geom_density()+
+  labs(title = "Density function of K",x="K",y="Values")
+
+p2<-ggplot(data_RBGlass1,aes(x=K))+geom_histogram()+
+  labs(title = "Histogram of K",x="K",y="Values")
+
+p3<-ggplot(data_RBGlass1,aes(x=K))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of K",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+
+```
+
+### Ti - Titanium
+
+```{r warning=FALSE, message=FALSE}
+
+# Basic descriptive statistics
+# Remember that package 'summarytools' is required
+descr(Ti)
+
+# Histogram, density and boxplot
+# Remember that package 'ggplot2' is required
+p1<-ggplot(data_RBGlass1,aes(x=Ti))+geom_density()+
+  labs(title = "Density function of Ti",x="Ti",y="Values")
+
+p2<-ggplot(data_RBGlass1,aes(x=Ti))+geom_histogram()+
+  labs(title = "Histogram of Ti",x="Ti",y="Values")
+
+p3<-ggplot(data_RBGlass1,aes(x=Ti))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Ti",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+
+```
+
+### P - Phosphorus
+
+```{r warning=FALSE, message=FALSE}
+
+# Basic descriptive statistics
+# Remember that package 'summarytools' is required
+descr(P)
+
+# Histogram, density and boxplot
+# Remember that package 'ggplot2' is required
+p1<-ggplot(data_RBGlass1,aes(x=P))+geom_density()+
+  labs(title = "Density function of P",x="P",y="Values")
+
+p2<-ggplot(data_RBGlass1,aes(x=P))+geom_histogram()+
+  labs(title = "Histogram of P",x="P",y="Values")
+
+p3<-ggplot(data_RBGlass1,aes(x=P))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of P",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+
+```
+
+### Mn - Manganese
+
+```{r warning=FALSE, message=FALSE}
+
+# Basic descriptive statistics
+# Remember that package 'summarytools' is required
+descr(Mn)
+
+# Histogram, density and boxplot
+# Remember that package 'ggplot2' is required
+p1<-ggplot(data_RBGlass1,aes(x=Mn))+geom_density()+
+  labs(title = "Density function of Mn",x="Mn",y="Values")
+
+p2<-ggplot(data_RBGlass1,aes(x=Mn))+geom_histogram()+
+  labs(title = "Histogram of Mn",x="Mn",y="Values")
+
+p3<-ggplot(data_RBGlass1,aes(x=Mn))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Mn",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+
+```
+
+### Sb - Antimony
+
+```{r warning=FALSE, message=FALSE}
+
+# Basic descriptive statistics
+# Remember that package 'summarytools' is required
+descr(Sb)
+
+# Histogram, density and boxplot
+# Remember that package 'ggplot2' is required
+p1<-ggplot(data_RBGlass1,aes(x=Sb))+geom_density()+
+  labs(title = "Density function of Sb",x="Sb",y="Values")
+
+p2<-ggplot(data_RBGlass1,aes(x=Sb))+geom_histogram()+
+  labs(title = "Histogram of Sb",x="Sb",y="Values")
+
+p3<-ggplot(data_RBGlass1,aes(x=Sb))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Sb",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+
+```
+
+### Pb - Plumb
+
+```{r warning=FALSE, message=FALSE}
+
+# Basic descriptive statistics
+# Remember that package 'summarytools' is required
+descr(Pb)
+
+# Histogram, density and boxplot
+# Remember that package 'ggplot2' is required
+p1<-ggplot(data_RBGlass1,aes(x=Pb))+geom_density()+
+  labs(title = "Density function of Pb",x="Pb",y="Values")
+
+p2<-ggplot(data_RBGlass1,aes(x=Pb))+geom_histogram()+
+  labs(title = "Histogram of Pb",x="Pb",y="Values")
+
+p3<-ggplot(data_RBGlass1,aes(x=Pb))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Pb",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+
+```
+
+## Basic descriptive statistics of **categorical variables**
+
+The only categorical variable in this data set is *Site*.
+
+### Site
+
+```{r warning=FALSE, message=FALSE}
+
+# Frequency tables. Descriptive analysis
+# Remember that package 'summarytools' is required
+freq(Site)
+
+# Pie chart and bar graph
+p1<-ggplot(data_RBGlass1,aes(x=factor(1),fill=Site))+geom_bar()+
+  coord_polar("y")+labs(x="Site",y="%")
+p2<-ggplot(data_RBGlass1,aes(x=factor(1),fill=Site))+geom_bar()+
+  labs(x="Site",y="%")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,nrow = 1,ncol=2, common.legend = TRUE)
+
+```
+
+##  **Outliers**
+
+### Identification 
+
+This graphical output shows together the boxplots of all the quantitative variables. This visualization is not the best due to the difference between the scales.
+
+```{r warning=FALSE, message=FALSE}
+
+# Boxplots of all variables together
+# This visualization is not the best due to the difference between the scales
+boxplot(data_RBGlass1[-1],main="Outliers",
+        xlab="All explanatory variables",
+        ylab="Values",
+        col=c(1:11))
+
+```
+
+However, if the quantitative variables are standardized, the effect of scales differences is erased. This joint boxplots output is more informative.
+
+```{r warning=FALSE, message=FALSE}
+
+# Standardization
+sca<-scale(data_RBGlass1[-1])
+
+# Boxplots of all variables together
+# This visualization is not affected by the difference between the scales
+sca<-scale(data_RBGlass1[-1])
+boxplot(sca,main="Outliers",
+        xlab="All explanatory variables",
+        ylab="Values",
+        col=c(1:11))
+
+```
+
+This is another joint visualization of the boxplots without the effect of the difference in scales.
+
+```{r warning=FALSE, message=FALSE}
+
+# Boxplots of all quantitative variables together
+# Remember that package 'ggplot2' is required
+
+p1<-ggplot(data_RBGlass1,aes(x=Al))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Al",x="Values",y="")
+
+p2<-ggplot(data_RBGlass1,aes(x=Fe))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Fe",x="Values",y="")
+
+p3<-ggplot(data_RBGlass1,aes(x=Mg))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Mg",x="Values",y="")
+
+p4<-ggplot(data_RBGlass1,aes(x=Ca))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Ca",x="Values",y="")
+
+p5<-ggplot(data_RBGlass1,aes(x=Na))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Na",x="Values",y="")
+
+p6<-ggplot(data_RBGlass1,aes(x=K))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of K",x="Values",y="")
+
+p7<-ggplot(data_RBGlass1,aes(x=Ti))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Ti",x="Values",y="")
+
+p8<-ggplot(data_RBGlass1,aes(x=P))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of P",x="Values",y="")
+
+p9<-ggplot(data_RBGlass1,aes(x=Mn))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Mn",x="Values",y="")
+
+p10<-ggplot(data_RBGlass1,aes(x=Sb))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Sb",x="Values",y="")
+
+p11<-ggplot(data_RBGlass1,aes(x=Pb))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Pb",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11, nrow=3, ncol=4, 
+          commond.legend=FALSE)
+
+```
+
+
+## **Towards classification**
+
+On many occasions it is common to face **problems of classifying** data at the different levels of a response variable according to the different values of a set of explanatory variables. For this task, it is usually interesting to do a visual exploratory analysis that provides clues as to whether all the variables are really needed to build a good model or whether one or more of them is enough.
+
+**Unit 5 deals with the topic of classification** but, at this stage, it is possible to anticipate which variable or combination of variables could provide good models.
+
+The next three sections illustrate a visual approach that searches for univariate, bivariate and trivariate classifiers.
+
+### Univariate visual exploratory analysis
+
+Based on the graphical outputs below (overlapping histograms by *Site*), it appears that the variables *Fe*, *Mn* and *Sb* are candidates for building classification models with good performance.
+
+```{r warning=FALSE, message=FALSE}
+
+# Boxplots of all quantitative variables together grouping by Site
+# Remember that package 'ggplot2' is required 
+p1 <- ggplot(data = data_RBGlass1, aes(x = Al, fill = Site)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+p2 <- ggplot(data = data_RBGlass1, aes(x = Fe, fill = Site)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+p3 <- ggplot(data = data_RBGlass1, aes(x = Mg, fill = Site)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+
+p4 <- ggplot(data = data_RBGlass1, aes(x = Ca, fill = Site)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+p5 <- ggplot(data = data_RBGlass1, aes(x = Na, fill = Site)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+p6 <- ggplot(data = data_RBGlass1, aes(x = K, fill = Site)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+
+p7 <- ggplot(data = data_RBGlass1, aes(x = Ti, fill = Site)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+p8 <- ggplot(data = data_RBGlass1, aes(x = P, fill = Site)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+p9 <- ggplot(data = data_RBGlass1, aes(x = Mn, fill = Site)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+
+p10 <- ggplot(data = data_RBGlass1, aes(x = Sb, fill = Site)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+p11 <- ggplot(data = data_RBGlass1, aes(x = Pb, fill = Site)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2, p3,p4,p5,p6,p7,p8,p9,p10,p11, nrow = 4, ncol=3, common.legend = TRUE)
+
+```
+
+
+### Bivariate visual exploratory analysis
+
+As before, based on the following graphical output (scatter plots for each pair of variable combinations), the pairs *Al - Mn*, *Mn - Fe* and *Mn - Pb*  could be consider to define a well-performing bivariate classification model, but it is not so clear.
+
+```{r warning=FALSE, message=FALSE}
+
+# Scatter plots for each pair of variable combinations
+pairs(x = data_RBGlass1[, c("Al","Fe","Mg","Ca","Na","K","Ti","P","Mn","Sb","Pb")],
+      col = c("red","blue")[data_RBGlass1$Site], pch = 19)
+
+```
+
+
+### Trivariate visual exploratory analysis
+
+Finally, these 3D-scatter plots analize wether combinations of three variables are able to separate the two sites, thinking again about the performance of classification models. For this illustration, three 3D-scatter plots are displayed combining different triplets of variables: Al-Fe-Mg; Ca-Na-K and Mg-P-Ca. 
+
+```{r warning=FALSE, message=FALSE}
+
+# 3D scatter plot for the variables Al, Fe and Mg
+# Remember that package 'scatterplot3d' is required
+scatterplot3d(Al, Fe, Mg,
+              color = c("firebrick", "green3")[data_RBGlass1$Site],pch = 19,
+              grid = TRUE, xlab = "Al", ylab = "Fe",
+              zlab = "Mg", angle = 65, cex.axis = 0.6)
+legend("topleft",
+       bty = "n", cex = 0.8,
+       title = "Site",
+       c("Mancetter", "Leicester"), fill = c("firebrick", "green3"))
+
+# 3D scatter plot for the variables Ca, Na and K
+# Remember that package 'scatterplot3d' is required
+scatterplot3d(Ca, Na, K,
+              color = c("yellow", "blue")[data_RBGlass1$Site],pch = 19,
+              grid = TRUE, xlab = "Ca", ylab = "Na",
+              zlab = "K", angle = 65, cex.axis = 0.6)
+legend("topleft",
+       bty = "n", cex = 0.8,
+       title = "Site",
+       c("Mancetter", "Leicester"), fill = c("yellow", "blue"))
+
+# 3D scatter plot for the variables Mg, P and Ca
+# Remember that package 'scatterplot3d' is required
+scatterplot3d(Mg, P, Ca,
+              color = c("lightblue", "orange")[data_RBGlass1$Site],pch = 19,
+              grid = TRUE, xlab = "Mg", ylab = "P",
+              zlab = "Ca", angle = 65, cex.axis = 0.6)
+legend("topleft",
+       bty = "n", cex = 0.8,
+       title = "Site",
+       c("Mancetter", "Leicester"), fill = c("lightblue", "orange"))
+```
+
+
+
+### Making decisions
+
+From previous graphical outputs it is noticed the presence of outliers for the variables *Mg, Ca, K, P and Mn*. It is relevant to take into account these values since multivariate methods, such as principal component analisis (PCA), are sensitive to this fact.
+
+This is not a light topic and it should be analyzed outlier per outlier. However, since the objective of this guide is to introduce to the reader in this preliminary step of exploratory data analysis and data preparation, **the decision for outliers is to replace them by the mean of their variable**. Perhaps it is not the best option, it depends on the problem under analysis and the data recorded, but it is a way to introduce the reader to **how to define functions in R language**.
+
+The following source code defines the function *outlier* whose utility is to deal with the univariate outliers.
+
+
+```{r warning=FALSE, message=FALSE}
+
+# Recursive function that modifies outliers by the mean of their variable
+outlier<-function(data,na.rm=T){
+
+  H<-1.5*IQR(data)
+  data[data<quantile(data,0.25,na.rm = T)-H]<-NA
+  data[data>quantile(data,0.75, na.rm = T)+H]<-NA
+  data[is.na(data)]<-mean(data, na.rm = T)
+  H<-1.5*IQR(data)
+
+  if (TRUE %in% (data<quantile(data,0.25,na.rm = T)-H) |
+      TRUE %in% (data>quantile(data,0.75,na.rm = T)+H))
+    outlier(data)
+  else
+
+    return(data)
+
+}
+
+# This data.frame is to preserve original data once the outliers are modified
+data_RBGlass1_aux<-data_RBGlass1
+
+# Called to outlier function for each variable identified with outliers
+data_RBGlass1_aux$Mg<-outlier(data_RBGlass1_aux$Mg)
+data_RBGlass1_aux$Ca<-outlier(data_RBGlass1_aux$Ca)
+data_RBGlass1_aux$K<-outlier(data_RBGlass1_aux$K)
+data_RBGlass1_aux$P<-outlier(data_RBGlass1_aux$P)
+data_RBGlass1_aux$Mn<-outlier(data_RBGlass1_aux$Mn)
+
+
+# Boxplots of all quantitative variables together once outliers are dealt with
+# Remember that package 'ggplot2' is required
+p1<-ggplot(data_RBGlass1_aux,aes(x=Al))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Al",x="Values",y="")
+
+p2<-ggplot(data_RBGlass1_aux,aes(x=Fe))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Fe",x="Values",y="")
+
+p3<-ggplot(data_RBGlass1_aux,aes(x=Mg))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Mg",x="Values",y="")
+
+p4<-ggplot(data_RBGlass1_aux,aes(x=Ca))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Ca",x="Values",y="")
+
+p5<-ggplot(data_RBGlass1_aux,aes(x=Na))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Na",x="Values",y="")
+
+p6<-ggplot(data_RBGlass1_aux,aes(x=K))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of K",x="Values",y="")
+
+p7<-ggplot(data_RBGlass1_aux,aes(x=Ti))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Ti",x="Values",y="")
+
+p8<-ggplot(data_RBGlass1_aux,aes(x=P))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of P",x="Values",y="")
+
+p9<-ggplot(data_RBGlass1_aux,aes(x=Mn))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Mn",x="Values",y="")
+
+p10<-ggplot(data_RBGlass1_aux,aes(x=Sb))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Sb",x="Values",y="")
+
+p11<-ggplot(data_RBGlass1_aux,aes(x=Pb))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = "Boxplot of Pb",x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11, nrow=3, ncol=4, 
+          commond.legend=FALSE)
+
+```
+
+
+# **Principal component analysis**
+
+## Requirements
+
+### Correlated variables
+
+According to the numerical results below, it is observed that the data **are correlated** both **at the sample level** (see correlation matrix) and **at the populacion level** (Bartlett's sphericity test is significant).
+
+```{r warning=FALSE, message=FALSE}
+
+###############################
+# Correlation at sample level #
+###############################
+
+# Are the variables correlated at sample level?
+correlation_matrix<-cor(data_RBGlass1[-1])
+correlation_matrix
+det(correlation_matrix)
+
+# It is noticed an important correlation between some variables
+# For instance, sodium (NA) and antimony (Sb) or titanium (Ti) and iron (Fe)
+cor(data_RBGlass1$Na,data_RBGlass1$Sb)
+cor(data_RBGlass1$Ti,data_RBGlass1$Fe)
+
+
+###################################
+# Correlation at population level #
+###################################
+
+# Bartlett's sphericity test:
+# This test checks whether the correlations are significantly different from 0
+# The null hypothesis is H_0; det(R)=1 means the variables are uncorrelated 
+# R denotes the correlation matrix
+# cortest.bartlett function in the package pysch performs this test
+# This function works with standardized data.
+
+# Standardization
+data_RBGlass1_scale<-scale(data_RBGlass1[-1])
+
+# Bartlett's sphericity test
+cortest.bartlett(cor(data_RBGlass1_scale))
+
+```
+
+### Absence of outliers
+
+Done in **Section 2.4.2** in the data.frame *data_RBGlass1_aux*.
+
+### Standardized data
+
+It is not necessary, since the *prcomp* function that obtains the principal components standardizes the data on its own.
+
+
+## Principal components
+
+### Obtaining
+
+
+```{r warning=FALSE, message=FALSE}
+
+# The 'prcomp' function in the base R package performs this analysis
+# Parameters 'scale' and 'center' are set to TRUE to consider standardized data
+PCA<-prcomp(data_RBGlass1_aux[-1], scale=T, center = T)
+
+# The field 'rotation' of the 'PCA' object is a matrix 
+# Its columns are the coefficients of the principal components
+# Indicates the weight of each variable in the corresponding principal component
+PCA$rotation
+
+# Standard deviations of each principal component
+PCA$sdev
+```
+
+
+Each principal component is obtained in a simple way as a linear combination of all the variables with the coefficients indicated by the columns of the rotation matrix.
+
+
+### Explained variance rate
+
+```{r warning=FALSE, message=FALSE}
+
+# The function 'summary' applied to the 'PCA' object provides relevant information
+# - Standard deviations of each principal component
+# - Proportion of variance explained and cummulative variance
+summary(PCA)
+
+# The following graph shows the proportion of explained variance
+Explained_variance <- PCA$sdev^2 / sum(PCA$sdev^2)
+
+p1<-ggplot(data = data.frame(Explained_variance, pc = 1:11),
+  aes(x = pc, y = Explained_variance, fill=Explained_variance )) +
+  geom_col(width = 0.3) + scale_y_continuous(limits = c(0,0.6)) + theme_bw() +
+  labs(x = "Principal component", y= "Proportion of variance")
+
+# The following graph shows the proportion of cumulative explained variance
+Cummulative_variance<-cumsum(Explained_variance)
+
+p2<-ggplot( data = data.frame(Cummulative_variance, pc = 1:11),
+  aes(x = pc, y = Cummulative_variance ,fill=Cummulative_variance )) +
+  geom_col(width = 0.5) +  scale_y_continuous(limits = c(0,1)) + theme_bw() +
+  labs(x = "Principal component",
+       y = "Proportion of cumulative variance")
+
+p1
+p2
+
+```
+
+
+### Appropriate number of principal components
+
+There are different methods:
+
++ 1.- **Elbow method** (Cuadras, 2007).
++ 2.- **At the discretion of the researcher** who chooses a minimum percentage of variance explained by the principal components (it is not reliable because it can give more than necessary).
++ 3.- **Rule of Abdi et al.** (2010). The variances explained by the principal components are averaged and those whose proportion of explained variance exceeds the mean are selected.
+
+For this illustration, applying the rule of Abdi et al., only **three principal components are considered**, as can be deduced from the following code chunk.
+
+```{r warning=FALSE, message=FALSE}
+
+#######################
+# Rule of Abdi et al. #
+#######################
+
+# Variances
+PCA$sdev^2
+
+# Average of variances
+mean(PCA$sdev^2)
+
+```
+
+
+### PCA graphical outputs of interest 
+
+#### Distances 
+
+
+```{r warning=FALSE, message=FALSE}
+
+# These graphical outputs show the projection of the variables in two dimensions
+# Display the weight of the variable in the direction of the principal component 
+p1<-fviz_pca_var(PCA,repel=TRUE,col.var="cos2",
+                 legend.title="Distance", title="Variables")+theme_bw()
+
+p2<-fviz_pca_var(PCA,axes=c(1,3),repel=TRUE,col.var="cos2",
+                 legend.title="Distance", title="Variables")+theme_bw()
+
+p3<-fviz_pca_var(PCA,axes=c(2,3),repel=TRUE,col.var="cos2",
+                 legend.title="Distance", title="Variables")+theme_bw()
+
+# Displaying graphics
+p1
+p2
+p3
+
+```
+
+
+
+#### Observations and variance contribution
+
+
+```{r warning=FALSE, message=FALSE}
+
+# It is also possible to represent the observations
+# As well as identify with colors those observations that explain the greatest 
+# variance of the principal components
+p1<-fviz_pca_ind(PCA,col.ind = "contrib", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel=TRUE,legend.title="Contrib.var", title="Records")+theme_bw()
+
+p2<-fviz_pca_ind(PCA,axes=c(1,3),col.ind = "contrib",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel=TRUE,legend.title="Contrib.var", title="Records")+theme_bw()
+
+p3<-fviz_pca_ind(PCA,axes=c(2,3),col.ind = "contrib",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel=TRUE,legend.title="Contrib.var", title="Records")+theme_bw()
+
+# Displaying graphics
+p1
+p2
+p3
+
+```
+
+
+
+#### Observations and variables with variance contribution
+
+
+
+```{r warning=FALSE, message=FALSE}
+
+# Joint representation of variables and observations
+# Relates the possible relationships between the contributions of the records
+# to the variances of the components and the weight of the variables in each 
+# principal component
+
+p1<-fviz_pca(PCA,alpha.ind ="contrib", col.var = "cos2",
+         col.ind="seagreen",
+         gradient.cols = c("#FDF50E", "#FD960E", "#FD1E0E"),
+         repel=TRUE, legend.title="Distancia")+theme_bw()
+
+p2<-fviz_pca(PCA,axes=c(1,3),alpha.ind ="contrib", 
+         col.var = "cos2",col.ind="seagreen",
+         gradient.cols = c("#FDF50E", "#FD960E", "#FD1E0E"),
+         repel=TRUE, legend.title="Distancia")+theme_bw()
+
+p3<-fviz_pca(PCA,axes=c(2,3),alpha.ind ="contrib", 
+         col.var = "cos2",col.ind="seagreen",
+         gradient.cols = c("#FDF50E", "#FD960E", "#FD1E0E"),
+         repel=TRUE, legend.title="Distancia")+theme_bw()
+
+# Displaying graphics
+p1
+p2
+p3
+
+```
+
+
+#### Coordinates in the new reference system
+
+
+Finally, since the object of this study was to reduce the dimension of the data set, it is possible to obtain **the coordinates of the original data in the new reference system**. In fact, they are stored since we used the prcomp function to create the PCA variable.
+
+```{r warning=FALSE, message=FALSE}
+
+head(PCA$x)
+
+```
+
