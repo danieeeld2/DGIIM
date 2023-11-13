@@ -364,3 +364,218 @@ CuboColores::CuboColores()
       {1.0, 1.0, 1.0}, // 7
    };  
 }
+
+// -----------------------------------------------------------------------------------------------
+
+/*
+Calcular ángulos -> La medida de cada angulo es 2pi/n_vertices
+En la circunferencia_
+Cada vertice sera -> x_i=centro_x+radio*cos(angulo*i)
+                     y_i=centro_y+radio*sin(angulo*i)
+                     z_i=0
+El resto:
+Cada vertice será el punto medio entre dos vertices de la circunferencia
+                     x_i=(x_i-1+x_i+1)/2
+                     y_i=(y_i-1+y_i+1)/2
+En este caso lo que vamos a hacer es calcular los vertices en la circ. de mitad de radio
+*/
+
+
+EstrellaZ::EstrellaZ(int n)
+:  MallaInd("Estrella Z")
+{
+   float radio = 0.5f;
+   float angulo = ((2*M_PI*radio)/n);
+   float centro_x = 0.5f;
+   float centro_y = 0.5f;
+   float centro_z = 0.0f;
+
+   for(int i=0;i<2*n;i++){
+      if(i%2 == 0)
+         vertices.push_back({centro_x+radio*cos(angulo*i),centro_y+radio*sin(angulo*i),centro_z});
+      else
+         vertices.push_back({centro_x+(radio/2.0f)*cos(angulo*i),centro_y+(radio/2.0f)*sin(angulo*i),centro_z});
+   }
+   vertices.push_back({centro_x,centro_y,centro_z});
+   for(int i=0; i<2*n+1; i++){
+      triangulos.push_back({i,(i+1)%(2*n),2*n});
+   }
+   for(int i=0; i<2*n; i++){
+      col_ver.push_back(vertices[i]);
+   }
+   col_ver.push_back({1.0,1.0,1.0});   
+}
+
+// ****************************************************************************
+
+CasaX::CasaX()
+: MallaInd("Casa X"){
+   vertices =
+      {  { -1.5, -1.0, -1.0 }, // 0
+         { -1.5, -1.0, +1.0 }, // 1
+         { -1.5, +1.0, -1.0 }, // 2
+         { -1.5, +1.0, +1.0 }, // 3
+         { +1.5, -1.0, -1.0 }, // 4
+         { +1.5, -1.0, +1.0 }, // 5
+         { +1.5, +1.0, -1.0 }, // 6
+         { +1.5, +1.0, +1.0 }, // 7
+         { +1.5, +1.5, 0.0},
+         { -1.5, +1.5, 0.0}
+      } ;
+   
+   triangulos =
+      {  {0,1,3}, {0,3,2}, // X-
+         {4,7,5}, {4,6,7}, // X+ (+4)
+
+         {0,6,4}, {0,2,6}, // Z-
+         {1,5,7}, {1,7,3},  // Z+ (+1)
+
+         {2,3,9}, {6,7,8},
+         {3,7,8}, {3,9,8},
+         {9,2,6}, {6,8,9}
+      } ;
+
+   for(int i=0; i<vertices.size(); i++) {
+      col_ver.push_back(vertices[i]);
+   }
+}
+
+// ****************************************************************************
+
+// Plano perpendicular al eje si lo corta en 90º
+
+MallaTriangulo::MallaTriangulo()
+: MallaInd("Malla Triangulo") {
+   vertices = {
+      {-0.5, 0.0, 0.0},
+      {+0.5, 0.0, 0.0},
+      {0.0, sqrt(2), 0.0}
+   };
+   triangulos = {
+      {0,1,2}
+   };
+}
+
+// ****************************************************************************
+
+MallaCuadrado::MallaCuadrado()
+: MallaInd("Malla Cuadrado") {
+   vertices = {
+      {-1.0,0.0,-1.0},
+      {+1.0,0.0,-1.0},
+      {-1.0,0.0,+1.0},
+      {+1.0,0.0,+1.0}
+   };
+   triangulos = {
+      {0,1,2},
+      {1,3,2}
+   };
+}
+
+// ****************************************************************************
+
+MallaPiramideL::MallaPiramideL()
+: MallaInd("Malla PiramideL") {
+   vertices =
+      {  { 0, 0, 2 }, 
+         { 0, 0, 0 },  
+         { 1, 0, 2 }, 
+         { 1, 0, 1 }, 
+         { 2, 0, 1 },  
+         {2,0,0}, 
+         {0,3,0}, 
+      } ;
+
+      triangulos =
+      {  {0,2,3},{0,1,5} // X-
+         ,{3,4,5},{3,6,4},{1,6,5},{1,6,0},{2,3,6}
+      } ;
+
+}
+
+// ****************************************************************************
+
+PiramideEstrellaZ::PiramideEstrellaZ(unsigned n)
+: MallaInd("Piramide Z") {
+   float centro_x = 0.5f;
+   float centro_y = 0.5f;
+   float centro_z = 0.0f;
+   float radio = 0.5f;
+   float angulo = ((2*M_PI*radio)/n);
+   for(int i=0; i<2*n; i++){
+      if(i%2 == 0){
+         vertices.push_back({centro_x+radio*cos(angulo*i),centro_y+radio*sin(angulo*i),centro_z});
+      }else{
+         vertices.push_back({centro_x+(radio/2.0f)*cos(angulo*i),centro_y+(radio/2.0f)*sin(angulo*i),centro_z});
+      }
+   }
+   vertices.push_back({centro_x,centro_y,centro_z});
+   vertices.push_back({centro_x,centro_y,1.5f});
+   for(int i=0; i<2*n+1; i++){
+      triangulos.push_back({i,(i+1)%(2*n),2*n});
+      triangulos.push_back({i,(i+1)%(2*n),2*n+1});
+   }
+   for(int i=1;i<2*n+2; i++){
+      col_ver.push_back(vertices[i]);
+   }
+   col_ver.push_back({1.0f,1.0f,1.0f});
+}
+
+// ****************************************************************************
+
+RejillaY::RejillaY(unsigned n, unsigned m){
+   assert(n > 1 && m > 1);
+   float escala_n = 1.0f/n;
+   float escala_m = 1.0f/m;
+   for(int i=0; i<n; i++){
+      for(int j=0; j<m; j++){
+         vertices.push_back({i*escala_n,0.0f,j*escala_m});
+      }
+   }
+   for(int i=0; i<n-1; i++){
+      for(int j=0; j<m-1; j++){
+         triangulos.push_back({i*m+j,i*m+j+1,(i+1)*m+j});
+         triangulos.push_back({i*m+j+1,(i+1)*m+j+1,(i+1)*m+j});
+      }
+   }
+   for(int i=0;i<vertices.size(); i++){
+      col_ver.push_back(vertices[i]);
+   }
+}
+
+// ****************************************************************************
+
+MallaTorre::MallaTorre(unsigned n)
+: MallaInd("Torre") {
+   assert(n > 1);
+   unsigned int j = 0;
+   vertices = {};
+
+   vertices.push_back({+0.5,0,+0.5});// k
+   vertices.push_back({-0.5,0,+0.5});// k+1
+   vertices.push_back({-0.5,0,-0.5});// k+2
+   vertices.push_back({+0.5,0,-0.5});// k+3
+
+
+   for(unsigned i = 1; i <= n; ++i)
+   {
+      j += 4;
+      vertices.push_back({+0.5,i,+0.5});// k
+      vertices.push_back({-0.5,i,+0.5});// k+1
+      vertices.push_back({-0.5,i,-0.5});// k+2
+      vertices.push_back({+0.5,i,-0.5});// k+3
+
+      triangulos.push_back({j-4, j-3, j});
+      triangulos.push_back({j-3, j+1, j});
+
+      triangulos.push_back({j-3, j-2, j+1});
+      triangulos.push_back({j-2, j+2, j+1});
+
+      triangulos.push_back({j-2, j-1, j+2});
+      triangulos.push_back({j-1, j+3, j+2});
+
+      triangulos.push_back({j-1, j-4, j+3});
+      triangulos.push_back({j-4, j, j+3});
+   }
+   
+}

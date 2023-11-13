@@ -321,6 +321,9 @@ Escena1::Escena1()
 
    objetos.push_back(new Tetraedro());
    objetos.push_back(new CuboColores());
+   objetos.push_back(new EstrellaZ(6));
+   objetos.push_back(new CasaX());
+   objetos.push_back(new MallaPiramideL());
 }
 
 // -------------------------------------------------------------------------
@@ -343,6 +346,9 @@ Escena2::Escena2()
    nveper = 100;
    objetos.push_back(new Cono(nveper,nperfiles));
    objetos.push_back(new Esfera(nveper,nperfiles));
+   objetos.push_back(new PiramideEstrellaZ(6));
+   objetos.push_back(new RejillaY(10,10));
+   objetos.push_back(new MallaTorre(5));
 }
 
 
@@ -352,6 +358,13 @@ Escena2::Escena2()
 // Añadir la implementación del constructor de la clase Escena3 para construir
 // los objetos que se indican en los guiones de las práctica 3
 // .......
+
+Escena3::Escena3()
+{
+   using namespace std;
+   cout << "Creando objetos de la práctica 3." << endl;
+   // objetos.push_back(); pendiente
+}
 
 
 
