@@ -525,8 +525,8 @@ PiramideEstrellaZ::PiramideEstrellaZ(unsigned n)
 
 RejillaY::RejillaY(unsigned n, unsigned m){
    assert(n > 1 && m > 1);
-   float escala_n = 1.0f/n;
-   float escala_m = 1.0f/m;
+   float escala_n = 1.0f/(n-1);
+   float escala_m = 1.0f/(m-1);
    for(int i=0; i<n; i++){
       for(int j=0; j<m; j++){
          vertices.push_back({i*escala_n,0.0f,j*escala_m});

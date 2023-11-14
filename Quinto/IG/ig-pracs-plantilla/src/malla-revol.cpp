@@ -143,3 +143,21 @@ Cono::Cono(const int num_verts_per, const unsigned nperfiles){
    }
    inicializar(perfil,nperfiles);
 }
+
+/*
+Ajustamos los valores para normalizar el cono
+La formula es:
+y = y_min+((y_max-y_min)*(x-x_min)/(x_max-x_min))
+*/
+
+Cono2::Cono2(const int num_verts_per, const unsigned nperfiles){
+   ponerNombre("cono2");
+   std::vector<glm::vec3> perfil = std::vector<glm::vec3>();
+
+   for(int i=0; i<num_verts_per; i++){
+      float altura = i*(0.15/(num_verts_per-1));
+      float x = (num_verts_per-1-i)*(0.14/(num_verts_per-1));
+      perfil.push_back(glm::vec3(x,altura,0.0));
+   }
+   inicializar(perfil,nperfiles);
+}

@@ -92,5 +92,11 @@ class Esfera : public MallaRevol
       Esfera(const int num_verts_per,const unsigned nperfiles);
 };
 
+class Cono2 : public MallaRevol
+{
+   public:
+      Cono2(const int num_verts_per,const unsigned nperfiles);
+};
+
 
 #endif

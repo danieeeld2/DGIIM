@@ -33,6 +33,7 @@
 #include "objeto3d.h"
 #include "malla-ind.h" // para poder usar clase MallaInd
 #include "materiales-luces.h"
+#include "malla-revol.h"
 
 //using namespace tup_mat ;
 
@@ -119,7 +120,42 @@ class NodoGrafoEscena : public Objeto3D
 
 // *********************************************************************
 
+// class GrafoEstrellaX : public NodoGrafoEscena
+// {
+//    protected:
+//       glm::mat4 *pm_rot_alpha = nullptr ;
+//       unsigned nparam;
+//    public:
+//       void fijarRot(const float alpha);
+//       unsigned leerNumParametros() const { return nparam ; }
+//       void actualizarEstadoParametro( const unsigned iParam, const float t_sec );
+//       GrafoEstrellaX(unsigned n) ;
+// } ;
 
+class GrafoCubos : public NodoGrafoEscena
+{
+   protected: // punteros a matrices
+      glm::mat4 *pm_rot1 = nullptr, *pm_rot2 = nullptr, *pm_rot3 = nullptr, *pm_rot4 = nullptr, *pm_rot5=nullptr, *pm_rot6=nullptr;
+      unsigned num_parametros; // número de parámetros o grados de libertad del objeto
+   public:
+      void fijarRot1( const float alpha );
+      void fijarRot2( const float alpha );
+      void fijarRot3( const float alpha );
+      void fijarRot4( const float alpha );   
+      void fijarRot5( const float alpha );
+      void fijarRot6( const float alpha );
+      unsigned leerNumParametros() const;
+      void actualizarEstadoParametro( const unsigned iParam, const float tSec );
+      GrafoCubos();
+};
+
+// Pared del cubo grande consistente en una instancia de la clase RejillaY con un
+// paralelepípedo en su centro
+class Wall : public NodoGrafoEscena
+{
+   public:
+      Wall(glm::mat4 * &pm_rot);
+};
 
 
 #endif // GRAFO_ESCENA_HPP

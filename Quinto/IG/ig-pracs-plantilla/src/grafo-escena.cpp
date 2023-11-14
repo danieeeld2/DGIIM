@@ -30,7 +30,7 @@
 #include "aplicacion-ig.h"
 #include "seleccion.h"   // para 'ColorDesdeIdent' 
 
-
+using namespace glm;
 
 // *********************************************************************
 // Entrada del nodo del Grafo de Escena
@@ -366,8 +366,115 @@ bool NodoGrafoEscena::buscarObjeto
    return false ;
 }
 
+// *****************************************************************************
 
+GrafoCubos::GrafoCubos(){
 
+   // base
+   NodoGrafoEscena *base = new NodoGrafoEscena();
+   base->agregar(translate(vec3(-0.5,-0.5,-0.5)));
+   base->agregar(new Wall(pm_rot1));
+   agregar(base);
+
+   //Perpendicular al eje X negativo
+   NodoGrafoEscena *ejexneg = new NodoGrafoEscena();
+   ejexneg->agregar(translate(vec3(-0.5,0.5,-0.5)));
+   ejexneg->agregar(rotate(-(float)M_PI/2,vec3{0,0,1}));
+   ejexneg->agregar(new Wall(pm_rot2));
+   agregar(ejexneg);
+
+   //Techo
+   NodoGrafoEscena *techo = new NodoGrafoEscena();
+   techo->agregar(translate(vec3(-0.5,0.5,0.5)));
+   techo->agregar(rotate((float)M_PI,vec3{1,0,0}));
+   techo->agregar(new Wall(pm_rot3));
+   agregar(techo);
+
+   //Perpendicular al eje X positivo
+   NodoGrafoEscena *ejexpos = new NodoGrafoEscena();
+   ejexpos->agregar(translate(vec3(0.5,-0.5,-0.5)));
+   ejexpos->agregar(rotate((float)M_PI/2,vec3{0,0,1}));
+   ejexpos->agregar(new Wall(pm_rot4));
+   agregar(ejexpos);
+
+   //Perpendicular al eje Z negativo
+   NodoGrafoEscena *ejezneg = new NodoGrafoEscena();
+   ejezneg->agregar(translate(vec3(0.5,-0.5,-0.5)));
+   ejezneg->agregar(rotate((float)M_PI,vec3{0,1,1}));
+   ejezneg->agregar(new Wall(pm_rot5));
+   agregar(ejezneg);
+
+   //Perpendicular al eje Z positivo
+   NodoGrafoEscena *ejezpos = new NodoGrafoEscena();
+   ejezpos->agregar(translate(vec3(0.5,-0.5,0.5)));
+   ejezpos->agregar(rotate((float)M_PI/2,vec3{0,0,1}));
+   ejezpos->agregar(rotate(3*(float)M_PI/2,vec3{1,0,0}));
+   ejezpos->agregar(new Wall(pm_rot6));
+   agregar(ejezpos);
+
+}
+
+Wall::Wall(mat4 * &pm_rot){
+
+   NodoGrafoEscena  *pared = new NodoGrafoEscena();
+   pared->agregar(new RejillaY(20,20));
+   agregar(pared);
+
+   NodoGrafoEscena * cubo = new NodoGrafoEscena();
+   
+   cubo->agregar(translate(vec3(0.5,-0.25,0.5)));
+   cubo->agregar(scale(vec3(0.125,0.25,0.125)));
+   unsigned ind = cubo->agregar(rotate(0.0f,vec3{0,1,0}));
+   cubo->agregar(new Cubo());
+   agregar(cubo);
+   pm_rot = cubo->leerPtrMatriz(ind);
+
+}
+
+void GrafoCubos::fijarRot1( const float alpha ){
+    *pm_rot1 = rotate( alpha, vec3{0, 1, 0} );
+}
+
+void GrafoCubos::fijarRot2( const float alpha ){
+    *pm_rot2 = rotate( alpha, vec3{0, 1, 0} );
+}
+
+void GrafoCubos::fijarRot3( const float alpha ){
+    *pm_rot3 = rotate( alpha, vec3{0, 1, 0} );
+}
+
+void GrafoCubos::fijarRot4( const float alpha ){
+    *pm_rot4 = rotate( alpha, vec3{0, 1, 0} );
+}
+
+void GrafoCubos::fijarRot5( const float alpha ){
+    *pm_rot5 = rotate( alpha, vec3{0, 1, 0} );
+}
+
+void GrafoCubos::fijarRot6( const float alpha ){
+    *pm_rot6 = rotate( alpha, vec3{0, 1, 0} );
+}
+
+unsigned GrafoCubos::leerNumParametros() const {
+   return 6;
+}
+
+void GrafoCubos::actualizarEstadoParametro( const unsigned iParam, const float tSec ){
+    assert( iParam < leerNumParametros() );
+    switch (iParam)
+    {
+    case 0:
+         fijarRot1(2.5*tSec);
+         fijarRot2(2.5*tSec);
+         fijarRot3(2.5*tSec);
+         fijarRot4(2.5*tSec);
+         fijarRot5(2.5*tSec);
+         fijarRot6(2.5*tSec);
+      break;
+    }
+}
+
+// ****************************************************************************************************
 
 
 

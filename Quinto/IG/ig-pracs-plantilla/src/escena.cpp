@@ -41,6 +41,7 @@
 #include "camara.h"
 #include "materiales-luces.h"
 #include "escena.h"
+#include "grafo-escena.h"
 
 
 
@@ -364,6 +365,8 @@ Escena3::Escena3()
    using namespace std;
    cout << "Creando objetos de la práctica 3." << endl;
    // objetos.push_back(); pendiente
+   // objetos.push_back(new GrafoEstrellaX(6));
+   objetos.push_back(new GrafoCubos());
 }
 
 
