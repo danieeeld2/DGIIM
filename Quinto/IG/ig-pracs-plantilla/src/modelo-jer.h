@@ -27,16 +27,10 @@ class CuboCabeza : public MallaInd {
         CuboCabeza();
 };
 
-class CuerdaBrazo : public MallaRevol {
-    public:
-        CuerdaBrazo(const int num_verts_per, const unsigned nperfiles, float altura, float radio);
-};
-
 class Robot : public NodoGrafoEscena {
     protected:
         mat4 *pm_rot_cabeza = nullptr;
         mat4 *pm_rot_cuerpo = nullptr;
-        mat4 *pm_tras_cuerda = nullptr;
         mat4 *pm_tras_brazo1 = nullptr;
         mat4 *pm_rot_brazo2 = nullptr;
         mat4 *pm_tras_cuerpo = nullptr;

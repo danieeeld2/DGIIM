@@ -200,9 +200,22 @@ CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/sr
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/materiales-luces.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/materiales-luces.cpp -o CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/materiales-luces.cpp.s
 
+CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp.o: CMakeFiles/release_exe.dir/flags.make
+CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp.o -c /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp
+
+CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp > CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp.i
+
+CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp -o CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp.s
+
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.cpp.o: CMakeFiles/release_exe.dir/flags.make
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.cpp.o -c /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.cpp
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.cpp.i: cmake_force
@@ -215,7 +228,7 @@ CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/sr
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.cpp.o: CMakeFiles/release_exe.dir/flags.make
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.cpp.o -c /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.cpp
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.cpp.i: cmake_force
@@ -228,7 +241,7 @@ CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/sr
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/vaos-vbos.cpp.o: CMakeFiles/release_exe.dir/flags.make
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/vaos-vbos.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/vaos-vbos.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/vaos-vbos.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/vaos-vbos.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/vaos-vbos.cpp.o -c /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/vaos-vbos.cpp
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/vaos-vbos.cpp.i: cmake_force
@@ -241,7 +254,7 @@ CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/sr
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/cauce.cpp.o: CMakeFiles/release_exe.dir/flags.make
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/cauce.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/cauce.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/cauce.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/cauce.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/cauce.cpp.o -c /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/cauce.cpp
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/cauce.cpp.i: cmake_force
@@ -254,7 +267,7 @@ CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/ma
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/fbo.cpp.o: CMakeFiles/release_exe.dir/flags.make
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/fbo.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/fbo.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/fbo.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/fbo.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/fbo.cpp.o -c /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/fbo.cpp
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/fbo.cpp.i: cmake_force
@@ -267,7 +280,7 @@ CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/ma
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/ig-aux.cpp.o: CMakeFiles/release_exe.dir/flags.make
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/ig-aux.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/ig-aux.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/ig-aux.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/ig-aux.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/ig-aux.cpp.o -c /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/ig-aux.cpp
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/ig-aux.cpp.i: cmake_force
@@ -280,7 +293,7 @@ CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/ma
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-jpg.cpp.o: CMakeFiles/release_exe.dir/flags.make
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-jpg.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-jpg.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-jpg.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-jpg.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-jpg.cpp.o -c /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-jpg.cpp
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-jpg.cpp.i: cmake_force
@@ -293,7 +306,7 @@ CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/ma
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-ply.cpp.o: CMakeFiles/release_exe.dir/flags.make
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-ply.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-ply.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-ply.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-ply.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-ply.cpp.o -c /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-ply.cpp
 
 CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/materiales/src-cpp/lector-ply.cpp.i: cmake_force
@@ -317,6 +330,7 @@ release_exe_OBJECTS = \
 "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-ind.cpp.o" \
 "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-revol.cpp.o" \
 "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/materiales-luces.cpp.o" \
+"CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp.o" \
 "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.cpp.o" \
 "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.cpp.o" \
 "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/vaos-vbos.cpp.o" \
@@ -340,6 +354,7 @@ release_exe_EXTERNAL_OBJECTS =
 ../bin/release_exe: CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-ind.cpp.o
 ../bin/release_exe: CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-revol.cpp.o
 ../bin/release_exe: CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/materiales-luces.cpp.o
+../bin/release_exe: CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp.o
 ../bin/release_exe: CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.cpp.o
 ../bin/release_exe: CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.cpp.o
 ../bin/release_exe: CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/vaos-vbos.cpp.o
@@ -353,7 +368,7 @@ release_exe_EXTERNAL_OBJECTS =
 ../bin/release_exe: /usr/lib/x86_64-linux-gnu/libGLX.so
 ../bin/release_exe: /usr/lib/x86_64-linux-gnu/libOpenGL.so
 ../bin/release_exe: CMakeFiles/release_exe.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Linking CXX executable ../bin/release_exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/builds/linux/cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Linking CXX executable ../bin/release_exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/release_exe.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

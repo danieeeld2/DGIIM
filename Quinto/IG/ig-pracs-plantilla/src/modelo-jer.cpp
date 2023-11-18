@@ -20,16 +20,6 @@ Esferas::Esferas(const int num_verts_per, const unsigned nperfiles, float radio)
     inicializar(perfil,nperfiles);
 }
 
-CuerdaBrazo::CuerdaBrazo(const int num_verts_per, const unsigned nperfiles, float altura, float radio){
-    std::vector<glm::vec3> perfil = std::vector<glm::vec3>();
-
-    for(int i=0; i<num_verts_per; i++){
-        float div_altura = i*(altura/(num_verts_per-1));
-        perfil.push_back(glm::vec3(radio,div_altura,0.0));
-    }
-    inicializar(perfil,nperfiles);
-}
-
 ConoExtremidades::ConoExtremidades(const int num_verts_per, const unsigned nperfiles, float altura, float radio){
     vector<vec3> perfil = vector<vec3>();
     float altura_x = altura/(num_verts_per-1);
@@ -97,17 +87,10 @@ Robot::Robot(){
     cabeza->ponerColor({0.5,0.5,0.5});
     cabeza->agregar(new CuboCabeza());
 
-    NodoGrafoEscena *cuerda = new NodoGrafoEscena();
     NodoGrafoEscena *brazo1 = new NodoGrafoEscena();
     NodoGrafoEscena *brazo2 = new NodoGrafoEscena();
 
-    unsigned ind_tras_cuerda = cuerda->agregar(translate(vec3(0.0,0.0,0.0)));
-    cuerda->agregar(rotate(float(M_PI/2),vec3{0.0,0.0,1.0}));
-    cuerda->agregar(translate(vec3(0.0,0.9,0.0)));
-    cuerda->ponerColor({1.0,0.0,0.0});
-    cuerda->agregar(new CuerdaBrazo(20,20,0.15,0.05));
     unsigned ind_tras_brazo1 = brazo1->agregar(translate(vec3(0.0,0.0,0.0)));
-    brazo1->agregar(cuerda);
     brazo1->agregar(rotate(float(M_PI/2),vec3{0.0,0.0,1.0}));
     brazo1->agregar(translate(vec3(0.0,1.0,0.0)));
     brazo1->agregar(new ConoExtremidades(20,20,1.0,0.25));
@@ -123,7 +106,6 @@ Robot::Robot(){
     robot->agregar(brazo2);
     pm_rot_cabeza = cabeza->leerPtrMatriz(ind_rot_cabeza);
     pm_rot_cuerpo = cuerpo->leerPtrMatriz(ind_rot_cuerpo);
-    pm_tras_cuerda = cuerda->leerPtrMatriz(ind_tras_cuerda);
     pm_tras_brazo1 = brazo1->leerPtrMatriz(ind_tras_brazo1);
     pm_rot_brazo2 = brazo2->leerPtrMatriz(ind_tras_brazo2);
     agregar(robot);
@@ -141,7 +123,6 @@ void Robot::actualizarEstadoParametro(const unsigned iParam, const float t_sec){
             *pm_rot_cabeza *= rotate(float(M_PI/10000),vec3{0.0,1.0,0.0});
             break;
         case 1:
-            *pm_tras_cuerda = scale(vec3(0.5*sin(2*M_PI*t_sec)-0.5,0.0,0.0));
             *pm_tras_brazo1 = translate(vec3(0.5*sin(2*M_PI*t_sec)-0.5,0.0,0.0));
             break;
         case 2:
