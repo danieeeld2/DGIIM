@@ -496,6 +496,36 @@ home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.cpp.s:
 	$(MAKE) -f CMakeFiles/debug_exe.dir/build.make CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.cpp.s
 .PHONY : home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.cpp.s
 
+home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.o: home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o
+
+.PHONY : home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.o
+
+# target to build an object file
+home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o:
+	$(MAKE) -f CMakeFiles/release_exe.dir/build.make CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o
+	$(MAKE) -f CMakeFiles/debug_exe.dir/build.make CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o
+.PHONY : home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o
+
+home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.i: home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.i
+
+.PHONY : home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.i
+
+# target to preprocess a source file
+home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.i:
+	$(MAKE) -f CMakeFiles/release_exe.dir/build.make CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.i
+	$(MAKE) -f CMakeFiles/debug_exe.dir/build.make CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.i
+.PHONY : home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.i
+
+home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.s: home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.s
+
+.PHONY : home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.s
+
+# target to generate assembly for a file
+home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.s:
+	$(MAKE) -f CMakeFiles/release_exe.dir/build.make CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.s
+	$(MAKE) -f CMakeFiles/debug_exe.dir/build.make CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.s
+.PHONY : home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.s
+
 home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/main.o: home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/main.cpp.o
 
 .PHONY : home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/main.o
@@ -782,6 +812,9 @@ help:
 	@echo "... home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.o"
 	@echo "... home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.i"
 	@echo "... home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.s"
+	@echo "... home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.o"
+	@echo "... home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.i"
+	@echo "... home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.s"
 	@echo "... home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/main.o"
 	@echo "... home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/main.i"
 	@echo "... home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/main.s"

@@ -1,3 +1,6 @@
+// Nombre: Daniel, Apellidos: Alconchel Vázquez, Titulación: GIM.
+// email: danieeeld2@correo.ugr.es, DNI o pasaporte: 49617109Z
+
 // *********************************************************************
 // **
 // ** Asignatura: INFORMÁTICA GRÁFICA
@@ -62,6 +65,8 @@ void FGE_PulsarLevantarTecla( GLFWwindow* window, int key, int scancode, int act
       // 'ProcesaTeclaFuenteLuz', si devuelve 'true', forzar revisualizar escena (asignar 'revisualizar_escena')
       // .....
 
+      if( ProcesaTeclaFuenteLuz(apl->escenas[apl->ind_escena_act]->colFuentes(),key) ) 
+            apl->revisualizar_escena = true;
       return ; // finalizar la f.g.e, ya que si está la tecla L pulsada no se mira ninguna otra tecla.
    }
 

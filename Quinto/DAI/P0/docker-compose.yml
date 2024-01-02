@@ -1,0 +1,14 @@
+services:
+  app:
+    image: python:3.11-alpine
+    volumes:
+      - ./tests:/tests
+    working_dir: /tests
+
+mongo:
+  image: mongo:6.0
+  restart: always
+  volumes:
+    - ./datos:/data/db
+  ports:
+    - 27017:27017

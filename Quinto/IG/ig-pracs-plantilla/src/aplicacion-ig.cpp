@@ -1,3 +1,6 @@
+// Nombre: Daniel, Apellidos: Alconchel Vázquez, Titulación: GIM.
+// email: danieeeld2@correo.ugr.es, DNI o pasaporte: 49617109Z
+
 // *********************************************************************
 // **
 // ** Asignatura: INFORMÁTICA GRÁFICA
@@ -91,6 +94,7 @@ AplicacionIG::AplicacionIG()
    // hacer 'push_back' en el vector de escenas de una instancia de 'Escena4'
    // ......
 
+   escenas.push_back(new Escena4());
 
    // COMPLETAR: práctica 5: añadir escena de la práctica 5
    //
@@ -98,7 +102,7 @@ AplicacionIG::AplicacionIG()
    // ......
 
 
-
+   escenas.push_back(new Escena5());
 
    cout << "Objetos creados." << endl ;
 }

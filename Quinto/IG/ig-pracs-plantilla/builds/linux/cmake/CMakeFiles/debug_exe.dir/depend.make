@@ -71,6 +71,7 @@ CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/
 CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/escena.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/escena.cpp
 CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/escena.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/escena.h
 CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/escena.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.h
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/escena.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.h
 CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/escena.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-ind.h
 CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/escena.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-revol.h
 CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/escena.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/materiales-luces.h
@@ -118,6 +119,19 @@ CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/
 CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/materiales-luces.h
 CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.h
 CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/seleccion.h
+
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o: ../../../materiales/src-cpp/cauce.h
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o: ../../../materiales/src-cpp/fbo.h
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o: ../../../materiales/src-cpp/ig-aux.h
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o: ../../../materiales/src-cpp/lector-jpg.h
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o: ../../../src/vaos-vbos.h
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.h
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.h
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-ind.h
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-revol.h
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/materiales-luces.h
+CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o: /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.h
 
 CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/main.cpp.o: ../../../materiales/src-cpp/cauce.h
 CMakeFiles/debug_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/main.cpp.o: ../../../materiales/src-cpp/fbo.h

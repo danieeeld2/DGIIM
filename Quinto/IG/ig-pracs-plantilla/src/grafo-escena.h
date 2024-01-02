@@ -1,3 +1,6 @@
+// Nombre: Daniel, Apellidos: Alconchel Vázquez, Titulación: GIM.
+// email: danieeeld2@correo.ugr.es, DNI o pasaporte: 49617109Z
+
 // *********************************************************************
 // **
 // ** Asignatura: INFORMÁTICA GRÁFICA
@@ -76,6 +79,7 @@ class NodoGrafoEscena : public Objeto3D
    // .......
 
    std::vector<EntradaNGE> entradas ; // vector de entradas del nodo
+   bool centro_calculado = false ; // true si el centro está actualizado
 
    public:
 
@@ -157,6 +161,11 @@ class Wall : public NodoGrafoEscena
       Wall(glm::mat4 * &pm_rot);
 };
 
+
+class NodoCubo24 : public NodoGrafoEscena {
+   public:
+      NodoCubo24();
+};
 
 #endif // GRAFO_ESCENA_HPP
 

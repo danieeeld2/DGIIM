@@ -1,3 +1,6 @@
+// Nombre: Daniel, Apellidos: Alconchel Vázquez, Titulación: GIM.
+// email: danieeeld2@correo.ugr.es, DNI o pasaporte: 49617109Z
+
 // *********************************************************************
 // **
 // ** Gestión de la selección (implementación)
@@ -63,8 +66,11 @@ int LeerIdentEnPixel( int xpix, int ypix )
    // COMPLETAR: práctica 5: leer el identificador codificado en el color del pixel (x,y)
    // .....(sustituir el 'return 0' por lo que corresponda)
    // .....
-
-   return 0 ;
+   unsigned char bytes[3] ; // para guardar los tres bytes
+   // leer los 3 bytes del frame-buffer
+   glReadPixels( xpix,ypix, 1,1, GL_RGB,GL_UNSIGNED_BYTE, (void *)bytes);
+   // reconstruir el identificador y devolverlo:
+   return int(bytes[0]) + ( int(0x100U)*int(bytes[1]) ) + ( int(0x10000U)*int(bytes[2]) ) ;
 
 }
 
@@ -78,7 +84,6 @@ int LeerIdentEnPixel( int xpix, int ypix )
 
 bool AplicacionIG::seleccion( int x, int y ) 
 {
-   
    using namespace std ;
    using namespace glm ;
 
@@ -97,25 +102,32 @@ bool AplicacionIG::seleccion( int x, int y )
    //        el tamaño actual de la ventana en dos parámetros)
    //      * Activar el framebuffer, con su método 'activar'.
    // .......
+   if (apl->fbo == nullptr)
+      apl->fbo = new Framebuffer(ventana_tam_x, ventana_tam_y);
 
+   apl->fbo->activar(ventana_tam_x, ventana_tam_y);
 
    // (2) Visualizar la escena actual en modo selección. Se usará el método 'visualizarGL_Seleccion' de la clae 'Escena'
    //     
    // .......
+   escena->visualizarGL_Seleccion();
 
 
    // (3) Leer el identificador del pixel en las coordenadas (x,y), se usa 'LeerIdentEnPixel'.
    // .......
-
-
+   int ident = LeerIdentEnPixel(x, y);
+   
    // (4) Desactivar el FBO (vuelve a activar el FBO por defecto, con nombre '0'), 
    //     se usa el método 'desactivar' del FBO
    // .......
-
+   apl->fbo->desactivar();
 
    // (5) Si el identificador del pixel es 0, imprimir mensaje y terminar (devolver 'false')
    // .......
-
+   if (ident == 0) {
+      cout << "No se ha pinchado ningun objeto seleccionable" << endl;
+      return false;
+   }
 
    // (6) Buscar el identificdor en el objeto raiz de la escena y ejecutar 'cuandoClick',
    //     Para ello se dan estos pasos:
@@ -126,6 +138,14 @@ bool AplicacionIG::seleccion( int x, int y )
    //       el mismo valor devuelto por 'cuandoClick'.
    //
    // .......
+   Objeto3D* raiz = escena->objetoActual();
+   Objeto3D* target = nullptr;
+   vec3 centro = vec3(0.0, 0.0, 0.0);
+   glm::mat4 *iMat = new mat4(1.0f);
+
+   if (raiz->buscarObjeto(ident, *iMat, &target, centro)) {
+      return target->cuandoClick(centro);
+   }
 
 
    // si el flujo de control llega aquí, es que no se encuentra ese identificador, devolver false:

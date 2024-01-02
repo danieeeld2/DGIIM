@@ -1,5 +1,5 @@
-// Daniel Alconchel Vázquez 
-// Informática y Matemáticas
+// Nombre: Daniel, Apellidos: Alconchel Vázquez, Titulación: GIM.
+// email: danieeeld2@correo.ugr.es, DNI o pasaporte: 49617109Z
 
 #ifndef MODELO_JER_HPP
 #define MODELO_JER_HPP

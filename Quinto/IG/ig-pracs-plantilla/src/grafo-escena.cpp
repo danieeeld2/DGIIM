@@ -1,3 +1,6 @@
+// Nombre: Daniel, Apellidos: Alconchel Vázquez, Titulación: GIM.
+// email: danieeeld2@correo.ugr.es, DNI o pasaporte: 49617109Z
+
 // *********************************************************************
 // **
 // ** Asignatura: INFORMÁTICA GRÁFICA
@@ -100,6 +103,9 @@ void NodoGrafoEscena::visualizarGL(  )
    Cauce *          cauce           = apl->cauce ;           assert( cauce != nullptr );
    PilaMateriales * pila_materiales = apl->pila_materiales ; assert( pila_materiales != nullptr );
 
+   if (apl->iluminacion)
+      pila_materiales->push();
+
    // COMPLETAR: práctica 3: implementar la visualización del nodo
    //
    // Se deben de recorrer las entradas y llamar recursivamente de visualizarGL, pero 
@@ -117,32 +123,42 @@ void NodoGrafoEscena::visualizarGL(  )
       cauce->fijarColor(leerColor());
    }
 
-   // 2. Guardar copia de la matriz de modelado (con 'pushMM'), 
+  
 
+   // 2. Guardar copia de la matriz de modelado (con 'pushMM'), 
    cauce->pushMM();
 
    // 3. Para cada entrada del vector de entradas:
    //     - si la entrada es de tipo objeto: llamar recursivamente a 'visualizarGL'
    //     - si la entrada es de tipo transformación: componer la matriz (con 'compMM')
-
-   for(int i = 0; i < entradas.size(); i++){
-      if(entradas[i].tipo == TipoEntNGE::objeto){
-         entradas[i].objeto->visualizarGL();
-      }else if(entradas[i].tipo == TipoEntNGE::transformacion){
-         cauce->compMM(*(entradas[i].matriz));
+    for( unsigned i = 0 ; i < entradas.size() ; i++ )
+      {
+      switch( entradas[i].tipo )
+         {
+         case TipoEntNGE::objeto : // entrada objeto:
+            entradas[i].objeto->visualizarGL();//llamar recursivamente a visualizarGL
+         break ;
+         case TipoEntNGE::transformacion : // entrada transf.:
+            cauce->compMM( *(entradas[i].matriz)); // componer matriz
+         break ;
+         case TipoEntNGE::material : // si la entrada es de tipo ’material’
+            if ( apl->iluminacion ) // y si está activada la iluminación
+            pila_materiales->activar( entradas[i].material );
+         break ;
       }
    }
 
-   // 4. Restaurar la copia guardada de la matriz de modelado (con 'popMM')
 
+   // 4. Restaurar la copia guardada de la matriz de modelado (con 'popMM')
    cauce->popMM();
+   
 
    // 5. Si el objeto tiene color asignado:
    //     - restaurar el color original a la entrada (con 'popColor')
-
    if(tieneColor()){
       cauce->popColor();
    }
+
 
 
    // COMPLETAR: práctica 4: añadir gestión de los materiales cuando la iluminación está activada    
@@ -152,8 +168,9 @@ void NodoGrafoEscena::visualizarGL(  )
    //   1. al inicio, hacer 'push' de la pila de materiales (guarda material actual en la pila)
    //   2. si una entrada es de tipo material, activarlo usando a pila de materiales
    //   3. al finalizar, hacer 'pop' de la pila de materiales (restaura el material activo al inicio)
-
-   // ......
+   if (apl->iluminacion){
+      pila_materiales->pop();
+   }
 
 
 }
@@ -215,9 +232,18 @@ void NodoGrafoEscena::visualizarNormalesGL(  )
    // en cuenta estos puntos:
    //
    // - usar push/pop de la matriz de modelado al inicio/fin (al igual que en visualizatGL)
+   cauce->pushMM();
    // - recorrer las entradas, llamando recursivamente a 'visualizarNormalesGL' en los nodos u objetos hijos
+   for (int i = 0; i < entradas.size(); i++) {
+      if (entradas[i].tipo == TipoEntNGE::objeto)
+         entradas[i].objeto->visualizarNormalesGL();
+      else if (entradas[i].tipo == TipoEntNGE::transformacion)
+         cauce->compMM(*entradas[i].matriz);
+   }
    // - ignorar el color o identificador del nodo (se supone que el color ya está prefijado antes de la llamada)
    // - ignorar las entradas de tipo material, y la gestión de materiales (se usa sin iluminación)
+
+   cauce->popMM();
 
    // .......
 
@@ -238,15 +264,34 @@ void NodoGrafoEscena::visualizarModoSeleccionGL()
    // 
    // 2. Leer identificador (con 'leerIdentificador'), si el identificador no es -1 
    //      + Guardar una copia del color actual del cauce (con 'pushColor')
-   //      + Fijar el color del cauce de acuerdo al identificador, (usar 'ColorDesdeIdent'). 
+   //      + Fijar el color del cauce de acuerdo al identificador, (usar 'ColorDesdeIdent').
+   int ident = leerIdentificador();
+   if (ident != -1) {
+      cauce->pushColor();
+      cauce->fijarColor(ColorDesdeIdent(ident));
+   }
+
    // 3. Guardar una copia de la matriz de modelado (con 'pushMM')
+   cauce->pushMM();
+
    // 4. Recorrer la lista de nodos y procesar las entradas transformación o subobjeto:
    //      + Para las entradas subobjeto, invocar recursivamente a 'visualizarModoSeleccionGL'
    //      + Para las entradas transformación, componer la matriz (con 'compMM')
+   for (int i = 0; i < entradas.size(); i++) {
+      if (entradas[i].tipo == TipoEntNGE::objeto)
+         entradas[i].objeto->visualizarModoSeleccionGL();
+      else if (entradas[i].tipo == TipoEntNGE::transformacion)
+         cauce->compMM(*entradas[i].matriz);
+   }
+
    // 5. Restaurar la matriz de modelado original (con 'popMM')   
+   cauce->popMM();
+
    // 6. Si el identificador no es -1, restaurar el color previo del cauce (con 'popColor')
    //
    // ........
+   if (ident != -1)
+      cauce->popColor();
 
 
 }
@@ -328,6 +373,30 @@ void NodoGrafoEscena::calcularCentroOC()
    //    en coordenadas de objeto (hay que hacerlo recursivamente)
    //   (si el centro ya ha sido calculado, no volver a hacerlo)
    // ........
+   
+   if (centro_calculado)
+      return;
+   
+   int contadorCentros = 0;
+   mat4 matrizModelado(1.0f);
+   vec3 centroAcumulado = vec3(0.0, 0.0, 0.0);
+
+   for (unsigned int i = 0; i < entradas.size(); i++){
+      if (entradas[i].tipo == TipoEntNGE::transformacion){
+         matrizModelado = matrizModelado * (*entradas[i].matriz);
+      }
+      else if (entradas[i].tipo == TipoEntNGE::objeto){
+         entradas[i].objeto->calcularCentroOC();
+         centroAcumulado = centroAcumulado + vec3(matrizModelado * vec4(entradas[i].objeto->leerCentroOC(),1.0f));
+         contadorCentros++;
+      }
+   }
+
+   for (int i = 0; i < 3; i++) {
+      centroAcumulado[i] /= contadorCentros;
+   }
+   ponerCentroOC( centroAcumulado);
+   centro_calculado = true;
 
 }
 // -----------------------------------------------------------------------------
@@ -351,15 +420,30 @@ bool NodoGrafoEscena::buscarObjeto
 
    // 1. calcula el centro del objeto, (solo la primera vez)
    // ........
+   calcularCentroOC();
 
 
    // 2. si el identificador del nodo es el que se busca, ya está (terminar)
    // ........
+   if (ident_busc == leerIdentificador()) {
+      *objeto = this;
+      centro_wc = leerCentroOC();
+      return true;
+   }
 
 
    // 3. El nodo no es el buscado: buscar recursivamente en los hijos
    //    (si alguna llamada para un sub-árbol lo encuentra, terminar y devolver 'true')
    // ........
+   mat4 matrizmod = mmodelado;
+
+   for(int i=0; i<entradas.size(); i++){
+        if(entradas[i].tipo == TipoEntNGE::objeto){
+            if(entradas[i].objeto->buscarObjeto(ident_busc, matrizmod, objeto, centro_wc)) return true;
+        }
+        else if(entradas[i].tipo == TipoEntNGE::transformacion) matrizmod = matrizmod*(*entradas[i].matriz);
+   }
+
 
 
    // ni este nodo ni ningún hijo es el buscado: terminar
@@ -477,7 +561,10 @@ void GrafoCubos::actualizarEstadoParametro( const unsigned iParam, const float t
 // ****************************************************************************************************
 
 
-
+NodoCubo24::NodoCubo24(){
+   agregar( new Material( new Textura("window-icon.jpg") , 0.5, 0.3, 0.7, 100.0) );
+   agregar( new Cubo24() );
+}
 
 
 

@@ -1,3 +1,6 @@
+// Nombre: Daniel, Apellidos: Alconchel Vázquez, Titulación: GIM.
+// email: danieeeld2@correo.ugr.es, DNI o pasaporte: 49617109Z
+
 // *********************************************************************
 // **
 // ** Asignatura: INFORMÁTICA GRÁFICA
@@ -202,6 +205,14 @@ class MallaTorre : public MallaInd
 {
    public:
       MallaTorre(unsigned n);
+};
+
+// ---------------------------------------------------------------------
+
+class Cubo24: public MallaInd
+{
+   public:
+      Cubo24();
 };
 
 #endif

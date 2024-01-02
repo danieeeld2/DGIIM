@@ -13,6 +13,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/eventos-raton.cpp.o"
   "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/eventos-teclado.cpp.o"
   "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.cpp.o"
+  "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp.o"
   "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/main.cpp.o"
   "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-ind.cpp.o"
   "CMakeFiles/release_exe.dir/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-revol.cpp.o"

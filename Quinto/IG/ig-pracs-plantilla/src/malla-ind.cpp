@@ -1,3 +1,6 @@
+// Nombre: Daniel, Apellidos: Alconchel Vázquez, Titulación: GIM.
+// email: danieeeld2@correo.ugr.es, DNI o pasaporte: 49617109Z
+
 // *********************************************************************
 // **
 // ** Asignatura: INFORMÁTICA GRÁFICA
@@ -32,6 +35,8 @@
 #include "lector-ply.h"
 #include "seleccion.h"   // para 'ColorDesdeIdent' 
 
+using namespace std ;
+using namespace glm ;
 
 // *****************************************************************************
 // funciones auxiliares
@@ -71,6 +76,25 @@ void MallaInd::calcularNormalesTriangulos()
    // COMPLETAR: Práctica 4: creación de la tabla de normales de triángulos
    // ....
 
+
+   for (int i = 0; i < nt; i++) {
+      vec3 p = vertices[triangulos[i][0]];
+      vec3 q = vertices[triangulos[i][1]];
+      vec3 r = vertices[triangulos[i][2]];
+
+      vec3 a = q - p;
+      vec3 b = r - p;
+
+      vec3 m_c = cross(a, b);
+
+      vec3 n_c;
+      if (length(m_c) != 0.0)
+         n_c = normalize(m_c);
+      else
+         n_c = vec3(0.0, 0.0, 0.0);
+
+      nor_tri.push_back(n_c);
+   }
 }
 
 
@@ -84,7 +108,21 @@ void MallaInd::calcularNormales()
    // se debe invocar en primer lugar 'calcularNormalesTriangulos'
    // .......
 
+   calcularNormalesTriangulos();
 
+   nor_ver = std::vector<vec3>(vertices.size(), vec3(0.0, 0.0, 0.0));
+
+   for (int i = 0; i < triangulos.size(); i++) {
+      for (int j = 0; j < 3; j++) {
+         unsigned indice_vertice = triangulos[i][j];
+
+         nor_ver[indice_vertice] = nor_ver[indice_vertice] + nor_tri[i];
+      }
+   }
+
+   for (int i = 0; i < nor_ver.size(); i++)
+      if (length(nor_ver[i]) != 0.0)
+         nor_ver[i] = normalize(nor_ver[i]);
 }
 
 
@@ -212,20 +250,25 @@ void MallaInd::visualizarNormalesGL(  )
    // 
    // *1* Si el puntero al descriptor de VAO de normales ('dvao_normales') es nulo, 
    //    debemos de crear dicho descriptor, con estos pasos:
+   if (dvao_normales == nullptr) {
    //
    //       * Para cada posición 'v_i' de un vértice en el vector 'vertices':
    //             - Leer la correspondiente normal 'n_i' del vector de normales ('nor_ver').
    //             - Añadir 'v_i' al vector 'segmentos_normales'.
    //             - Añadir 'v_i+a*n_i' al vector 'segmentos_normales'.
-   //
+      for (int i = 0; i < vertices.size(); i++) {
+         segmentos_normales.push_back(vertices[i]);
+         segmentos_normales.push_back(vertices[i] + (0.35f * nor_ver[i]));
+      }
    //       * Crear el objeto descriptor del VAO de normales, para ello se usa el vector 
    //          'segmentos_normales' y se tiene en cuenta que esa descriptor únicamente gestiona 
    //          una tabla de atributos de vértices (la de posiciones, ya que las otras no se 
    //          necesitan).
-   // 
+      dvao_normales = new DescrVAO(numero_atributos_cauce, new DescrVBOAtribs(ind_atrib_posiciones, segmentos_normales));
+   }
    // *2* Visualizar el VAO de normales, usando el método 'draw' del descriptor, con el 
    //       tipo de primitiva 'GL_LINES'.
-
+   dvao_normales->draw(GL_LINES);
    //  ..........
 
 }
@@ -250,8 +293,16 @@ void MallaInd::visualizarModoSeleccionGL()
    //       + Hacer push del color del cauce, con 'pushColor'.
    //       + Fijar el color del cauce (con 'fijarColor') usando un color obtenido a 
    //         partir del identificador (con 'ColorDesdeIdent'). 
+   int ident = leerIdentificador();
+   if (ident != -1) {
+      cauce->pushColor();
+      cauce->fijarColor(ColorDesdeIdent(ident));
+   }
    // 2. Invocar 'visualizarGeomGL' para visualizar la geometría.
-   // 3. Si tiene identificador: hacer pop del color, con 'popColor'.
+   visualizarGeomGL();
+      // 3. Si tiene identificador: hacer pop del color, con 'popColor'.
+   if (ident != -1)  
+      cauce->popColor();
    //
 
 }
@@ -271,6 +322,8 @@ MallaPLY::MallaPLY( const std::string & nombre_arch )
 
    // COMPLETAR: práctica 4: invocar  a 'calcularNormales' para el cálculo de normales
    // .................
+
+   calcularNormales();
 
 }
 
@@ -305,6 +358,8 @@ Cubo::Cubo()
          {1,5,7}, {1,7,3}  // Z+ (+1)
       } ;
 
+      calcularNormales();
+
 }
 
 Tetraedro::Tetraedro()
@@ -321,7 +376,7 @@ Tetraedro::Tetraedro()
       {0,1,2}, {0,1,3}, {1,2,3}, {0,2,3}
    };
 
-   ponerColor({0.5, 0.5, 0.5});
+   calcularNormales();
 }
 
 // -----------------------------------------------------------------------------------------------
@@ -578,4 +633,96 @@ MallaTorre::MallaTorre(unsigned n)
       triangulos.push_back({j-4, j, j+3});
    }
    
+}
+Cubo24::Cubo24() {
+   vertices =
+      {
+         {+1.0, -1.0, +1.0}, // 0
+         {+1.0, +1.0, +1.0}, // 1
+         {+1.0, +1.0, -1.0}, // 2
+         {+1.0, -1.0, -1.0}, // 3
+
+
+         {-1.0, -1.0, +1.0}, // 4
+         {-1.0, +1.0, +1.0}, // 5
+         {+1.0, +1.0, +1.0}, // 6
+         {+1.0, -1.0, +1.0}, // 7
+
+
+         {-1.0, -1.0, -1.0}, // 8
+         {-1.0, +1.0, -1.0}, // 9
+         {-1.0, +1.0, +1.0}, // 10
+         {-1.0, -1.0, +1.0}, // 11
+
+         {+1.0, -1.0, -1.0}, // 12
+         {+1.0, +1.0, -1.0}, // 13
+         {-1.0, +1.0, -1.0}, // 14
+         {-1.0, -1.0, -1.0}, // 15
+
+
+         {+1.0, +1.0, +1.0}, // 16
+         {-1.0, +1.0, +1.0}, // 17
+         {-1.0, +1.0, -1.0}, // 18
+         {+1.0, +1.0, -1.0}, // 19
+
+         {+1.0, -1.0, +1.0}, // 20
+         {-1.0, -1.0, +1.0}, // 21
+         {-1.0, -1.0, -1.0}, // 22
+         {+1.0, -1.0, -1.0} // 23
+      };
+
+   triangulos =
+      {
+         {0, 3, 2},
+         {0, 2, 1},
+
+         {4, 7, 6},
+         {4, 6, 5},
+
+         {8, 11, 10},
+         {8, 10, 9},
+
+         {12, 15, 14},
+         {12, 14, 13},
+
+         {16, 19, 18},
+         {16, 18, 17},
+
+         {20, 23, 22},
+         {20, 22, 21}
+      };
+      
+   cc_tt_ver = {
+      {0.0, 1.0-0.0},
+      {0.0, 1.0-1.0},
+      {1.0, 1.0-1.0},
+      {1.0, 1.0-0.0},
+
+      {0.0, 1.0-0.0},
+      {0.0, 1.0-1.0},
+      {1.0, 1.0-1.0},
+      {1.0, 1.0-0.0},
+
+      {0.0, 1.0-0.0},
+      {0.0, 1.0-1.0},
+      {1.0, 1.0-1.0},
+      {1.0, 1.0-0.0},
+
+      {0.0, 1.0-0.0},
+      {0.0, 1.0-1.0},
+      {1.0, 1.0-1.0},
+      {1.0, 1.0-0.0},
+
+      {0.0, 1.0-0.0},
+      {0.0, 1.0-1.0},
+      {1.0, 1.0-1.0},
+      {1.0, 1.0-0.0},
+
+      {0.0, 1.0-0.0},
+      {0.0, 1.0-1.0},
+      {1.0, 1.0-1.0},
+      {1.0, 1.0-0.0}
+   };
+
+   calcularNormales();
 }

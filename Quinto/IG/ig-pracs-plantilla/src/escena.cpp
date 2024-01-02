@@ -1,3 +1,6 @@
+// Nombre: Daniel, Apellidos: Alconchel Vázquez, Titulación: GIM.
+// email: danieeeld2@correo.ugr.es, DNI o pasaporte: 49617109Z
+
 // *********************************************************************
 // **
 // ** Asignatura: INFORMÁTICA GRÁFICA
@@ -43,6 +46,7 @@
 #include "escena.h"
 #include "grafo-escena.h"
 #include "modelo-jer.h"
+#include "latapeones.h"
 
 
 
@@ -59,12 +63,19 @@ Escena::Escena()
    //
    // ...
 
+   col_fuentes = new Col2Fuentes();
+   material_ini = new Material(0.4f, 0.8f, 0.0f, 2.0f);
+
 
    // COMPLETAR: práctica 5: añadir varias cámaras perspectiva y ortogonales al vector de cámaras de la escena
    //
    // Añadir sentencias 'push_back' para añadir varias cámaras al vector 'camaras'.
    // Eliminar este 'push_back' de la cámara orbital simple ('CamaraOrbitalSimple') por varias cámaras de 3 modos ('Camara3Modos')
-   camaras.push_back( new CamaraOrbitalSimple() );
+   // camaras.push_back( new CamaraOrbitalSimple() );
+   camaras.push_back(new Camara3Modos(true, *(new vec3({2.0, 2.0, 2.0})), 1.0, *(new vec3({0.0, 0.0, 0.0})), 60.0));
+   camaras.push_back(new Camara3Modos(false, *(new vec3({5.0, 5.0, 5.0})), 1.0, *(new vec3({0.0, 0.0, 0.0})), 60.0));
+   camaras.push_back(new Camara3Modos(false, *(new vec3({-2.5, 2.5, 2.5})), 1.0, *(new vec3({0.0, 0.0, 0.0})), 50.0));
+   camaras.push_back(new Camara3Modos(true, *(new vec3({5.0, -2.5, 5.0})), 1.0, *(new vec3({0.5, 3.0, 0.0})), 70.0));
 
 }
 // -----------------------------------------------------------------------------------------------
@@ -146,6 +157,12 @@ void Escena::visualizarGL( )
       // * activar el material inicial (usando 'pila_materiales')
       // ....
 
+      cauce->fijarEvalMIL(true);
+
+       col_fuentes->activar();
+      // // * activar el material inicial (usando 'pila_materiales')
+       apl->pila_materiales->activar(material_ini);
+
    }
    else // si la iluminación no está activada, deshabilitar MIL y texturas
    {  
@@ -207,6 +224,8 @@ void Escena::visualizarGL_Seleccion(  )
    //       + fijar el modo de polígonos a 'relleno', con 'glPolygonMode'
    //
    // ........
+   glViewport(0, 0, apl->ventana_tam_x, apl->ventana_tam_y);
+   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
    // (2) Activar  y configurar el cauce:
@@ -214,19 +233,24 @@ void Escena::visualizarGL_Seleccion(  )
    //      + Desactivar iluminación y texturas en el cauce
    //      + Poner el color actual del cauce a '0' (por defecto los objetos no son seleccionables)
    // ........
-
+   cauce->activar();
+   cauce->fijarEvalMIL(false);
+   cauce->fijarEvalText(false);
+   cauce->fijarColor(vec4(0.0, 0.0, 0.0, 1.0));
 
    // (3) Limpiar el framebuffer (color y profundidad) con color (0,0,0) (para indicar que en ningún pixel hay nada seleccionable)
    // ........
-
+   glClearColor(0,0,0,1);
+   glClear(GL_DEPTH_BUFFER_BIT);
 
    // (4) Recuperar la cámara actual (con 'camaraActual') y activarla en el cauce, 
    // ........
-
+   camaraActual()->activar(*cauce);
 
    // (5) Recuperar (con 'objetoActual') el objeto raíz actual de esta escena y 
    //     visualizarlo con 'visualizarModoSeleccionGL'.
    // ........
+   objetoActual()->visualizarModoSeleccionGL();
 
 }
 
@@ -251,6 +275,10 @@ void Escena::visualizarNormales(  )
 
    // ......
 
+   apl->cauce->fijarEvalMIL(false);
+   apl->cauce->fijarEvalText(false);
+   apl->cauce->fijarColor(1.0,1.0,1.0);
+   objetoActual()->visualizarNormalesGL();
 }
 
 
@@ -312,7 +340,7 @@ Escena1::Escena1()
    using namespace std ;
    cout << "Creando objetos de la práctica 1." << endl ;
 
-   objetos.push_back( new Cubo() );
+   
 
    // COMPLETAR: práctica 1: añadir resto de objetos a la escena 1
    //
@@ -321,6 +349,8 @@ Escena1::Escena1()
    // 
    // .......
 
+   // objetos.push_back(new P1MallaCubo());
+   objetos.push_back( new Cubo() );
    objetos.push_back(new Tetraedro());
    objetos.push_back(new CuboColores());
    objetos.push_back(new EstrellaZ(6));
@@ -339,6 +369,7 @@ Escena2::Escena2()
 {
    using namespace std;
    cout << "Creando objetos de la práctica 2." << endl;
+   // objetos.push_back(new P2Rejilla(20,20));
    objetos.push_back(new MallaPLY("../plys/beethoven.ply"));
    objetos.push_back(new MallaPLY("../plys/big_dodge.ply"));
    int nperfiles = 100; // Número de perfiles
@@ -366,6 +397,7 @@ Escena3::Escena3()
    using namespace std;
    cout << "Creando objetos de la práctica 3." << endl;
    // objetos.push_back(); pendiente
+   // objetos.push_back(new P3Caja());
    objetos.push_back(new Robot());
    // objetos.push_back(new GrafoEstrellaX(6));
    objetos.push_back(new GrafoCubos());
@@ -380,6 +412,15 @@ Escena3::Escena3()
 // los objetos que se indican en el guion de la práctica 4
 // .......
 
+Escena4::Escena4()
+{
+   using namespace std;
+   cout << "Creando objetos de la práctica 4" << endl;
+
+   objetos.push_back(new LataPeones());
+   objetos.push_back(new NodoCubo24());
+}
+
 
 
 // ----------------------------------------------------------------------
@@ -389,5 +430,10 @@ Escena3::Escena3()
 // los objetos que se indican en el guion de la práctica 5
 // .......
 
+Escena5::Escena5() {
+   using namespace std;
+   cout << "Creando objetos de la práctica 4" << endl;
 
+   objetos.push_back(new VariasLatasPeones());
+}
 

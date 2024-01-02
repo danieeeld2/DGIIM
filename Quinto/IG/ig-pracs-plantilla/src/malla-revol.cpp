@@ -1,3 +1,6 @@
+// Nombre: Daniel, Apellidos: Alconchel Vázquez, Titulación: GIM.
+// email: danieeeld2@correo.ugr.es, DNI o pasaporte: 49617109Z
+
 // *********************************************************************
 // **
 // ** Asignatura: INFORMÁTICA GRÁFICA
@@ -35,9 +38,6 @@ using namespace std ;
 
 // *****************************************************************************
 
-
-
-
 // Método que crea las tablas de vértices, triángulos, normales y cc.de.tt.
 // a partir de un perfil y el número de copias que queremos de dicho perfil.
 void MallaRevol::inicializar
@@ -47,6 +47,50 @@ void MallaRevol::inicializar
 )
 {
    using namespace glm ;
+   using namespace std;
+
+   // COMPLETAR: práctica 4: creación de las normales y materiales/texturas
+   vector<vec3> normales_m;
+
+   //Aristas
+   for (int i = 0; i < perfil.size()-1; i++) {
+      float v_1 = (perfil[i+1] - perfil[i])[0];
+      float v_2 = (perfil[i+1] - perfil[i])[1];
+      vec3 m_i(vec3(v_2, -v_1, 0.0f));
+
+      if (length(m_i) != 0.0)
+         m_i = normalize(m_i);
+      
+      normales_m.push_back(m_i);
+   }
+
+   //Vértices
+   vector<vec3> normales_n;
+
+   normales_n.push_back(normales_m[0]);
+   for (int i = 1; i < perfil.size()-1; i++) {
+      normales_n.push_back(normalize(normales_m[i-1] + normales_m[i]));
+   }
+
+   normales_n.push_back(normales_m[perfil.size() - 2]);
+
+   //Vectores d y t
+   vector<float> d, t, sumas_parciales;
+   float suma_total;
+
+   for (int i = 0; i < perfil.size()-1; i++) {
+      d.push_back(sqrt(length(perfil[i+1] - perfil[i])));
+   }
+
+   sumas_parciales.push_back(0.0f);
+   for (int i = 1; i < perfil.size(); i++) {
+      sumas_parciales.push_back(sumas_parciales[i-1] + d[i-1]);
+   }
+
+   suma_total = sumas_parciales[perfil.size()-1];
+   t.push_back(0.0f);
+   for (int i = 1; i < perfil.size(); i++)
+      t.push_back(sumas_parciales[i] / suma_total);
    
    // COMPLETAR: práctica 2: implementar algoritmo de creación de malla de revolución
    //
@@ -55,33 +99,41 @@ void MallaRevol::inicializar
    //
    // ............................... 
 
-   // Partimos de las tablas de vértices y triángulos vacías
-   vertices = std::vector<glm::vec3>();
-   triangulos = std::vector<glm::uvec3>();
-   unsigned int m = perfil.size();
-   unsigned int n = num_copias;
+   //Rellenamos la tabla de vertices
+   for (int i = 0; i < num_copias; i++) {
+      for (int j = 0; j < perfil.size(); j++) {
+         float tita = (2*M_PI*i)/(num_copias - 1);
 
-   // Completamos vértices
-   for(unsigned int i=0; i<n; i++){
-      for(unsigned int j=0; j<m; j++){
-         // Obtener las coordenadas del punto perfil[j] girado 2pi*i/(n-1) sobre eje Y
-         glm::vec3 q,p_j = perfil[j];
-         float c = cos(float(2*M_PI*i)/(n-1));
-         float s = sin(float(2*M_PI*i)/(n-1));
-         q[0] = c*p_j[0] + s*p_j[2];
-         q[1] = p_j[1];
-         q[2] = -s*p_j[0] + c*p_j[2];
+         std::vector<std::vector<float>> matriz_giro = 
+         {  {cos(tita), 0.0, sin(tita)},
+            {0 ,1, 0},
+            {-sin(tita), 0, cos(tita)},
+         };
 
-         vertices.push_back(q);
+         glm::vec3 nuevo_vertice = {
+            matriz_giro[0][0]*perfil[j][0] + matriz_giro[0][1]*perfil[j][1] + matriz_giro[0][2]*perfil[j][2],
+            matriz_giro[1][0]*perfil[j][0] + matriz_giro[1][1]*perfil[j][1] + matriz_giro[1][2]*perfil[j][2],
+            matriz_giro[2][0]*perfil[j][0] + matriz_giro[2][1]*perfil[j][1] + matriz_giro[2][2]*perfil[j][2],
+         };
+
+         vertices.push_back(nuevo_vertice);
+
+         // PRACTICA 4
+         vec3 aux = vec3(normales_n[j][0] * cos(tita), normales_n[j][1], -normales_n[j][0] * sin(tita));
+         if (length(aux) != 0.0)
+            normalize(aux);
+         nor_ver.push_back(aux);
+         
+         cc_tt_ver.push_back({float(i) / (num_copias-1), 1-t[j]});
       }
    }
+   // Rellenamos la tabla de triangulos
+   for (int i = 0; i < num_copias-1; i++) {
+      for (int j = 0; j < perfil.size() - 1; j++) {
+         int k = i * perfil.size() + j;
 
-   // Completamos triángulos
-   for (unsigned int i = 0; i < n-1; i++){
-      for (unsigned int j = 0; j < m-1; j++){
-         unsigned int k = i*m + j;
-         triangulos.push_back({k, k+m, k+m+1});
-         triangulos.push_back({k, k+m+1, k+1});
+         triangulos.push_back({k, k + perfil.size(), k + perfil.size() + 1});
+         triangulos.push_back({k, k + perfil.size() + 1, k + 1});
       }
    }
 
