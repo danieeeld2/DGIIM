@@ -108,14 +108,6 @@ materiales-luces.h
 malla-revol.h
 /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-revol.h
 
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.cpp
-latapeones.h
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.h
-
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/latapeones.h
-grafo-escena.h
-/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.h
-
 /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-ind.h
 vector
 -
@@ -141,6 +133,28 @@ ig-aux.h
 /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/ig-aux.h
 lector-jpg.h
 /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/lector-jpg.h
+
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.cpp
+grafo-escena.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.h
+malla-ind.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-ind.h
+ig-aux.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/ig-aux.h
+malla-revol.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-revol.h
+modelo-jer.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.h
+
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/modelo-jer.h
+grafo-escena.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/grafo-escena.h
+malla-ind.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-ind.h
+ig-aux.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/ig-aux.h
+malla-revol.h
+/home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/malla-revol.h
 
 /home/daniel/Git/DGIIM/Quinto/IG/ig-pracs-plantilla/src/objeto3d.h
 string

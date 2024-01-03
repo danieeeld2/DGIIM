@@ -176,12 +176,30 @@ Cilindro::Cilindro(const int num_verts_per, const unsigned nperfiles){
 
 Esfera::Esfera(const int num_verts_per, const unsigned nperfiles){
    ponerNombre("esfera");
-   std::vector<glm::vec3> perfil = std::vector<glm::vec3>();
-   float perimetro = (2*M_PI*1.0/(num_verts_per-1));
-   for(int i=0; i<num_verts_per; i++){
-      perfil.push_back(glm::vec3(cos(i*perimetro),sin(i*perimetro),0.0));
+   float radio = 1;
+   std::vector<glm::vec3> perfil;
+   perfil.push_back({0.0, -radio, 0.0});
+
+   for (int i = 0; i < num_verts_per; i++) {
+      float tita = ((M_PI * (i+1)) / num_verts_per);
+
+      std::vector<std::vector<float>> matriz_giro = 
+      {  {cos(tita), -sin(tita), 0},
+         {sin(tita), cos(tita), 0},
+         {0, 0, 1},
+      };
+
+      glm::vec3 nuevo_vertice = {
+         matriz_giro[0][0] * 0.0 + matriz_giro[0][1] * -radio + matriz_giro[0][2] * 0.0,
+         matriz_giro[1][0] * 0.0 + matriz_giro[1][1] * -radio + matriz_giro[1][2] * 0.0,
+         matriz_giro[2][0] * 0.0 + matriz_giro[2][1] * -radio + matriz_giro[2][2] * 0.0,
+      };
+
+      perfil.push_back(nuevo_vertice);
+
    }
-   inicializar(perfil,nperfiles);
+
+   inicializar(perfil, nperfiles);
 }
 
 Cono::Cono(const int num_verts_per, const unsigned nperfiles){

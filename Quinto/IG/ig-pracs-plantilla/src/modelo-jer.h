@@ -14,7 +14,7 @@ using namespace glm;
 
 class Esferas : public MallaRevol {
     public:
-        Esferas(const int num_verts_per, const unsigned nperfiles, float radio);
+        Esferas(const int num_verts_per, const unsigned nperfiles);
 };
 
 class ConoExtremidades : public MallaRevol {
@@ -24,6 +24,7 @@ class ConoExtremidades : public MallaRevol {
 
 class CuboCabeza : public MallaInd {
     public:
+        // Sustituimos por el Cubo24, pensado para iluminacion y normales
         CuboCabeza();
 };
 
