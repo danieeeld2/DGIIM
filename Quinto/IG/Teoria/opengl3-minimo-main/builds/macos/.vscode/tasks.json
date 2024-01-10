@@ -1,0 +1,81 @@
+// https://code.visualstudio.com/docs/editor/tasks#_custom-tasks
+
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label"   : "Compilar y ejecutar",
+      "type"    : "shell",
+      "command" : "cd bin-cmake && make && ./main_macos_exe",
+      "group"   : 
+      {
+        "kind"      : "build",
+        "isDefault" : true
+      },
+      "problemMatcher" : "$gcc",
+      "presentation" : 
+      {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label"   : "Compilar si es necesario",
+      "type"    : "shell",
+      "command" : "cd bin-cmake && make",
+      "group"   : 
+      {
+        "kind"      : "build",
+        "isDefault" : false
+      },
+      "problemMatcher" : "$gcc",
+      "presentation" : 
+      {
+        "reveal" : "always",
+        "panel"  : "new"
+      }
+    },
+    {
+      "label"   : "Limpiar y Recompilar",
+      "type"    : "shell",
+      "command" : "cd bin-cmake && make clean && make",
+      "group"   : 
+      {
+        "kind"      : "build",
+        "isDefault" : false
+      },
+      "problemMatcher" : "$gcc",
+      "presentation" : 
+      {
+        "reveal" : "always",
+        "panel"  : "new"
+      }
+    },
+    {
+      "label"   : "Ejecutar",
+      "type"    : "shell",
+      "command" : "cd bin-cmake && ./main_macos_exe",
+      "group"   : 
+      { "kind"      : "test",
+        "isDefault" : true
+      },
+      "presentation": 
+      { "reveal" : "always",
+        "panel"  : "new"
+      }
+    },
+    {
+      "label"   : "Regenerar archivos de compilación",
+      "type"    : "shell",
+      "command" : "cd bin-cmake && touch tmp && rm -rf * && cmake ..",
+      "group"   : 
+      { "kind"      : "build",
+        "isDefault" : false
+      },
+      "presentation" : 
+      { "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ]    
+}

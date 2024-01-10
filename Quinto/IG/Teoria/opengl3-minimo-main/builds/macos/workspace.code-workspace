@@ -1,0 +1,33 @@
+{
+  "folders": 
+  [ { "name": "BUILD (macOS)",
+      "path": "."
+    },
+    { "name": "FUENTES",
+      "path": "../../src"
+    }
+  ],
+
+  "settings" : 
+  {
+    "C_Cpp.default.cppStandard" : "c++20",
+    "C_Cpp.default.includePath" : [ "${workspaceFolder:FUENTES}", "${default}" ]
+                                  
+  },
+
+  // indicar extensiones recomendadas y extensiones que no se deben usar (y que no queremos que se recomienden)
+  "extensions": {
+    "recommendations": 
+    [ 
+      "ms-vscode.cpptools", 
+      "ms-vscode.cpptools-extension-pack", 
+      "ms-vscode.cpptools-themes", 
+      "slevesque.shader",    // soporte para archivos (¿y literales?) glsl en C++
+    ],
+    "unwantedRecommendations": 
+    [
+      "ms-vscode.makefile-tools",  // no queremos que VS code gestione makefiles 
+      "ms-vscode.cmake-tools"      // tampoco los archivos 'CMakeFiles.txt'
+    ]
+  },
+}

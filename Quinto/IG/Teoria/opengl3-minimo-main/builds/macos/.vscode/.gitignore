@@ -1,0 +1,2 @@
+# GIT debe ignorar archivos de log creados por vscode
+*.log

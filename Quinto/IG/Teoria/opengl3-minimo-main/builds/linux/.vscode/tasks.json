@@ -1,0 +1,97 @@
+// https://code.visualstudio.com/docs/editor/tasks#_custom-tasks
+
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label"   : "Compilar y ejecutar",
+      "type"    : "shell",
+      "command" : "cd cmake && make && ../bin/debug_exe",
+      "group"   : 
+      {
+        "kind"      : "build",
+        "isDefault" : true
+      },
+      "problemMatcher" : "$gcc",
+      "presentation" : 
+      {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label"   : "Compilar si es necesario",
+      "type"    : "shell",
+      "command" : "cd cmake && make",
+      "group"   : 
+      {
+        "kind"      : "build",
+        "isDefault" : false
+      },
+      "problemMatcher" : "$gcc",
+      "presentation" : 
+      {
+        "reveal" : "always",
+        "panel"  : "new"
+      }
+    },
+    {
+      "label"   : "Limpiar",
+      "type"    : "shell",
+      "command" : "cd cmake && make clean && cd .. && cd bin && rm -f *_exe",
+      "group"   : 
+      {
+        "kind"      : "build",
+        "isDefault" : false
+      },
+      "problemMatcher" : "$gcc",
+      "presentation" : 
+      {
+        "reveal" : "always",
+        "panel"  : "new"
+      }
+    },
+    {
+      "label"   : "Compilar todo",
+      "type"    : "shell",
+      "command" : "cd cmake && make clean && make",
+      "group"   : 
+      {
+        "kind"      : "build",
+        "isDefault" : false
+      },
+      "problemMatcher" : "$gcc",
+      "presentation" : 
+      {
+        "reveal" : "always",
+        "panel"  : "new"
+      }
+    },
+    {
+      "label"   : "Ejecutar",
+      "type"    : "shell",
+      "command" : "bin/debug_exe",
+      "group"   : 
+      { "kind"      : "test",
+        "isDefault" : true
+      },
+      "presentation": 
+      { "reveal" : "always",
+        "panel"  : "new"
+      }
+    },
+    {
+      "label"   : "Generar archivos de compilación",
+      "type"    : "shell",
+      "command" : "cd cmake && rm -rf * && cmake .. && cd .. && cd bin && rm -f *_exe",
+      "group"   : 
+      { "kind"      : "build",
+        "isDefault" : false
+      },
+      "presentation" : 
+      { "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ]    
+}

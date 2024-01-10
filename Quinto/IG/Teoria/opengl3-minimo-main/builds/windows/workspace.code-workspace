@@ -1,0 +1,21 @@
+{
+  "folders": 
+  [ { "name": "BUILD (Windows)",
+      "path": "."
+    },
+    { "name": "FUENTES",
+      "path": "../../src"
+    }
+  ],
+
+  "settings" : 
+  {
+    "C_Cpp.default.cppStandard": "c++20",
+    "C_Cpp.default.includePath" : 
+    [
+      "${workspaceFolder:FUENTES}",
+      "~/vcpkg/installed/x64-windows/include",
+      "${default}"
+    ]
+  }
+}
