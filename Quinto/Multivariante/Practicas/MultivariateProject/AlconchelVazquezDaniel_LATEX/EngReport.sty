@@ -1,0 +1,47 @@
+\ProvidesPackage{EngReport}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Backend %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[utf8]{inputenc}
+\usepackage{lipsum}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Formatting %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{anyfontsize}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{titling}
+\usepackage{geometry}      
+\usepackage{setspace}
+\usepackage[sorting=none]{biblatex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Graphics %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{wrapfig2}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Math & Symbols %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{gensymb}
+\usepackage{siunitx}
+\usepackage{mathtools}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Side Comment %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{xcolor}
+\usepackage{marginnote}
+\usepackage[textwidth=2cm]{todonotes}
+\setlength{\marginparwidth}{2cm}
+\newcounter{mycomment}
+\definecolor{Red}{rgb}{1,0,0}
+\definecolor{Green}{rgb}{0,0,1}
+
+\newcommand{\jx}[1]{\stepcounter{mycomment} \todo[prepend, caption={\textbf{\arabic{mycomment} - JX}}, size=\tiny, linecolor=Red, bordercolor=Red, backgroundcolor=Red!10]{#1}}
+
+\newcommand{\cxh}[1]{\stepcounter{mycomment} \todo[prepend, caption={\textbf{\arabic{mycomment} - CXH}}, size=\tiny, linecolor=Green, bordercolor=Green, backgroundcolor=Green!10]{#1}}

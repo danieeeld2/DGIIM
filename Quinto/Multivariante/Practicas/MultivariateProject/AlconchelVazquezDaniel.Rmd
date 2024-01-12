@@ -1,0 +1,831 @@
+---
+title: "Multivariate Project"
+author: "Daniel Alconchel, Mario García and Pablo Fuentes"
+date: "27/12/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+In this project, we will analyze a database containing data on various aspects of residential homes in Ames, Iowa.
+
+Our initial step involves a comprehensive exploratory data analysis to identify potential missing values and outliers. We will make decisions to address these issues.
+
+Secondly, we will conduct a Principal Component Analysis (PCA). This technique aims to condense information from the original variables into a few linear combinations. The objective is to achieve dimensionality reduction while maximizing variance. These linear combinations are designed to be perpendicular to each other, aligning with the directions of maximum variance and ensuring lack of correlation.
+
+Next, we will perform Factor Analysis (FA), identifying latent variables that exhibit a high correlation with specific groups of observable variables and minimal correlation with others. FA facilitates dimensionality reduction by capturing the underlying structure in the data.
+
+In the final stage, we will execute both Linear Discriminant Analysis (LDA) and Quadratic Discriminant Analysis (QDA). Prior to these analyses, we will verify the necessary assumptions of normality. Discriminant Analysis is a classification method for qualitative variables. It allows the categorization of new observations based on their characteristics (explanatory or predictor variables) into different categories of the qualitative response variable.Data pre-processing
+
+### Imports
+
+```{r}
+# Package required to call 'freq' and 'descr' functions (descriptive statistics)
+library(summarytools)
+
+# Package required to call 'ggplot' function (graphical tools)
+library(ggplot2)
+
+# Package required to call 'read.spss' function (loading '.spss' data format)
+library(foreign)
+
+# Package required to call 'read_xlsx' function (loading '.xlsx' data format)
+library(readxl)
+
+# Package required to load the data set 'RBGlass1'
+library(archdata)
+
+library(ggpubr)
+
+# Package required to call 'fviz_pca_var, fviz_pca_ind and fviz_pca' functions
+library(factoextra)
+
+# Package required to call 'scatterplot3d' function
+library(scatterplot3d)
+
+library(psych)
+```
+
+### Data Base Description
+
+The file train.csv has the following data:
+
+-   GrLivArea: Above grade (ground) living area square feet
+
+-   GarageArea: Area of the garage
+
+-   X1stFlrSF: Area of the first floor
+
+-   LotArea: Lot size in square feet
+
+-   OverallQual: Rates the overall material and finish of the house
+
+-   YearBuilt: Year of construction
+
+-   SalePrice: Sale price
+
+### Load Data from a local file
+
+The data file has a .csv extension, so the read.csv function is used to load the file.
+
+```{r}
+data <- read.csv("train.csv")
+```
+
+Select the columns mentioned before:
+
+```{r}
+data <- data[c("GrLivArea","GarageArea", "X1stFlrSF", "LotArea", "OverallQual", "YearBuilt", "SalePrice")]
+```
+
+```{r}
+colnames(data)
+```
+
+### Identifying and treatment of missing values (NA)
+
+Initially, we examine whether the database (BD) contains missing values. To accomplish this, we create the following function to calculate the percentage of missing values in a vector. Subsequently, we apply this function to the entire data frame using the `apply` function.
+
+```{r}
+percentageNA<-function(data){
+  c=(sum(is.na(data)))/length(data)*100
+  return(c)
+}
+contNA<-apply(data,2,percentageNA)
+contNA
+```
+
+We don't have missing data so we can continue, directly, with the next step.
+
+### Classic Numerical Descriptive Analysis
+
+We will conduct a preliminary exploratory data analysis of the dataset. As the variables are quantitative, we will present basic numerical descriptive statistics along with visual representations such as histograms, density plots, and boxplots.
+
+```{r}
+for (col in c("GrLivArea","GarageArea", "X1stFlrSF", "LotArea", "OverallQual", "YearBuilt", "SalePrice")) {
+  print(descr(data[col]))
+}
+```
+
+```{r}
+attach(data)
+
+p1<-ggplot(data,aes(x=GrLivArea))+geom_density()+
+  labs(title = paste("Density function of", "GrLivArea"),x="GrLivArea",y="Values")
+
+p2<-ggplot(data,aes(x=GrLivArea))+geom_histogram()+
+  labs(title = paste("Histogram of", "GrLivArea"), x="GrLivArea",y="Values")
+
+p3<-ggplot(data,aes(x=GrLivArea))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = paste("Boxplot of", "GrLivArea"),x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+```
+
+```{r}
+p1<-ggplot(data,aes(x=GarageArea))+geom_density()+
+  labs(title = paste("Density function of", "GarageArea"),x="GarageArea",y="Values")
+
+p2<-ggplot(data,aes(x=GarageArea))+geom_histogram()+
+  labs(title = paste("Histogram of", "GarageArea"), x="GarageArea",y="Values")
+
+p3<-ggplot(data,aes(x=GarageArea))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = paste("Boxplot of", "GarageArea"),x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+```
+
+```{r}
+p1<-ggplot(data,aes(x=X1stFlrSF))+geom_density()+
+  labs(title = paste("Density function of", "X1stFlrSF"),x="X1stFlrSF",y="Values")
+
+p2<-ggplot(data,aes(x=X1stFlrSF))+geom_histogram()+
+  labs(title = paste("Histogram of", "X1stFlrSF"), x="X1stFlrSF",y="Values")
+
+p3<-ggplot(data,aes(x=X1stFlrSF))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = paste("Boxplot of", "X1stFlrSF"),x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+```
+
+```{r}
+p1<-ggplot(data,aes(x=LotArea))+geom_density()+
+  labs(title = paste("Density function of", "LotArea"),x="LotArea",y="Values")
+
+p2<-ggplot(data,aes(x=LotArea))+geom_histogram()+
+  labs(title = paste("Histogram of", "LotArea"), x="LotArea",y="Values")
+
+p3<-ggplot(data,aes(x=LotArea))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = paste("Boxplot of", "LotArea"),x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+```
+
+```{r}
+p1<-ggplot(data,aes(x=OverallQual))+geom_density()+
+  labs(title = paste("Density function of", "OverallQual"),x="OverallQual",y="Values")
+
+p2<-ggplot(data,aes(x=OverallQual))+geom_histogram()+
+  labs(title = paste("Histogram of", "OverallQual"), x="OverallQual",y="Values")
+
+p3<-ggplot(data,aes(x=OverallQual))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = paste("Boxplot of", "OverallQual"),x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+```
+
+```{r}
+p1<-ggplot(data,aes(x=YearBuilt))+geom_density()+
+  labs(title = paste("Density function of", "YearBuilt"),x="YearBuilt",y="Values")
+
+p2<-ggplot(data,aes(x=YearBuilt))+geom_histogram()+
+  labs(title = paste("Histogram of", "YearBuilt"), x="YearBuilt",y="Values")
+
+p3<-ggplot(data,aes(x=YearBuilt))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = paste("Boxplot of", "YearBuilt"),x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+```
+
+```{r}
+p1<-ggplot(data,aes(x=SalePrice))+geom_density()+
+  labs(title = paste("Density function of", "SalePrice"),x="SalePrice",y="Values")
+
+p2<-ggplot(data,aes(x=SalePrice))+geom_histogram()+
+  labs(title = paste("Histogram of", "SalePrice"), x="SalePrice",y="Values")
+
+p3<-ggplot(data,aes(x=SalePrice))+
+  geom_boxplot(outlier.colour="red", outlier.shape=1,outlier.size=2)+
+  coord_flip()+labs(title = paste("Boxplot of", "SalePrice"),x="Values",y="")
+
+# This function controls the graphical output device
+# Remember that package 'ggpubr' is required
+ggarrange(p1,p2,p3, nrow=1, common.legend = FALSE)
+```
+
+### Outliers Treatment
+
+To identify outliers, a prior graphical exploratory analysis must be conducted by creating boxplots for all variables.
+
+Since all variables are quantitative, the decision has been made to replace outliers with the mean. To achieve this, the outlier function has been developed, which detects and manipulates outliers. It is worth noting that the decision to replace outliers with the mean would require a prior analysis of the cause of these atypical values.
+
+```{r}
+boxplot(data,main="Exploratory data analysis",
+        xlab="House features",
+        ylab="Value",
+        col=c(1:ncol(data)))
+```
+
+```{r}
+outlier<-function(data,na.rm=T){
+  H<-1.5*IQR(data)
+  data[data<quantile(data,0.25, na.rm = T)-H]<-NA
+  data[data>quantile(data,0.75, na.rm = T)+H]<-NA
+  data[is.na(data)]<-mean(data, na.rm = T)
+
+  H<-1.5*IQR(data)
+
+  if (TRUE %in% (data<quantile(data,0.25,na.rm = T)-H) |
+      TRUE %in% (data>quantile(data,0.75,na.rm = T)+H))
+    outlier(data)
+  else
+    return(data)
+}
+
+data<-as.data.frame(apply(data,2,outlier))
+
+
+par(mfrow=c(1,2))
+# Fixed data
+boxplot(data,main="Data without outliers",
+        xlab="House features",
+        ylab="Values",
+        col=c(1:ncol(data)))
+```
+
+The analysis of outliers is repeated below, but this time with normalized data to enhance the visualization of all outliers.
+
+```{r}
+normalized_data<-scale(data)
+# En el gráfico se observa que muchas variables presentan outliers.
+boxplot(normalized_data,main="Exploratory data analysis",
+        xlab="House features",
+        ylab="Value",
+        col=c(1:ncol(data)))
+```
+
+## Principal component analysis
+
+### Correlation
+
+Firstly, it is necessary to verify that the variables are not independent. At the sample level collected in the database, this can be done by calculating and observing the correlation matrix. At the population level, the justification for correlation can be established by performing the **Bartlett test** (the Bartlett sphericity test checks whether the correlations are significantly different from 0. The null hypothesis is that $det(R) = 1$, where $R$ is the correlation matrix. The following code performs the two mentioned checks.
+
+```{r}
+cor(data)
+```
+
+```{r}
+normalized_data<-scale(data)
+cortest.bartlett(cor(normalized_data))
+```
+
+In light of the test results $(p < 0.001)$, it can be stated that the data are not independent. Therefore, it makes sense to consider dimensionality reduction through Principal Component Analysis (PCA) or Factor Analysis (FA).
+
+Other ways to observe that the variables are correlated, which will be useful for Factor Analysis, include:
+
+-   The polychoric correlation matrix:
+
+```{r}
+#install.packages("polycor")
+suppressMessages(library(polycor))
+#install.packages("ggcorrplot")
+suppressMessages(library(ggcorrplot))
+
+poly_cor<-hetcor(data)$correlations
+ggcorrplot(poly_cor, type="lower",hc.order=T)
+```
+
+-   With *corrplot*:
+
+```{r}
+#install.packages("corrplot")
+suppressMessages(library(corrplot))
+
+corrplot(cor(data), order = "hclust", tl.col='black', tl.cex=1)
+```
+
+-   With *corrr*:
+
+```{r}
+#install.packages("corrr")
+suppressMessages(library(corrr))
+
+data_correlations <- correlate(data)  #Cálculo de un objeto de correlaciones.
+```
+
+```{r}
+rplot(data_correlations, legend = TRUE, colours = c("firebrick1", "black","darkcyan"), print_cor = TRUE) 
+```
+
+Based on the results obtained in the previous sections, it is now possible to proceed with dimensionality reduction through either Principal Component Analysis or Factor Analysis. The data exhibit correlations, there are no missing values, and the presence of outliers has been addressed.
+
+### Doing the PCA and summary of the information
+
+The following code performs Principal Component Analysis (PCA), obtaining the eigenvectors that generate each component, as well as their eigenvalues, which correspond to the variance of each component.
+
+```{r}
+PCA<-prcomp(data, scale=T, center = T)
+PCA$rotation
+```
+
+```{r}
+PCA$sdev
+```
+
+```{r}
+summary(PCA)
+```
+
+The following graphs illustrate the behavior of the variance explained by each principal component, as well as the cumulative explained variance.
+
+```{r}
+suppressMessages(library(ggplot2))
+
+
+# Explained variance
+explained_var <- PCA$sdev^2 / sum(PCA$sdev^2)
+ggplot(data = data.frame(explained_var, pc = 1:ncol(data)),
+       aes(x = pc, y =  explained_var, fill=explained_var )) +
+  geom_col(width = 0.3) +
+  scale_y_continuous(limits = c(0,0.6)) + theme_bw() +
+  labs(x = "Principal component", y= " Proportion of the explained variance")
+```
+
+```{r}
+accum_var<-cumsum(explained_var)
+ggplot( data = data.frame(accum_var, pc = 1:ncol(data)),
+        aes(x = pc, y = accum_var ,fill=accum_var )) +
+  geom_col(width = 0.5) +
+  scale_y_continuous(limits = c(0,1)) +
+  theme_bw() +
+  labs(x = "Principal component",
+       y = "Proportion of the accumulated explained variance")
+```
+
+### Optimal number of components
+
+To choose the appropriate number of principal components, the following method is employed: The variances explained by the principal components are averaged, and those components whose proportion of explained variance surpasses the mean are selected.
+
+```{r}
+PCA$sdev^2
+```
+
+```{r}
+mean(PCA$sdev^2)
+```
+
+By **Rule of Abdi**, 2 components are chosen. Each principal component is obtained as the linear combination of all variables with the coefficients shown in columns of the rotation matrix.
+
+### Some plots of interest
+
+The following graphs display a comparison between different principal components through a two-dimensional projection. In this representation, it is evident which of the original variables carry greater or lesser weight in each of the juxtaposed components.
+
+```{r}
+suppressMessages(library("factoextra"))
+
+# Comparativa entre la 1ª y 2ª componente principal.
+fviz_pca_var(PCA,
+             repel=TRUE,col.var="cos2",
+             legend.title="Distance")+theme_bw()
+```
+
+```{r}
+fviz_pca_var(PCA,axes=c(1,3),
+             repel=TRUE,col.var="cos2",
+             legend.title="Distance")+theme_bw()
+```
+
+```{r}
+fviz_pca_var(PCA,axes=c(2,3),
+             repel=TRUE,col.var="cos2",
+             legend.title="Distance")+theme_bw()
+```
+
+It is also possible to represent the observations of the objects along with the principal components using the "contrib" argument of the previous "fviz_pca_ind" function. Additionally, observations that explain higher variance can be identified with colors.
+
+```{r}
+fviz_pca_ind(PCA,col.ind = "contrib",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel=TRUE,legend.title="Contrib.var")+theme_bw()
+```
+
+## Factorial analysis
+
+### Different estimation methods
+
+To extract the factors, a method of estimation must be chosen. The **`fa()`** function is used for this purpose, as it allows the implementation of up to 6 different methods.
+
+Next, the outputs are compared using the principal factor method and the maximum likelihood method. Three factors are calculated, as suggested by the correlation graphs, although it is not entirely clear in this example.
+
+```{r}
+# Likelihood method
+model1<-fa(poly_cor,
+            nfactors = 3, 
+            rotate = "none",
+            fm="mle")
+
+# minimal residual model
+model2<-fa(poly_cor,
+            nfactors = 3,
+            rotate = "none",
+            fm="minres") 
+```
+
+The communalities of both models are compared to see what proportion of the variance is explained by the latent factors.
+
+```{r}
+sort(model1$communality,decreasing = T)->c1
+sort(model2$communality,decreasing = T)->c2
+head(cbind(c1,c2))
+```
+
+The uniqueness, which represents the proportion of variance not explained by the factor (1-communality), is also compared.
+
+```{r}
+sort(model1$uniquenesses,decreasing = T)->u1
+sort(model2$uniquenesses,decreasing = T)->u2
+head(cbind(u1,u2))
+```
+
+We can see that both are quite similar, since we are obtaining very closed values.
+
+### Searching for the optimal amount of Factors
+
+Different criteria exist for determining the optimal number of factors. The elbow method is implemented below.
+
+The elbow method involves creating a scree plot, obtained by plotting eigenvalues in decreasing order on the y-axis and the corresponding component numbers for principal components or latent factors (depending on whether PCA or FA is being conducted) on the x-axis. Connecting the points creates a figure that starts with a steep slope and then transitions to a gentler incline. The method suggests selecting the number of factors up to the "elbow" of the plot, where the steep slope gives way to the gentler incline.
+
+It is called a scree plot because it resembles the profile of a mountain with a steep slope leading to the base, where pebbles fallen from the summit accumulate (where they "sediment").
+
+```{r}
+scree(poly_cor)
+```
+
+```{r}
+fa.parallel(poly_cor,n.obs=200,fa="fa",fm="minres")
+```
+
+We can see that the optimum number of factors is 4. Another form of calculating it is with the following tests:
+
+```{r}
+library(stats)
+factanal(data,factors=3,rotation="none") # 4 gives error
+```
+
+We can see that 4 gives us error, so we should take 3 as the number of optimum factors.
+
+### Estimation of the model
+
+Finally, the factorial model with 3 factors is estimated. To achieve this, a varimax rotation is implemented to seek a simpler interpretation of reality.
+
+```{r}
+varimax_model<-fa(poly_cor,nfactors = 3,rotate = "varimax",
+                   fa="mle")
+```
+
+The rotated factorial weight matrix is:
+
+```{r}
+print(varimax_model$loadings,cut=0) 
+```
+
+Visually, one could make an effort to see which variables each of the factors correlates with in the factorial matrix. However, this is quite tedious, so the following representation is used:
+
+```{r}
+fa.diagram(varimax_model)
+```
+
+We can see that the first latent factor correlations *YearBuilt*, *OverallQual*, *GarageArea*, the second one correlations *GrLivArea*, *SalePrice* and the third one *X1stFlrSF*.
+
+## Linear discriminant analysis
+
+The database contains information on various indicators measured across different residential homes, including the house price. Therefore, it would be interesting to provide a classification method for the price level based on other indicators.
+
+To achieve this, a qualitative variable is defined as the response variable for classification, called "precio" (price). This variable has two categories:
+
+-   High price if it is greater than the mean.
+
+-   Low price if it is less than the mean.
+
+```{r}
+price=c()
+mean_price = mean(data$SalePrice)
+
+for(k in 1:nrow(data)){
+  if(data$SalePrice[k]<mean_price){
+  price[k] = "low"
+  }
+  else
+    price[k] = "high"
+}
+
+price<-as.factor(price)
+price
+```
+
+Firstly, we explore how well (or poorly) each of the independently measured variables classifies the profits.
+
+```{r}
+suppressMessages(library(ggpubr))
+
+p1 <- ggplot(data = data, aes(x = GrLivArea, fill = price)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+p2 <- ggplot(data = data, aes(x = GarageArea, fill = price)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+p3 <- ggplot(data = data, aes(x = X1stFlrSF, fill = price)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+p4 <- ggplot(data = data, aes(x = LotArea, fill = price)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+p5 <- ggplot(data = data, aes(x = OverallQual, fill = price)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+p6 <- ggplot(data = data, aes(x = YearBuilt, fill = price)) +
+      geom_histogram(position = "identity", alpha = 0.5)
+
+p1
+p2
+p3
+p4
+p5
+p6
+```
+
+It doesn't seem that any single variable adequately separates the price. Next, we explore which pairs of variables better differentiate between price levels.
+
+```{r}
+pairs(x = data[, c("GrLivArea","GarageArea", "X1stFlrSF", "LotArea", "OverallQual", "YearBuilt")],
+      col = c("firebrick", "green3")[price], pch = 19)
+```
+
+### Normality uni and multivariate
+
+Next, a graphical exploration of the normality of individual distributions of our predictors is conducted by representing histograms and qqplots.
+
+**Individual distributions**
+
+```{r}
+par(mfcol = c(2, 3))
+for (k in c(1,2,3,5,6,7)) {
+  j0 <- names(data)[k]
+  x0 <- seq(min(data[, k]), max(data[, k]), le = 50)
+  for (i in 1:2) {
+    i0 <- levels(price)[i]
+    x <- data[price == i0, j0]
+    hist(x, proba = T, col = grey(0.8), main = paste("Price", i0), xlab = j0)
+    lines(x0, dnorm(x0, mean(x), sd(x)), col = "red", lwd = 2)
+  }
+}
+```
+
+**qqplots graphics**
+
+```{r}
+par(mfrow=c(2,3))
+for (k in c(1,2,3,5,6,7)) {
+  j0 <- names(data)[k]
+  x0 <- seq(min(data[, k]), max(data[, k]), le = 50)
+  for (i in 1:2) {
+    i0 <- levels(price)[i]
+    x <- data[price == i0, j0]
+    qqnorm(x, main = paste("price", i0, j0), pch = 19, col = i + 1)
+    qqline(x)
+  }
+}
+```
+
+This exploratory analysis can provide an idea of the possible normal distribution of univariate variables, but it is always better to perform the respective tests of normality.
+
+### Normality test (Shapiro-Wilks)
+
+```{r}
+library(reshape2)
+shap<-function(x){shapiro.test(x)$p.value}
+
+datos1=data
+datos1$price=price
+
+datos_tidy <- melt(datos1, value.name = "value")
+aggregate(value ~ price + variable, data = datos_tidy,
+          FUN = shap)
+```
+
+As observed in the results above, every p-value obtained is below the selected significance level. Consequently, we are unable to assume normality for any variable.
+
+### Multivariate normality
+
+The MVN package in R provides functions for conducting three commonly used tests to assess multivariate normality. Additionally, it includes functions for analyzing outliers, as multivariate normality can be influenced by the presence of outliers.
+
+```{r}
+suppressMessages(library(MVN))
+royston_test <- mvn(data = data, mvnTest = "royston", multivariatePlot = "qq")
+```
+
+```{r}
+royston_test$multivariateNormality
+```
+
+```{r}
+hz_test <- mvn(data = data, mvnTest = "hz")
+hz_test$multivariateNormality
+```
+
+So we cannot assume normality.
+
+### Discriminant function
+
+We do not have the normality assumption, but we will continue with the analysis (assuming that this condition holds, which may lead to a result that is not entirely accurate or valid, depending on the context of the analysis):
+
+```{r}
+suppressMessages(library(MASS))
+modelo_lda <- lda( price ~ GrLivArea + GarageArea + X1stFlrSF + LotArea + OverallQual + YearBuilt ,data = data)
+modelo_lda
+```
+
+The output of this object displays the prior probabilities of each group, in this case, 0.54 for each high price and 0.46 for low, the means of each predictor by group, and the coefficients of the linear discriminant classification model.
+
+Once the classifier is built, new data can be classified based on its measurements simply by calling the predict function.
+
+```{r}
+library(biotools)
+pred <- predict(modelo_lda, dimen = 1)
+confusionmatrix(price, pred$class)
+```
+
+```{r}
+trainig_error <- mean(price != pred$class) * 100
+paste("trainig_error=", trainig_error, "%")
+```
+
+In this case, it has a 88.1% of success.
+
+### Visualization of predictions
+
+The **`partimat`** function from the **`klaR`** package allows for the visualization of classification boundaries of a linear or quadratic discriminant model for each pair of predictors. Each color represents a classification region according to the model, and the centroid of each region, along with the actual values of the observations, is displayed.
+
+```{r}
+suppressMessages(library(klaR))
+partimat(price ~ GrLivArea + GarageArea + X1stFlrSF + LotArea + OverallQual + YearBuilt,
+         data = data, method = "lda", prec = 200,
+         image.colors = c("darkgoldenrod1", "snow2"),
+         col.mean = "firebrick",nplots.vert =1, nplots.hor=3)
+```
+
+## Cuadratic discriminant
+
+Similar to Linear Discriminant Analysis, for Quadratic Discriminant Analysis, one begins with the graphical exploration of data and checks on univariate and multivariate normality and homogeneity of variances, which have already been performed previously.
+
+### Discriminant function
+
+```{r}
+suppressMessages(library(MASS))
+qda_model<- qda(price ~ GrLivArea + GarageArea + X1stFlrSF + LotArea + OverallQual + YearBuilt,data = data)
+qda_model
+```
+
+The output of this object displays the prior probabilities of each group, in this case, 0.54 and 0.46, and the means of each predictor by group.
+
+Once the classifier is built, new data can be classified based on its measurements simply by calling the predict function.
+
+### Cross validation
+
+```{r}
+pred <- predict(qda_model, dimen = 1)
+confusionmatrix(price, pred$class)
+```
+
+```{r}
+trainig_error <- mean(price != pred$class) * 100
+paste("trainig_error=", trainig_error, "%")
+```
+
+The percentage of success is around 88%.
+
+### Visualization of predictions
+
+The **`partimat`** function from the **`klaR`** package allows for the visualization of classification boundaries of a linear or quadratic discriminant model for each pair of predictors. Each color represents a classification region according to the model, and the centroid of each region, along with the actual values of the observations, is displayed.
+
+```{r}
+suppressMessages(library(klaR))
+partimat(price ~ GrLivArea + GarageArea + X1stFlrSF + LotArea + OverallQual + YearBuilt,
+         data = data, method = "qda", prec = 200,
+         image.colors = c("darkgoldenrod1", "snow2"),
+         col.mean = "firebrick",nplots.vert =1, nplots.hor=3)
+
+```
+
+## Cluster analysis
+
+### Hierarchical clustering
+
+**Hierarchical clustering** is interested in finding a hierarchy based on the closeness or similarity of the data according to the distance considered. In the **agglomerative** case, we start from a group with the closest observations. The next closest pairs are then calculated and groups are generated in an ascending manner. This construction can be observed visually by means of a **dendrogram**.
+
+Below it will be illustrated how the groups are defined by the number of vertical lines in the dendrogram, and the selection of the optimal number of groups can be estimated from this same graph.
+
+```{r}
+library(tidyverse)
+
+# Package required to call 'clusGap' function
+library(cluster)
+
+# Package required to call 'get_dist', 'fviz_cluster' and 'fviz_dist' functions
+library(factoextra)
+
+# Package required to call 'ggdendrogram' function
+library(ggdendro)
+
+# Package required to call 'grid.arrange' function
+library(gridExtra)
+
+dendrogram <- hclust(dist(data, method = 'euclidean'), method = 'ward.D')
+ggdendrogram(dendrogram, rotate = FALSE, labels = FALSE, theme_dendro = TRUE) + 
+  labs(title = "Dendrograma")
+```
+
+### K-means
+
+The R language implements the **K-means algorithm** with the function of the same name. This function receives as input parameters the data and the number of groupings to be performed (*centers* parameter). To address the problem of **choosing initial seed points** it incorporates the *nstart* parameter that tests multiple initial configurations and reports on the best one. For example, if *nstart = 25*, it will generate 25 initial configurations. The use of this parameter is recommended.
+
+```{r}
+k3 <- kmeans(data, centers = 3, nstart = 25)
+
+str(k3)
+```
+
+```{r}
+fviz_cluster(k3,data=data)
+```
+
+```{r}
+set.seed(123)
+k2 <- kmeans(data, centers = 2, nstart = 25)
+k3 <- kmeans(data, centers = 3, nstart = 25)
+k4 <- kmeans(data, centers = 4, nstart = 25)
+k5 <- kmeans(data, centers = 5, nstart = 25)
+
+# Plots to compare
+p1 <- fviz_cluster(k2, geom = "point", data = data) + ggtitle("k = 2")
+p2 <- fviz_cluster(k3, geom = "point",  data = data) + ggtitle("k = 3")
+p3 <- fviz_cluster(k4, geom = "point",  data = data) + ggtitle("k = 4")
+p4 <- fviz_cluster(k5, geom = "point",  data = data) + ggtitle("k = 5")
+
+
+grid.arrange(p1, p2, p3, p4, nrow = 2)
+```
+
+### Optimal number of clusters
+
+```{r}
+set.seed(123)
+fviz_nbclust(data, kmeans, method = "wss")
+```
+
+4 would be the optimal amount
+
+### Silhouette method
+
+```{r}
+set.seed(123)
+fviz_nbclust(data, kmeans, method = "silhouette")
+```
+
+### Gap statistical
+
+```{r}
+set.seed(123)
+gap_stat <- clusGap(data, FUN = kmeans, nstart = 25,K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+```
+
+Each method tell us a different number of clusters, but they tend to be around 2, so we will stick to 2 as the optimal amount of clusters.
+
+### Analysis of the result
+
+```{r}
+set.seed(123)
+final <- kmeans(data, 2, nstart = 25)
+print(final)
+```
+
+```{r}
+fviz_cluster(final, data = data)
+```
+
+```{r}
+data %>%
+  mutate(Cluster = final$cluster) %>%
+  group_by(Cluster) %>%
+  summarise_all("mean")
+```
+
+As seen in the graph above, we separated the data into 2 clusters, which are not entirely heterogeneous; however, there is a certain homogeneity within both clusters, as observed in the table above. One of them groups data with higher mean values, meanwhile the second one groups data with lower values. In both clusters, the data for LotArea is quite similar. That can explain why both clusters intersect.
