@@ -726,3 +726,32 @@ Cubo24::Cubo24() {
 
    calcularNormales();
 }
+
+MallaDiscoP4::MallaDiscoP4()
+{
+   ponerColor({1.0, 1.0, 1.0});
+   const unsigned ni = 23, nj = 31 ;
+
+   for( unsigned i= 0 ; i < ni ; i++ )
+   for( unsigned j= 0 ; j < nj ; j++ )
+   {
+      const float
+         fi = float(i)/float(ni-1),
+         fj = float(j)/float(nj-1),
+         ai = 2.0*M_PI*fi,
+         x = fj * cos( ai ),
+         y = fj * sin( ai ),
+         z = 0.0 ;
+      vertices.push_back({ x, y, z });
+      // Adicional 1
+      cc_tt_ver.push_back({float(0.5*x+0.5), float(0.5*y+0.5)}); 
+      // Adicional 2
+      // cc_tt_ver.push_back({fj, fi});
+   }
+   for( unsigned i= 0 ; i < ni-1 ; i++ )
+   for( unsigned j= 0 ; j < nj-1 ; j++ )
+   {
+      triangulos.push_back({ i*nj+j, i*nj+(j+1), (i+1)*nj+(j+1) });
+      triangulos.push_back({ i*nj+j, (i+1)*nj+(j+1), (i+1)*nj+j });
+   }
+}

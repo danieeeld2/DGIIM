@@ -167,6 +167,36 @@ class NodoCubo24 : public NodoGrafoEscena {
       NodoCubo24();
 };
 
+class NodoDiscoP4 : public NodoGrafoEscena {
+   public:
+      NodoDiscoP4();
+};
+
+class MiEsferaE1 : public NodoGrafoEscena {
+   public:
+      MiEsferaE1(unsigned i, unsigned j);
+      bool cuandoClick(const glm::vec3 & centro_wc) override;
+   protected:
+      unsigned fila = 0;
+      unsigned columna = 0;
+};
+
+class GrafoEsferasP5 : public NodoGrafoEscena {
+   public:
+      GrafoEsferasP5();
+};
+
+class MiEsferaE2 : public NodoGrafoEscena {
+   public:
+      MiEsferaE2();
+      bool cuandoClick(const glm::vec3 & centro_wc) override;
+};
+
+class GrafoEsferasP5_2 : public NodoGrafoEscena {
+   public:
+      GrafoEsferasP5_2();
+};
+
 #endif // GRAFO_ESCENA_HPP
 
 

@@ -558,4 +558,92 @@ NodoCubo24::NodoCubo24(){
 }
 
 
+// ****************************************************************************************************
+
+NodoDiscoP4::NodoDiscoP4(){
+   Textura *textura = new Textura("cuadricula.jpg");
+   Material *material = new Material(textura, 0.5, 0.8, 0.2, 100.0);
+   ponerNombre("Nodo ejercicio adicional práctica 4, examen 27 enero");
+   agregar(material);
+   agregar( new MallaDiscoP4() );
+}
+
+// ****************************************************************************************************
+
+MiEsferaE1::MiEsferaE1(unsigned i, unsigned j){
+   fila = i;
+   columna = j;
+   agregar(new Esfera(20,20));
+}
+
+bool MiEsferaE1::cuandoClick(const glm::vec3 & centro_wc) {
+   std::cout << "Se ha seleccionado la esfera numero " << columna+1 << " de la fila numero " << fila+1 << std::endl;
+}
+
+// ****************************************************************************************************
+
+GrafoEsferasP5::GrafoEsferasP5(){
+   const unsigned
+      n_filas_esferas = 8,
+      n_esferas_x_fila = 5;
+   const float
+      e = 0.4/n_esferas_x_fila;
+   
+   agregar(glm::scale(glm::vec3(e,e,e)));
+
+   for(unsigned i=0; i<n_filas_esferas; i++){
+      NodoGrafoEscena *fila_esferas = new NodoGrafoEscena();
+      for(unsigned j=0; j<n_esferas_x_fila; j++){
+         MiEsferaE1 *esfera = new MiEsferaE1(i,j);
+         esfera->ponerIdentificador(i*n_esferas_x_fila+j+1);
+         fila_esferas->agregar(glm::translate(glm::vec3(2.2,0.0,0.0)));
+         fila_esferas->agregar(esfera);
+      }
+      agregar(fila_esferas);
+      agregar(glm::translate(glm::vec3(0.0,0.0,5.0)));
+   }
+   
+}
+
+// ****************************************************************************************************
+
+MiEsferaE2::MiEsferaE2(){
+   ponerColor(glm::vec3(1.0,1.0,1.0));
+   agregar(new Esfera(20,20));
+}
+
+bool MiEsferaE2::cuandoClick(const glm::vec3 & centro_wc) {
+   if(leerColor() == glm::vec3(1.0,1.0,1.0)){
+      ponerColor(glm::vec3(1.0,0.0,0.0));
+   }else{
+      ponerColor(glm::vec3(1.0,1.0,1.0));
+   }
+}
+
+// ****************************************************************************************************
+
+GrafoEsferasP5_2::GrafoEsferasP5_2(){
+   const unsigned
+      n_filas_esferas = 8,
+      n_esferas_x_fila = 5;
+   const float
+      e = 0.5/n_esferas_x_fila;
+
+   agregar(glm::scale(glm::vec3(e,e,e)));
+
+   for(int i=0; i<n_filas_esferas; i++){
+      NodoGrafoEscena *fila_esferas = new NodoGrafoEscena();
+      fila_esferas->agregar(glm::translate(glm::vec3(3.0,0.0,0.0)));
+      for(int j=0; j<n_esferas_x_fila; j++){
+         MiEsferaE2 *esfera = new MiEsferaE2();
+         esfera -> ponerIdentificador(i*n_esferas_x_fila+j+1);
+         fila_esferas->agregar(glm::translate(glm::vec3(2.5,0.0,0.0)));
+         fila_esferas->agregar(esfera);
+      }
+      agregar(fila_esferas);
+      float angulo = (2*M_PI)/n_filas_esferas;
+      agregar(glm::rotate(angulo,glm::vec3(0.0,1.0,0.0)));
+   }
+}
+
 

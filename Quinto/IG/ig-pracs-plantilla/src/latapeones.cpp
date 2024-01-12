@@ -3,7 +3,15 @@
 using namespace std;
 using namespace glm;
 
-Peon::Peon(int nperfiles) : MallaRevolPLY("peon.ply", nperfiles) {}
+Peon::Peon(int nperfiles) {
+    pm_tras = leerPtrMatriz(agregar(translate(vec3(0.0))));
+    agregar(new MallaRevolPLY("peon.ply", nperfiles));
+}
+
+bool Peon::cuandoClick(const glm::vec3 & centro_oc) {
+    *pm_tras = translate(vec3(0.0, 0.0, 1.0));
+    return true;
+}
 
 Lata::Lata(const std::string & nombre_arch) {
     NodoGrafoEscena* actual = new NodoGrafoEscena();
@@ -48,9 +56,14 @@ LataPeones::LataPeones() {
     Material* materialPeonBlanco = new Material(0.5, 0.2, 0.5, 5.0);
     Material* materialPeonNegro = new Material(0.01, 0.2, 0.5, 50.0);
 
-    NodoGrafoEscena* peonMadera = new NodoGrafoEscena();
-    NodoGrafoEscena* peonNegro = new NodoGrafoEscena();
-    NodoGrafoEscena* peonBlanco = new NodoGrafoEscena();
+    NodoGrafoEscena* peones = new NodoGrafoEscena();
+    peones->agregar(translate(vec3(0.0, 0.4, 0.7)));
+    peones->agregar(scale(vec3(0.25, 0.25, 0.25)));
+    
+
+    Peon* peonMadera = new Peon(32);
+    Peon* peonNegro = new Peon(32);
+    Peon* peonBlanco = new Peon(32);
 
     Lata* lata = new Lata("lata-coke.jpg");
     lata->ponerNombre("Lata de Coca-Cola");
@@ -58,29 +71,23 @@ LataPeones::LataPeones() {
 
     peonMadera->ponerNombre("Peón de madera");
     peonMadera->ponerIdentificador(identPeonMadera);
-    peonMadera->agregar(translate(vec3(0.0, 0.4, 0.7)));
-    peonMadera->agregar(scale(vec3(0.25, 0.25, 0.25)));
-    peonMadera->agregar(materialPeonMadera);
-    peonMadera->agregar(new Peon(32));
+    peones->agregar(materialPeonMadera);
+    peones->agregar(peonMadera);
 
     peonNegro->ponerNombre("Peón Negro");
     peonNegro->ponerIdentificador(identPeonNegro);
-    peonNegro->agregar(translate(vec3(0.6, 0.4, 0.7)));
-    peonNegro->agregar(scale(vec3(0.25, 0.25, 0.25)));
-    peonNegro->agregar(materialPeonNegro);
-    peonNegro->agregar(new Peon(32));
+    peones->agregar(translate(vec3(2.5, 0.0, 0.0)));
+    peones->agregar(materialPeonNegro);
+    peones->agregar(peonNegro);
 
     peonBlanco->ponerNombre("Peón blanco");
     peonBlanco->ponerIdentificador(identPeonBlanco);
-    peonBlanco->agregar(translate(vec3(1.2, 0.4, 0.7)));
-    peonBlanco->agregar(scale(vec3(0.25, 0.25, 0.25)));
-    peonBlanco->agregar(materialPeonBlanco);
-    peonBlanco->agregar(new Peon(32));
+    peones->agregar(translate(vec3(2.5, 0.0, 0.0)));
+    peones->agregar(materialPeonBlanco);
+    peones->agregar(peonBlanco);
 
 
-    actual->agregar(peonMadera);
-    actual->agregar(peonBlanco);
-    actual->agregar(peonNegro);
+    actual->agregar(peones);
 
     actual->agregar(lata);
 

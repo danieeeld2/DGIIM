@@ -419,6 +419,7 @@ Escena4::Escena4()
 
    objetos.push_back(new LataPeones());
    objetos.push_back(new NodoCubo24());
+   objetos.push_back(new NodoDiscoP4());
 }
 
 
@@ -435,5 +436,7 @@ Escena5::Escena5() {
    cout << "Creando objetos de la práctica 4" << endl;
 
    objetos.push_back(new VariasLatasPeones());
+   objetos.push_back(new GrafoEsferasP5());
+   objetos.push_back(new GrafoEsferasP5_2());
 }
 
