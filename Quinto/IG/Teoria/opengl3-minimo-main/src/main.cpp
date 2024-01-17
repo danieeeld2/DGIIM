@@ -612,8 +612,8 @@ void VisualizarFrame( )
     // habilitar EPO por Z-buffer (test de profundidad)
     glDisable( GL_DEPTH_TEST );
 
-    cauce->compMM(glm::scale(glm::vec3(0.15,0.15,0.0)));
-    DibujarFigura6(5);
+    //cauce->compMM(glm::scale(glm::vec3(0.15,0.15,0.0)));
+    gancho_2p_b(glm::vec3(0.0,0.0,0.0),glm::vec3(1.0,1.0,0.0));
 
     // comprobar y limpiar variable interna de error
     assert( glGetError() == GL_NO_ERROR );

@@ -420,6 +420,8 @@ Escena4::Escena4()
    objetos.push_back(new LataPeones());
    objetos.push_back(new NodoCubo24());
    objetos.push_back(new NodoDiscoP4());
+   objetos.push_back(new PiramideRayada());
+   objetos.push_back(new NodoEXP4());
 }
 
 
@@ -438,5 +440,6 @@ Escena5::Escena5() {
    objetos.push_back(new VariasLatasPeones());
    objetos.push_back(new GrafoEsferasP5());
    objetos.push_back(new GrafoEsferasP5_2());
+   objetos.push_back(new AnilloEXP5(5));
 }
 

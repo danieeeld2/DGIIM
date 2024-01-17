@@ -197,6 +197,27 @@ class GrafoEsferasP5_2 : public NodoGrafoEscena {
       GrafoEsferasP5_2();
 };
 
+class PiramideRayada : public NodoGrafoEscena {
+   public:
+      PiramideRayada();
+};
+
+class NodoEXP4: public NodoGrafoEscena {
+   public:
+      NodoEXP4();
+};
+
+class EsferaEXP5 : public NodoGrafoEscena {
+   public:
+      EsferaEXP5(unsigned int n);
+      bool cuandoClick(const glm::vec3 & centro_wc) override;
+};
+
+class AnilloEXP5 : public NodoGrafoEscena {
+   public:
+      AnilloEXP5(unsigned int n);
+};
+
 #endif // GRAFO_ESCENA_HPP
 
 

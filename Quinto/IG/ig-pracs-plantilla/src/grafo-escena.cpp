@@ -646,4 +646,53 @@ GrafoEsferasP5_2::GrafoEsferasP5_2(){
    }
 }
 
+// ****************************************************************************************************
 
+PiramideRayada::PiramideRayada(){
+   Textura *textura = new Textura("textura-examen.jpg");
+   Material *material = new Material(textura, 0.5, 0.8, 0.2, 100.0);
+
+   ponerNombre("Piramide rayada");
+   agregar(material);
+   agregar(new Piramide());
+}
+
+// ****************************************************************************************************
+
+NodoEXP4::NodoEXP4(){
+   Textura *textura = new Textura("textura-examen.jpg");
+   Material *material = new Material(textura, 0.5, 0.8, 0.2, 100.0);
+   agregar(material);
+   agregar(new MallaEXP4());
+   ponerNombre("Nodo ejercicio adicional práctica 4, examen 27 enero");
+}
+
+// ****************************************************************************************************
+
+EsferaEXP5::EsferaEXP5(unsigned int n){
+   agregar(glm::translate(glm::vec3(1.0,0.0,0.0)));
+   agregar(glm::scale(glm::vec3(M_PI/float(n),M_PI/float(n),M_PI/float(n))));
+   ponerColor(glm::vec3(1.0,1.0,1.0));
+   agregar(new Esfera(50,50));
+   ponerNombre("EsferaEXP5");
+}
+
+bool EsferaEXP5::cuandoClick(const glm::vec3 & centro_wc) {
+   if(leerColor() == glm::vec3(1.0,1.0,1.0)){
+      ponerColor(glm::vec3(1.0,0.5,0.5));
+   }else{
+      ponerColor(glm::vec3(1.0,1.0,1.0));
+   }
+}
+
+AnilloEXP5::AnilloEXP5(unsigned int n){
+   assert(n>3);
+   for(int i=0; i<n; i++){
+      EsferaEXP5 *esfera = new EsferaEXP5(n);
+      esfera->ponerIdentificador(i+1);
+      float angulo = 2*M_PI/float(n);
+      agregar(glm::rotate(angulo,glm::vec3(0.0,1.0,0.0)));
+      agregar(esfera);
+   }
+   ponerNombre("AnilloEXP5");
+}
