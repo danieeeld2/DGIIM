@@ -174,6 +174,176 @@ void DibujarTriangulo_glm( )
 
 // ---------------------------------------------------------------------------------------------
 
+void DibujarEstrellaN(unsigned int n){
+    assert(n>=5);
+    assert( glGetError() == GL_NO_ERROR );
+    std::vector<glm::vec3> vertices;
+    float angulo = 2*M_PI/n;
+    for(int i=0; i<n; i++){
+        vertices.push_back(glm::vec3(cos(angulo*i),sin(angulo*i),0.0));
+        vertices.push_back(glm::vec3(0.5*cos(angulo*i+angulo/2),0.5*sin(angulo*i+angulo/2),0.0));
+    }
+    if(vao_glm == nullptr){
+        vao_glm = new DescrVAO(cauce->num_atribs, new DescrVBOAtribs(cauce->ind_atrib_posiciones, vertices));
+        assert( glGetError() == GL_NO_ERROR );
+    }
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    cauce->fijarUsarColorPlano( true );
+    cauce->fijarColor( { 1.0, 0.0, 1.0 });
+    vao_glm->draw(GL_LINE_LOOP);
+    assert( glGetError() == GL_NO_ERROR );
+}
+
+// ---------------------------------------------------------------------------------------------
+
+void DibujarEstrellaN2(unsigned int n){
+    assert(n>=5);
+    assert( glGetError() == GL_NO_ERROR );
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::uvec3> indices;
+    std::vector<glm::vec3> colores;
+    float angulo = 2*M_PI/n;
+    for(int i=0; i<n; i++){
+        vertices.push_back(glm::vec3(cos(angulo*i),sin(angulo*i),0.0));
+        vertices.push_back(glm::vec3(0.5*cos(angulo*i+angulo/2),0.5*sin(angulo*i+angulo/2),0.0));
+    }
+    vertices.push_back(glm::vec3(0.0,0.0,0.0));
+    for(int i=0; i<2*n; i++){
+        indices.push_back(glm::uvec3(i,(i+1)%(2*n),vertices.size()));
+    }
+    srand(time(NULL));
+    for(int i = 0; i < 2*n+1; i++){
+        colores.push_back(glm::vec3((float)rand()/RAND_MAX,(float)rand()/RAND_MAX,(float)rand()/RAND_MAX));
+    }
+    if(vao_glm == nullptr){
+        vao_glm = new DescrVAO(cauce->num_atribs, new DescrVBOAtribs(cauce->ind_atrib_posiciones, vertices));
+        vao_glm->agregar(new DescrVBOInds(indices));
+        vao_glm->agregar(new DescrVBOAtribs(cauce->ind_atrib_colores, colores));
+        assert( glGetError() == GL_NO_ERROR );
+    }
+    vao_glm->crearVAO();
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    cauce->fijarUsarColorPlano( false );
+    glEnableVertexAttribArray(cauce->ind_atrib_colores);
+    glDrawElements(GL_TRIANGLES, indices.size()*3, GL_UNSIGNED_INT, 0);
+    assert( glGetError() == GL_NO_ERROR );
+    glDisableVertexAttribArray(cauce->ind_atrib_colores);
+    cauce->fijarUsarColorPlano( true );
+    cauce->fijarColor( { 0.0, 1.0, 1.0 });
+    glDrawArrays(GL_LINE_LOOP, 0, vertices.size()-1);
+    assert( glGetError() == GL_NO_ERROR );
+}
+
+// ---------------------------------------------------------------------------------------------
+
+void DibujarEstrellaN3(unsigned int n){
+    assert(n>=5);
+    assert( glGetError() == GL_NO_ERROR );
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::uvec3> indices;
+    std::vector<glm::vec3> colores;
+    float angulo = 2*M_PI/n;
+    for(int i=0; i<n; i++){
+        vertices.push_back(glm::vec3(cos(angulo*i),sin(angulo*i),0.0));
+        vertices.push_back(glm::vec3(0.5*cos(angulo*i+angulo/2),0.5*sin(angulo*i+angulo/2),0.0));
+    }
+    vertices.push_back(glm::vec3(0.0,0.0,0.0));
+    for(int i=0; i<2*n; i++){
+        indices.push_back(glm::uvec3(i,(i+1)%(2*n),vertices.size()));
+    }
+    srand(time(NULL));
+    for(int i = 0; i < 2*n+1; i++){
+        colores.push_back(glm::vec3((float)rand()/RAND_MAX,(float)rand()/RAND_MAX,(float)rand()/RAND_MAX));
+    }
+    static GLuint array = 0;
+    if(array == 0){
+        glGenVertexArrays(1, &array);
+        glBindVertexArray(array);
+        GLuint buffer;
+        glGenBuffers(1, &buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(cauce->ind_atrib_posiciones, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        glEnableVertexAttribArray(cauce->ind_atrib_posiciones);
+        GLuint buffercol;
+        glGenBuffers(1, &buffercol);
+        glBindBuffer(GL_ARRAY_BUFFER, buffercol);
+        glBufferData(GL_ARRAY_BUFFER, colores.size()*sizeof(glm::vec3), colores.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(cauce->ind_atrib_colores, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        GLuint bufferind;
+        glGenBuffers(1, &bufferind);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferind);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,3*sizeof(indices)*indices.size() , indices.data(), GL_STATIC_DRAW);
+        assert( glGetError() == GL_NO_ERROR );
+    }
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    cauce->fijarUsarColorPlano( false );
+    glEnableVertexAttribArray(cauce->ind_atrib_colores);
+    glDrawElements(GL_TRIANGLES, indices.size()*3, GL_UNSIGNED_INT, 0);
+    assert( glGetError() == GL_NO_ERROR );
+    glDisableVertexAttribArray(cauce->ind_atrib_colores);
+    cauce->fijarUsarColorPlano( true );
+    cauce->fijarColor( { 0.0, 1.0, 1.0 });
+    glDrawArrays(GL_LINE_LOOP, 0, vertices.size()-1);
+    assert( glGetError() == GL_NO_ERROR );
+}
+
+// ---------------------------------------------------------------------------------------------
+
+struct AtribVerts{
+    glm::vec3 posicion;
+    glm::vec3 color;
+};
+
+void DibujarEstrellaN4(unsigned int n){
+    assert(n>=5);
+    assert( glGetError() == GL_NO_ERROR );
+    static GLuint array = 0;
+    std::vector<AtribVerts> vertices;
+    std::vector<glm::uvec3> indices;
+    float angulo = 2*M_PI/n;
+    for(int i=0; i<n; i++){
+        vertices.push_back({glm::vec3(cos(angulo*i),sin(angulo*i),0.0),glm::vec3(0.0,0.0,0.0)});
+        vertices.push_back({glm::vec3(0.5*cos(angulo*i+angulo/2),0.5*sin(angulo*i+angulo/2),0.0),glm::vec3(0.0,0.0,0.0)});
+    }
+    vertices.push_back({glm::vec3(0.0,0.0,0.0),glm::vec3(0.0,0.0,0.0)});
+    for(int i=0; i<2*n; i++){
+        indices.push_back(glm::uvec3(i,(i+1)%(2*n),vertices.size()));
+    }
+    srand(time(NULL));
+    for(int i = 0; i < 2*n+1; i++){
+        vertices[i].color = glm::vec3((float)rand()/RAND_MAX,(float)rand()/RAND_MAX,(float)rand()/RAND_MAX);
+    }
+    if(array == 0){
+        glGenVertexArrays(1, &array);
+        glBindVertexArray(array);
+        GLuint buffer;
+        glGenBuffers(1, &buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(AtribVerts), vertices.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(cauce->ind_atrib_posiciones, 3, GL_FLOAT, GL_FALSE, sizeof(AtribVerts), (void*)0);
+        glEnableVertexAttribArray(cauce->ind_atrib_posiciones);
+        glVertexAttribPointer(cauce->ind_atrib_colores, 3, GL_FLOAT, GL_FALSE, sizeof(AtribVerts), (void*)(3*sizeof(float)));
+        GLuint bufferind;
+        glGenBuffers(1, &bufferind);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferind);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,3*sizeof(indices)*indices.size() , indices.data(), GL_STATIC_DRAW);
+        assert( glGetError() == GL_NO_ERROR );
+    }
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    cauce->fijarUsarColorPlano( false );
+    glEnableVertexAttribArray(cauce->ind_atrib_colores);
+    glDrawElements(GL_TRIANGLES, indices.size()*3, GL_UNSIGNED_INT, 0);
+    assert( glGetError() == GL_NO_ERROR );
+    glDisableVertexAttribArray(cauce->ind_atrib_colores);
+    cauce->fijarUsarColorPlano( true );
+    cauce->fijarColor( { 0.0, 1.0, 1.0 });
+    glDrawArrays(GL_LINE_LOOP, 0, vertices.size()-1);
+    assert( glGetError() == GL_NO_ERROR );
+}
+
+// ---------------------------------------------------------------------------------------------
+
 void DibujarFigura1(unsigned int n){
     assert(n>2);
     assert( glGetError() == GL_NO_ERROR );
@@ -619,7 +789,7 @@ void VisualizarFrame( )
     glDisable( GL_DEPTH_TEST );
 
     //cauce->compMM(glm::scale(glm::vec3(0.15,0.15,0.0)));
-    DibujarFigura5(5);
+    DibujarEstrellaN4(5);
 
     // comprobar y limpiar variable interna de error
     assert( glGetError() == GL_NO_ERROR );
