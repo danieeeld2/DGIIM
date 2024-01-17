@@ -249,13 +249,14 @@ void DibujarFigura4(unsigned int n){
         vao_glm->agregar(new DescrVBOInds(indices));
         assert( glGetError() == GL_NO_ERROR );
     }
+    vao_glm->crearVAO();
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     cauce->fijarUsarColorPlano( true );
     cauce->fijarColor( { 1.0, 0.0, 1.0 });
-    vao_glm->draw( GL_TRIANGLES );
+    glDrawElements(GL_TRIANGLES, indices.size()*3, GL_UNSIGNED_INT, 0);
     assert( glGetError() == GL_NO_ERROR );
     cauce->fijarColor( { 0.0, 1.0, 1.0 });
-    vao_glm->draw(GL_LINE_LOOP);
+    glDrawArrays(GL_LINE_LOOP, 1, n);
     assert( glGetError() == GL_NO_ERROR );
 }
 
@@ -284,16 +285,17 @@ void DibujarFigura5(unsigned int n){
         vao_glm->agregar(new DescrVBOInds(indices));
         assert( glGetError() == GL_NO_ERROR );
     }
+    vao_glm->crearVAO();
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     // Llama a glUniform1i
     cauce->fijarUsarColorPlano( false );
-    vao_glm->habilitarAtrib( cauce->ind_atrib_colores, true );
-    vao_glm->draw( GL_TRIANGLES );
+    glEnableVertexAttribArray(cauce->ind_atrib_colores);
+    glDrawElements(GL_TRIANGLES, indices.size()*3, GL_UNSIGNED_INT, 0);
     assert( glGetError() == GL_NO_ERROR );
-    vao_glm->habilitarAtrib( cauce->ind_atrib_colores, false );
+    glDisableVertexAttribArray(cauce->ind_atrib_colores);
     cauce->fijarUsarColorPlano( true );
     cauce->fijarColor( { 1.0, 0.0, 1.0 });
-    vao_glm->draw(GL_LINE_LOOP);
+    glDrawArrays(GL_LINE_LOOP, 1, n);
     assert( glGetError() == GL_NO_ERROR );
 }
 
@@ -353,8 +355,12 @@ void DibujarFigura6(unsigned int n){
         // Especificar formato de los colores
         glVertexAttribPointer(cauce->ind_atrib_colores, 3, GL_FLOAT, GL_FALSE, sizeof(AtributosVertices), (void*)(3*sizeof(float)));
         // Hacemos VBO indice
-        DescrVBOInds *vbo_ind = new DescrVBOInds(indices);
-        vbo_ind->crearVBO();
+        // DescrVBOInds *vbo_ind = new DescrVBOInds(indices);
+        // vbo_ind->crearVBO();
+        GLuint bufferind;
+        glGenBuffers(1, &bufferind);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferind);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,3*sizeof(indices)*indices.size() , indices.data(), GL_STATIC_DRAW);
         assert( glGetError() == GL_NO_ERROR );
     }
     // Dibujamos relleno
@@ -613,7 +619,7 @@ void VisualizarFrame( )
     glDisable( GL_DEPTH_TEST );
 
     //cauce->compMM(glm::scale(glm::vec3(0.15,0.15,0.0)));
-    gancho_2p_b(glm::vec3(0.0,0.0,0.0),glm::vec3(1.0,1.0,0.0));
+    DibujarFigura5(5);
 
     // comprobar y limpiar variable interna de error
     assert( glGetError() == GL_NO_ERROR );
